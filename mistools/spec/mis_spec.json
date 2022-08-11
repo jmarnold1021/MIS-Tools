@@ -1,0 +1,821 @@
+{
+    "SP" : {
+
+        "LENGTH" : 40,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SP01" : [21,27],
+            "SP02" : [27,28],
+            "SP03" : [28,34],
+            "GI92" : [34,35],
+            "SP04" : [35,40]
+        }
+    },
+
+    "SF" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SF01" : [21,22],
+            "SF03" : [22,23],
+            "SF04" : [23,28],
+            "SF05" : [28,29],
+            "SF06" : [29,31],
+            "SF07" : [31,33],
+            "SF08" : [33,40],
+            "SF09" : [40,47],
+            "SF10" : [47,55],
+            "SF11" : [55,63],
+            "SF17" : [63,69]
+        }
+    },
+
+    "FA" : {
+
+        "LENGTH" : 50,
+
+        "POSITION" : {
+
+            "GI90"      : [1,3],
+            "GI01"      : [3,6],
+            "GI03"      : [6,9],
+            "GI03_TERM" : [9,12],
+            "SB00"      : [12,21],
+            "SF21"      : [21,23],
+            "SF22"      : [23,28]
+        }
+    },
+
+    "CB" : {
+
+        "LENGTH" : 220,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "CB00" : [9,21],
+            "CB01" : [21,33],
+            "CB02" : [33,101],
+            "CB03" : [101,107],
+            "CB04" : [107,108],
+            "CB05" : [108,109],
+            "CB06" : [109,113],
+            "CB07" : [113,117],
+            "CB08" : [117,118],
+            "CB09" : [118,119],
+            "CB10" : [119,120],
+            "CB11" : [120,121],
+            "CB13" : [122,123],
+            "CB14" : [123,129],
+            "CB15" : [129,137],
+            "CB19" : [173,180],
+            "CB20" : [180,189],
+            "CB21" : [189,190],
+            "CB22" : [190,191],
+            "CB23" : [191,192],
+            "CB24" : [192,193],
+            "CB25" : [193,194],
+            "CB26" : [194,195]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'CB'",
+            "GI01" : "CASTCB_GI01",
+            "GI03" : "CASTCB_GI03",
+            "CB00" : "CASE WHEN CASTCB_CB00 IS NOT NULL THEN CASTCB_CB00 ELSE REPLICATE(' ', 12) END",
+            "CB01" : "LEFT(CASTCB_CB01 + SPACE(12), 12)",
+            "CB02" : "LEFT(CASTCB_CB02 + SPACE(68), 68)",
+            "CB03" : "CASE WHEN CASTCB_CB03 IS NOT NULL THEN CASTCB_CB03 ELSE REPLICATE('0', 6) END",
+            "CB04" : "CASE WHEN CASTCB_CB04 IS NOT NULL THEN CASTCB_CB04 ELSE ' ' END",
+            "CB05" : "CASTCB_CB05",
+            "CB06" : "CASTCB_CB06",
+            "CB07" : "CASTCB_CB07",
+            "CB08" : "CASTCB_CB08",
+            "CB09" : "CASTCB_CB09",
+            "CB10" : "CASTCB_CB10",
+            "CB11" : "CASE WHEN CASTCB_CB11 IS NOT NULL THEN CASTCB_CB11 ELSE ' ' END",
+            "CB12" : "SPACE(1)",
+            "CB13" : "CASTCB_CB13",
+            "CB14" : "LEFT(CASTCB_CB14 + SPACE(6), 6)",
+            "CB15" : "LEFT(CASTCB_CB15 + SPACE(8), 8)",
+            "CB16" : "SPACE(12)",
+            "CB17" : "SPACE(12)",
+            "CB18" : "SPACE(12)",
+            "CB19" : "LEFT(CASTCB_CB19 + SPACE(7), 7)",
+            "CB20" : "LEFT(CASTCB_CB20 + SPACE(9), 9)",
+            "CB21" : "CASTCB_CB21",
+            "CB22" : "CASE WHEN CASTCB_CB22 IS NOT NULL THEN CASTCB_CB22 ELSE ' ' END",
+            "CB23" : "CASTCB_CB23",
+            "CB24" : "CASE WHEN CASTCB_CB24 IS NOT NULL THEN CASTCB_CB24 ELSE ' ' END",
+            "CB25" : "CASTCB_CB25",
+            "CB26" : "CASTCB_CB26",
+            "FILLER" : "SPACE(26)"
+
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_CB_RPT"
+    },
+
+    "SB" : {
+
+        "LENGTH" : 430,
+
+        "POSITION" : {
+
+            "GI90" :     [1,3],
+            "GI01" :     [3,6],
+            "GI03" :     [6,9],
+            "SB02" :    [9,12],
+            "SB00" :   [12,21],
+            "SB01" :   [21,22],
+            "SB03" :   [22,30],
+            "SB04" :   [30,31],
+            "SB06" :   [31,33],
+            "SB08" :   [35,44],
+            "SB09" :   [44,49],
+            "SB11" :   [50,55],
+            "SB12" :   [55,61],
+            "SB14" :   [67,68],
+            "SB15" :   [68,69],
+            "SB16" :   [69,75],
+            "SB17" :   [75,81],
+            "SB18" :   [81,87],
+            "SB19" :   [87,93],
+            "SB20" :   [93,99],
+            "SB21" :  [99,105],
+            "SB22" : [105,106],
+            "SB23" : [106,107],
+            "SB24" : [107,108],
+            "SB26" : [109,110],
+            "SB28" :    [9,12],
+            "SB29" : [114,135],
+            "SB30" : [135,136],
+            "SB31" : [136,166],
+            "SB32" : [166,206],
+            "SB33" : [206,208],
+            "SB34" : [208,216],
+            "SB35" : [216,226],
+            "SB36" : [226,227],
+            "SB37" : [227,228],
+            "SB38" : [228,422]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SB'",
+            "GI01" : "CASTSB_GI01",
+            "GI03" : "CASTSB_GI03",
+            "SB02" : "LEFT(CASTSB_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSB_SB00 + SPACE(9), 9)",
+            "SB01" : "CASTSB_SB01",
+            "SB03" : "CASTSB_SB03",
+            "SB04" : "CASTSB_SB04",
+            "SB05" : "SPACE(2)",
+            "SB06" : "CASTSB_SB06",
+            "SB07" : "SPACE(1)",
+            "SB08" : "CASTSB_SB08",
+            "SB09" : "CASTSB_SB09",
+            "SB10" : "SPACE(1)",
+            "SB11" : "CASTSB_SB11",
+            "SB12" : "CASTSB_SB12",
+            "SB13" : "SPACE(6)",
+            "SB14" : "CASTSB_SB14",
+            "SB15" : "CASE WHEN CASTSB_SB15 IS NOT NULL THEN CASTSB_SB15 ELSE 'X' END",
+            "SB16" : "RIGHT( '000000' + CASTSB_SB16, 6)",
+            "SB17" : "RIGHT( '000000' + CASTSB_SB17, 6)",
+            "SB18" : "RIGHT( '000000' + CASTSB_SB18, 6)",
+            "SB19" : "RIGHT( '000000' + CASTSB_SB19, 6)",
+            "SB20" : "RIGHT( '000000' + CASTSB_SB20, 6)",
+            "SB21" : "RIGHT( '000000' + CASTSB_SB21, 6)",
+            "SB22" : "CASTSB_SB22",
+            "SB23" : "CASTSB_SB23",
+            "SB24" : "CASTSB_SB24",
+            "SB25" : "SPACE(1)",
+            "SB26" : "CASTSB_SB26",
+            "SB27" : "SPACE(1)",
+            "SB28" : "SPACE(3)",
+            "SB29" : "CASTSB_SB29",
+            "SB30" : "CASTSB_SB30",
+            "SB31" : "LEFT(CASTSB_SB31 + SPACE(30), 30)",
+            "SB32" : "LEFT(CASTSB_SB32 + SPACE(40), 40)",
+            "SB33" : "CASTSB_SB33",
+            "SB34" : "LEFT(CASTSB_SB34 + SPACE(8), 8)",
+            "SB35" : "CASTSB_SB35",
+            "SB36" : "CASTSB_SB36",
+            "SB37" : "CASTSB_SB37",
+            "SB38" : "REPLICATE('N', '194')",
+            "FILLER" : "SPACE(9)"
+
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SB_WORK"
+    },
+
+
+    "XB" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "CB01" : [12,24],
+            "XB00" : [24,30],
+            "XB01" : [30,31],
+            "XB02" : [31,36],
+            "XB04" : [43,44],
+            "XB05" : [44,48],
+            "XB06" : [48,51],
+            "XB08" : [53,54],
+            "XB09" : [54,55],
+            "XB10" : [55,56],
+            "XB11" : [56,62],
+            "CB00" : [62,74]
+        },
+
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'XB'",
+            "GI01" : "CASTXB_GI01",
+            "GI03" : "CASTXB_GI03",
+            "GI02" : "SPACE(3)",
+            "CB01" : "LEFT(CASTXB_CB01 + SPACE(12), 12)",
+            "XB00" : "LEFT(CASTXB_XB00 + SPACE(6), 6)",
+            "XB01" : "CASTXB_XB01",
+            "XB02" : "CASTXB_XB02",
+            "XB03" : "SPACE(6)",
+            "XB04" : "CASTXB_XB04",
+            "XB05" : "CASTXB_XB05",
+            "XB06" : "CASTXB_XB06",
+            "XB07" : "SPACE(1)",
+            "XB08" : "CASTXB_XB08",
+            "XB09" : "CASTXB_XB09",
+            "XB10" : "CASTXB_XB10",
+            "XB11" : "CASTXB_XB11",
+            "CB00" : "CASTXB_CB00",
+            "FILLER": "SPACE(7)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_XB_RPT"
+    },
+
+    "XF" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "CB01" : [9,21],
+            "XB00" : [21,27],
+            "XF00" : [27,29],
+            "XF01" : [29,31],
+            "XF02" : [31,37],
+            "XF03" : [37,43],
+            "XF04" : [43,52],
+            "XF05" : [52,56],
+            "XF06" : [56,60],
+            "XF07" : [60,65],
+            "CB00" : [65,77]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'XF'",
+            "GI01" : "CASTXF_GI01",
+            "GI03" : "CASTXF_GI03",
+            "CB01" : "LEFT(CASTXF_CB01 + SPACE(12), 12)",
+            "XB00" : "LEFT(CASTXF_XB00 + SPACE(6), 6)",
+            "XF00" : "CASTXF_XF00",
+            "XF01" : "CASTXF_XF01",
+            "XF02" : "CASTXF_XF02",
+            "XF03" : "CASTXF_XF03",
+            "XF04" : "CASTXF_XF04",
+            "XF05" : "CASTXF_XF05",
+            "XF06" : "CASTXF_XF06",
+            "XF07" : "CASTXF_XF07",
+            "CB00" : "CASTXF_CB00",
+            "FILLER" : "SPACE(4)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_XF_RPT"
+
+    },
+
+    "XE" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "CB01" : [9,21],
+            "XB00" : [21,27],
+            "EB00" : [21,27],
+            "XF00" : [36,38],
+            "XE01" : [38,39],
+            "XE02" : [39,42],
+            "XE03" : [42,47],
+            "XE04" : [47,52],
+            "CB00" : [52,63]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'XE'",
+            "GI01" : "CASTXE_GI01",
+            "GI03" : "CASTXE_GI03",
+            "CB01" : "LEFT(CASTXE_COURSE_DEPT_NO + SPACE(12), 12)",
+            "XB00" : "LEFT(CASTXE_SECTION_IDENTIFIER + SPACE(6), 6)",
+            "EB00" : "CASTXE_EB00",
+            "XF00" : "CASTXE_SESSION_IDENTIFIER",
+            "XE01" : "CASE WHEN CASTXE_FAC_ASGMT_TYPE IS NOT NULL THEN CASTXE_FAC_ASGMT_TYPE ELSE ' ' END",
+            "XE02" : "RIGHT('000' + CASTXE_FAC_ASGMT_PCT, 3)",
+            "XE03" : "CASTXE_FAC_ASGMT_FTE",
+            "XE04" : "CASTXE_FAC_ASGMT_PAY_RATE",
+            "CB00" : "CASTXE_CB00",
+            "FILLER" : "SPACE(17)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_XE_RPT"
+
+    },
+
+    "SC" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB00" : [9,18],
+            "SC01" : [18,19],
+            "SC02" : [19,20],
+            "SC03" : [20,21],
+            "SC04" : [21,22],
+            "SC05" : [22,27],
+            "SC06" : [27,31],
+            "SC07" : [31,35],
+            "SC08" : [35,37],
+            "SC09" : [37,39],
+            "SC10" : [39,40],
+            "SC11" : [40,46],
+            "SC18" : [46,47]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SC'",
+            "GI01" : "CASTSC_GI01",
+            "GI03" : "SUBSTRING(CAST_CALWORK_SC_WORK_ID,9, 3)",
+            "SB00" : "LEFT(CASTSC_SB00 + SPACE(9), 9)",
+            "SC01" : "CASTSC_SC01",
+            "SC02" : "CASTSC_SC02",
+            "SC03" : "CASTSC_SC03",
+            "SC04" : "CASTSC_SC04",
+            "SC05" : "CASTSC_SC05",
+            "SC06" : "RIGHT('0000' + CASTSC_SC06, 4)",
+            "SC07" : "RIGHT('0000' + CASTSC_SC07, 4)",
+            "SC08" : "RIGHT('00' + CASTSC_SC08, 2)",
+            "SC09" : "RIGHT('00' + CASTSC_SC09, 2)",
+            "SC10" : "CASTSC_SC10",
+            "SC11" : "CASTSC_SC11",
+            "SC18" : "CASTSC_SC18",
+            "FILLER" : "SPACE(34)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_CALWORK_SC_WORK"
+    },
+
+    "CW" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB00" : [9,18],
+            "SC12" : [18,19],
+            "SC13" : [19,25],
+            "SC14" : [25,33],
+            "SC15" : [33,41],
+            "SC16" : [41,43],
+            "SC17" : [43,46]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'CW'",
+            "GI01" : "CASTCW_GI01",
+            "GI03" : "CASTCW_GI03",
+            "SB00" : "LEFT(CASTCW_SB00 + SPACE(9), 9)",
+            "SC12" : "CASTCW_SC12",
+            "SC13" : "CASTCW_SC13",
+            "SC14" : "CASTCW_SC14",
+            "SC15" : "CASTCW_SC15",
+            "SC16" : "RIGHT( '00' + CASTCW_SC16, 2)",
+            "SC17" : "CASTCW_SC17",
+            "FILLER" : "SPACE(34)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_CALWORK_CW_WORK"
+    },
+
+    "SS" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SS01" : [21,22],
+            "SS02" : [22,28],
+            "SS03" : [28,30],
+            "SS04" : [30,32],
+            "SS05" : [32,34],
+            "SS06" : [34,35],
+            "SS07" : [35,39],
+            "SS08" : [39,40],
+            "SS09" : [40,41],
+            "SS10" : [41,42],
+            "SS11" : [42,46],
+            "SS12" : [46,52],
+            "SS13" : [52,54],
+            "SS14" : [54,56],
+            "SS15" : [56,58],
+            "SS16" : [58,59],
+            "SS17" : [59,63],
+            "SS18" : [63,64],
+            "SS19" : [64,65],
+            "SS20" : [65,68]
+
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SS'",
+            "GI01" : "CASTSS_GI01",
+            "GI03" : "CASTSS_GI03",
+            "SB02" : "LEFT(CASTSS_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSS_SB00 + SPACE(9), 9)",
+            "SS01" : "CASTSS_SS01",
+            "SS02" : "CASE WHEN CASTSS_SS02 IS NOT NULL THEN LEFT(CASTSS_SS02 + SPACE(6), 6) ELSE SPACE(6) END",
+            "SS03" : "CASTSS_SS03",
+            "SS04" : "CASTSS_SS04",
+            "SS05" : "CASTSS_SS05",
+            "SS06" : "CASTSS_SS06",
+            "SS07" : "CASTSS_SS07",
+            "SS08" : "CASTSS_SS08",
+            "SS09" : "CASTSS_SS09",
+            "SS10" : "CASTSS_SS10",
+            "SS11" : "CASTSS_SS11",
+            "SS12" : "CASTSS_SS12",
+            "SS13" : "CASTSS_SS13",
+            "SS14" : "CASTSS_SS14",
+            "SS15" : "CASTSS_SS15",
+            "SS16" : "CASTSS_SS16",
+            "SS17" : "CASTSS_SS17",
+            "SS18" : "CASTSS_SS18",
+            "SS19" : "CASTSS_SS19",
+            "SS20" : "CASTSS_SS20",
+            "FILLER" : "SPACE(13)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SS_WORK"
+    },
+
+    "SY" : {
+
+        "LENGTH" : 55,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB00" : [9,18],
+            "CB00" : [18,30],
+            "CB01" : [30,42],
+            "SY01" : [42,48],
+            "SY02" : [48,49],
+            "SY03" : [49,53],
+            "SY04" : [53,56]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SY'",
+            "GI01" : "CASTSY_GI01",
+            "GI03" : "CASTSY_GI03",
+            "SB00" : "LEFT(CASTSY_SB00 + SPACE(9), 9)",
+            "CB00" : "CASTSY_CB00",
+            "CB01" : "LEFT(CASTSY_CB01 + SPACE(12), 12)",
+            "SY01" : "CONVERT(VARCHAR, CASTSY_SY01, 12)",
+            "SY02" : "CASTSY_SY02",
+            "SY03" : "CASTSY_SY03",
+            "SY04" : "LEFT(CASTSY_SY04 + SPACE(3), 3)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SY_WORK"
+    },
+
+    "SX" : {
+        "LENGTH" : 78,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "CB01" : [21,33],
+            "XB00" : [33,39],
+            "SX01" : [39,45],
+            "SX02" : [45,51],
+            "SX03" : [51,55],
+            "SX04" : [55,58],
+            "SX05" : [58,63],
+            "CB00" : [63,75],
+            "SX06" : [75,76]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SX'",
+            "GI01" : "CASTSX_GI01",
+            "GI03" : "CASTSX_GI03",
+            "SB02" : "LEFT(CASTSX_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSX_SB00 + SPACE(9), 9)",
+            "CB01" : "LEFT(CASTSX_CB01 + SPACE(12), 12)",
+            "XB00" : "LEFT(CASTSX_XB00 + SPACE(6), 6)",
+            "SX01" : "CASE WHEN CASTSX_SX01 IS NOT NULL THEN CASTSX_SX01 ELSE '888888' END",
+            "SX02" : "CASTSX_SX02",
+            "SX03" : "RIGHT('0000' + CASTSX_SX03, 4)",
+            "SX04" : "LEFT(CASTSX_SX04 + SPACE(3), 3)",
+            "SX05" : "CASE WHEN CASTSX_SX05 IS NOT NULL THEN RIGHT('00000' + CASTSX_SX05, 5) ELSE '88888' END",
+            "CB00" : "CASTSX_CB00",
+            "SX06" : "CASTSX_SX06",
+            "FILLER" : "SPACE(3)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SX_RPT"
+    },
+
+    "SD" : {
+        "LENGTH" : 40,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SD01" : [21,22],
+            "SD05" : [29,30]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SD'",
+            "GI01" : "CASTSD_GI01",
+            "GI03" : "CASTSD_GI03",
+            "SB02" : "LEFT(CASTSD_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSD_SB00 + SPACE(9), 9)",
+            "SD01" : "CASTSD_SD01",
+            "SD02" : "SPACE(3)",
+            "SD03" : "SPACE(1)",
+            "SD04" : "SPACE(3)",
+            "SD05" : "CASTSD_SD05",
+            "FILLER" : "SPACE(11)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SD_RPT"
+    },
+
+    "SG" : {
+
+        "LENGTH" : 60,
+
+        "POSITION" : {
+
+            "GI09" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB00" : [9,18],
+            "SG01" : [18,22],
+            "SG02" : [22,26],
+            "SG03" : [26,27],
+            "SG04" : [27,28],
+            "SG05" : [28,29],
+            "SG06" : [29,30],
+            "SG07" : [30,31],
+            "SG08" : [31,32],
+            "SG10" : [34,35],
+            "SG11" : [35,36],
+            "SG12" : [36,41],
+            "SG13" : [41,42],
+            "SG14" : [42,44],
+            "SG15" : [44,45],
+            "SG16" : [45,46],
+            "SG17" : [46,47],
+            "SG18" : [47,48],
+            "SG19" : [48,49],
+            "SG20" : [49,50],
+            "SG21" : [50,51]
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SG'",
+            "GI01" : "CASTSG_GI01",
+            "GI03" : "CASTSG_GI03",
+            "SB00" : "LEFT(CASTSG_SB00 + SPACE(9), 9)",
+            "SG01" : "CASE WHEN CASTSG_SG01 IS NOT NULL THEN CASTSG_SG01 ELSE REPLICATE('X', 4) END",
+            "SG02" : "CASE WHEN CASTSG_SG02 IS NOT NULL THEN CASTSG_SG02 ELSE REPLICATE('X', 4) END",
+            "SG03" : "CASTSG_SG03",
+            "SG04" : "CASTSG_SG04",
+            "SG05" : "CASTSG_SG05",
+            "SG06" : "CASTSG_SG06",
+            "SG07" : "CASTSG_SG07",
+            "SG08" : "CASTSG_SG08",
+            "SG09" : "SPACE(2)",
+            "SG10" : "CASTSG_SG10",
+            "SG11" : "CASTSG_SG11",
+            "SG12" : "CASTSG_SG12",
+            "SG13" : "CASTSG_SG13",
+            "SG14" : "CASTSG_SG14_SOURCE",
+            "SG14_S" : "CASTSG_SG14_STATUS",
+            "SG15" : "CASTSG_SG15",
+            "SG16" : "CASTSG_SG16",
+            "SG17" : "CASTSG_SG17",
+            "SG18" : "CASTSG_SG18",
+            "SG19" : "CASTSG_SG19",
+            "SG20" : "CASTSG_SG20",
+            "SG21" : "CASTSG_SG21",
+            "FILLER" : "SPACE(10)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SG_WORK"
+    },
+
+    "SV" : {
+
+        "LENGTH" : 40,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SV01" : [12,22],
+            "SV03" : [23,25],
+            "SV04" : [25,26],
+            "SV05" : [26,27],
+            "SV06" : [27,28],
+            "SV08" : [29,30],
+            "SV09" : [30,31],
+            "SV10" : [31,32]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI09" : "'SV'",
+            "GI01" : "CASTSV_GI01",
+            "GI03" : "CASTSV_GI03",
+            "SB02" : "LEFT(CASTSV_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSV_SB00 + SPACE(9), 9)",
+            "SV01" : "CASTSV_SV01",
+            "SV02" : "SPACE(1)",
+            "SV03" : "CASTSV_SV03",
+            "SV04" : "CASTSV_SV04",
+            "SV05" : "CASTSV_SV05",
+            "SV06" : "CASTSV_SV06",
+            "SV07" : "SPACE(1)",
+            "SV08" : "CASTSV_SV08",
+            "SV09" : "CASTSV_SV09",
+            "SV10" : "CASTSV_SV10",
+            "FILLER" : "SPACE(9)"
+        },
+
+
+        "CAL_GOLD_TABLE" : "CAST_SV_WORK"
+    },
+
+    "SE" : {
+
+        "LENGTH" : 40,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "SB02" : [9,12],
+            "SB00" : [12,21],
+            "SE01" : [21,22],
+            "SE02" : [22,25],
+            "SE03" : [25,26],
+            "SE04" : [26,30],
+            "SE05" : [30,31],
+            "SE06" : [31,34],
+            "SE07" : [34,35],
+            "SE08" : [35,36],
+            "SE09" : [36,37],
+            "SE10" : [37,38]
+
+        }
+    },
+
+    "EB" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "EB00" : [9,18],
+            "EB01" : [18,19],
+            "EB02" : [19,27],
+            "EB03" : [27,28],
+            "EB05" : [30,31],
+            "EB06" : [31,32],
+            "EB07" : [32,33],
+            "EB08" : [33,34],
+            "EB09" : [34,35],
+            "EB11" : [41,42],
+            "EB12" : [42,48],
+            "EB13" : [48,54],
+            "EB14" : [54,75]
+
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'EB'",
+            "GI01" : "CAHREB_GI01",
+            "GI03" : "CAHREB_GI03",
+            "EB00" : "CAHREB_EB00",
+            "EB01" : "CAHREB_EB01",
+            "EB02" : "CAHREB_EB02",
+            "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",
+            "EB04" : "'X '",
+            "EB05" : "CASE WHEN CAHREB_EB05 IS NOT NULL THEN CAHREB_EB05 ELSE 'C' END",
+            "EB06" : "CASE WHEN CAHREB_EB06 IS NOT NULL THEN CAHREB_EB06 ELSE SPACE(1) END",
+            "EB07" : "CASE WHEN CAHREB_EB07 IS NOT NULL THEN CAHREB_EB07 ELSE SPACE(1) END",
+            "EB08" : "CASE WHEN CAHREB_EB08 IS NOT NULL THEN CAHREB_EB08 ELSE SPACE(1) END",
+            "EB09" : "CASE WHEN CAHREB_EB09 IS NOT NULL THEN CAHREB_EB09 ELSE SPACE(1) END",
+            "EB10" : "SPACE(6)",
+            "EB11" : "CASE WHEN CAHREB_EB11 IS NOT NULL THEN CAHREB_EB11 ELSE SPACE(1) END",
+            "EB12" : "RIGHT( '000000' + CAST(CAHREB_EB12 AS VARCHAR), 6)",
+            "EB13" : "RIGHT( '000000' + CAST(CAHREB_EB13 AS VARCHAR), 6)",
+            "EB14" : "CAHREB_EB14",
+            "FILLER" : "SPACE(6)"
+        },
+
+
+        "CAL_GOLD_TABLE" : "CAHR_EB_RPT"
+    }
+}
