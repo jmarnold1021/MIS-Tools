@@ -41,7 +41,7 @@ OK
 
 ## Docs
 
-| All api docs are built and readable in MIS-Docs Wiki found on the Standard IE Procedures File Share.
+All api docs are built and readable in MIS-Docs Wiki found on the Standard IE Procedures File Share.
 
 
 ## Build
@@ -85,7 +85,7 @@ $ .\Activate.ps1
 
 Mode                LastWriteTime         Length Name
 ----                -------------         ------ ----
--a----        1/28/2022  12:08 PM           1069 misffparser-0.10.4-py3-none-any.whl
+-a----        1/28/2022  12:08 PM           1069 mistools-0.10.4-py3-none-any.whl
 
 
 # exit venv
@@ -95,7 +95,7 @@ $
 
 ```
 
-| If no new dependancies are needed can run...
+If no new dependancies are needed can run...
 
 ```powershell
 
@@ -103,7 +103,7 @@ $
 
 ```
 
-| to get a new version with updated source code.
+To get a new version with updated source code.
 
 
 ## Install
@@ -128,16 +128,16 @@ $ python
 
 ## Configuration
 
-| Ensure misexport.py is pointed at the MIS Specification JSON at the top of the file. Reach out to MIS Programmer for the config. The configs directory should be created under PACKAGE_ROOT.
+Ensure misexport.py is pointed at the MIS Specification JSON at the top of the file. Reach out to MIS Programmer for the config. The configs directory should be created under PACKAGE_ROOT.
 
 ``` python
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
 
-| **This will change soon since installed versions will need a way to have configs provided probably using a path paramater.**
-
 ```
+
+**This will change soon since installed versions will need a way to have configs provided probably using a path paramater.**
 
 ## Python Packaging Help Docs I Roughly Used
 [Packaging Docs](https://medium.com/analytics-vidhya/how-to-create-a-python-library-7d5aea80cc3f)<br>
