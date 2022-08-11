@@ -164,8 +164,8 @@ def xb_mis_parse(xb_mis_file_path, headers = False):
 
     if headers:
         xb_mis_data['XB'] = _mis_add_headers('XB', xb_mis_data['XB'])
-        xb_mis_data['XF'] = _mis_add_headers('XE', xb_mis_data['XF'])
-        xb_mis_data['XE'] = _mis_add_headers('XF', xb_mis_data['XE'])
+        xb_mis_data['XF'] = _mis_add_headers('XF', xb_mis_data['XF'])
+        xb_mis_data['XE'] = _mis_add_headers('XE', xb_mis_data['XE'])
 
 
     return xb_mis_data
