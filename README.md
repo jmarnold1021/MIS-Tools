@@ -9,8 +9,6 @@ Various tools for working with MIS-Data
 
 ## Test/Development/Contributing
 
- From Package Root Dir run
-
 * Make necessary changes
 * Ensure unit tests still pass
 
@@ -137,7 +135,7 @@ CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
 
 ```
 
-**This will change soon since installed versions will need a way to have configs provided probably using a path paramater.**
+**This will change soon since installed versions will need a way to have configs provided probably using a path paramater. Packaged version will fail atm sourcing this file!!!**
 
 ## Python Packaging Help Docs I Roughly Used
 [Packaging Docs](https://medium.com/analytics-vidhya/how-to-create-a-python-library-7d5aea80cc3f)<br>

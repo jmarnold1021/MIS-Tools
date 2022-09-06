@@ -15,7 +15,23 @@
             "SP03" : [28,34],
             "GI92" : [34,35],
             "SP04" : [35,40]
-        }
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'SP'",
+            "GI01" : "CASTSP_GI01",
+            "GI03" : "CASTSP_GI03",
+            "SB02" : "LEFT(CASTSP_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSP_SB00 + SPACE(9), 9)",
+            "SP01" : "CASTSP_SP01",
+            "SP02" : "CASTSP_SP02",
+            "SP03" : "CASTSP_SP03",
+            "GI92" : "(ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1",
+            "SP04" : "CASTSP_SP04"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SP_RPT"
     },
 
     "SF" : {
@@ -817,5 +833,25 @@
 
 
         "CAL_GOLD_TABLE" : "CAHR_EB_RPT"
+    },
+
+    "AA" : {
+
+        "LENGTH" : 25,
+
+        "POSITION" : {},
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'AA'",
+            "GI01" : "'221'",
+            "GI03" : "GI03_Term",
+            "SB00" : "CASE WHEN (SSN IS NOT NULL /*AND SSNum = 'Y'*/) THEN SSN ELSE 'D' + StudentID + SPACE(1) END",
+            "AA01" : "RegDate",
+            "AA02" : "AA02_Result"
+        },
+
+
+        "CAL_GOLD_TABLE" : "L56_AA"
     }
 }
