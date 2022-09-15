@@ -26,9 +26,10 @@
             "SB00" : "LEFT(CASTSP_SB00 + SPACE(9), 9)",
             "SP01" : "CASTSP_SP01",
             "SP02" : "CASTSP_SP02",
-            "SP03" : "CASTSP_SP03",
-            "GI92" : "(ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1",
-            "SP04" : "CASTSP_SP04"
+            "SP03" : "CONVERT(VARCHAR, CASTSP_SP03, 12)",
+            "GI92" : "CAST((ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1 AS VARCHAR)",
+            "SP04" : "CASTSP_SP04",
+            "FILLER": "SPACE(1)"
         },
 
         "CAL_GOLD_TABLE" : "CAST_SP_RPT"
