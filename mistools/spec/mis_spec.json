@@ -57,7 +57,30 @@
             "SF10" : [47,55],
             "SF11" : [55,63],
             "SF17" : [63,69]
-        }
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90" : "'SF'",
+            "GI01" : "CASTSF_COLLEGE_IDENTIFIER",
+            "GI03" : "CASTSF_TERM_IDENTIFIER",
+            "SB02" : "LEFT(CASTSF_STU_NAME_PARTIAL + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSF_STU_IDENTIFIER + SPACE(9), 9)",
+            "SF01" : "CASTSF_APPLICANT_STATUS",
+            "SF03" : "CASTSF_BUDGET_CATEGORY",
+            "SF04" : "RIGHT( REPLICATE('0', 5) + CASTSF_BUDGET_AMT, 5)",
+            "SF05" : "CASTSF_APPLICANT_STATUS",
+            "SF06" : "RIGHT( REPLICATE('0', 2) + CASTSF_HOUSEHOLD_SIZE, 2)",
+            "SF07" : "CASTSF_FAMILY_STATUS",
+            "SF08" : "RIGHT( REPLICATE('0', 7) + CASTSF_INCOME_AGI_PARENT, 7)",
+            "SF09" : "RIGHT( REPLICATE('0', 7) + CASTSF_INCOME_AGI_STUDENT, 7)",
+            "SF10" : "RIGHT( REPLICATE('0', 8) + CASTSF_UNTAX_INC_PARENT, 8)",
+            "SF11" : "RIGHT( REPLICATE('0', 8) + CASTSF_UNTAX_INC_STUDENT, 8)",
+            "SF17" : "RIGHT( REPLICATE('0', 6) + CASTSF_EXP_FAMILY_CONTRIB, 6)",
+            "FILLER" : "SPACE(12)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_SF_RPT"
     },
 
     "FA" : {
@@ -73,7 +96,21 @@
             "SB00"      : [12,21],
             "SF21"      : [21,23],
             "SF22"      : [23,28]
-        }
+        },
+
+        "CAL_GOLD_ATTRS" : {
+
+            "GI90"      : "'FA'",
+            "GI01"      : "CASTFA_COLLEGE_IDENTIFIER",
+            "GI03"      : "CASTFA_TOS_TERM_IDENTIFIER",
+            "GI03_TERM" : "SUBSTRING(CASTFA_UNIQUE_KEY, 12, 3)",
+            "SB00"      : "LEFT(CASTFA_SB00_ID + SPACE(9), 9)",
+            "SF21"      : "SUBSTRING(CASTFA_UNIQUE_KEY, 9, 2)",
+            "SF22"      : "RIGHT( REPLICATE('0', 5) + CASTFA_AWARD_AMOUNT, 5)",
+            "FILLER" : "SPACE(23)"
+        },
+
+        "CAL_GOLD_TABLE" : "CAST_FA_RPT"
     },
 
     "CB" : {
