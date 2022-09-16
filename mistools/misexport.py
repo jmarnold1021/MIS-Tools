@@ -776,7 +776,7 @@ def sl_mis_export(gi03, out_file_path, sql_only = False):
 
     :return: :redbold:`empty string`
 
-    :rtype: string
+    :rtype: str
 
     '''
 
@@ -784,7 +784,7 @@ def sl_mis_export(gi03, out_file_path, sql_only = False):
 
 def sf_mis_export(gi03, out_file_path, sql_only = False):
     '''
-    Export Student Financial Aid Data(:redbold:`Has not been Implemented`)
+    Export Student Financial Aid Data
 
     :param str gi03: Term to export data from
 
@@ -792,13 +792,35 @@ def sf_mis_export(gi03, out_file_path, sql_only = False):
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
-    :return: :redbold:`empty string`
+    :return: The sql used to perform the export
 
-    :rtype: string
+    :rtype: str
 
     '''
 
-    return ''
+    attrs     = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']
+    gi03_attr = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']['GI03']
+    table     = DED_MIS_SPEC['SF']['CAL_GOLD_TABLE']
+
+    # build sql from spec
+    sql = _build_sql(gi03, attrs, gi03_attr, table)
+
+    if sql_only:
+        return sql
+
+    rows = _exec_query(sql)
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SF')
+    out_file = os.path.join(out_file_path, dat_file)
+
+    row_count = _write_dat_file(rows, out_file)
+
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(out_file_path, txt_file)
+
+    _build_txt_file(row_count, 'SF', gi03, out_file)
+
+    return sql
 
 def fa_mis_export(gi03, out_file_path, sql_only = False):
     '''
@@ -810,10 +832,33 @@ def fa_mis_export(gi03, out_file_path, sql_only = False):
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
-    :return: :redbold:`empty string`
+    :return: The sql used to perform the export
 
-    :rtype: string
+    :rtype: str
 
     '''
 
-    return ''
+    attrs     = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']
+    gi03_attr = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']['GI03']
+    table     = DED_MIS_SPEC['FA']['CAL_GOLD_TABLE']
+
+    # build sql from spec
+    sql = _build_sql(gi03, attrs, gi03_attr, table)
+
+    if sql_only:
+        return sql
+
+    rows = _exec_query(sql)
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'FA')
+    out_file = os.path.join(out_file_path, dat_file)
+
+    row_count = _write_dat_file(rows, out_file)
+
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(out_file_path, txt_file)
+
+    _build_txt_file(row_count, 'FA', gi03, out_file)
+
+    return sql
+
