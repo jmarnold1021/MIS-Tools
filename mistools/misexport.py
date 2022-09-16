@@ -746,6 +746,64 @@ def sp_mis_export(gi03, out_file_path, sql_only = False):
 
     return sql
 
+def sf_mis_export(gi03, out_file_path, sql_only = False):
+    '''
+    Export Student Financial Aid Data
+
+    :param str gi03: Term to export data from
+
+    :param str out_file_path: Path where .DAT file should be written
+
+    :param bool sql_only: Only return the generated sql, defaults to False
+
+    :return: The sql used to perform the export
+
+    :rtype: str
+
+    '''
+
+    attrs     = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']
+    gi03_attr = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']['GI03']
+    table     = DED_MIS_SPEC['SF']['CAL_GOLD_TABLE']
+
+    sf_sql = _build_sql(gi03, attrs, gi03_attr, table)
+
+    attrs     = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']
+    gi03_attr = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']['GI03']
+    table     = DED_MIS_SPEC['FA']['CAL_GOLD_TABLE']
+
+    fa_sql = _build_sql(gi03, attrs, gi03_attr, table)
+
+    if sql_only:
+        return sf_sql + '\n\n' + fa_sql
+
+    rows = _exec_query(sf_sql)
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SF')
+    out_file = os.path.join(out_file_path, dat_file)
+
+    row_count = _write_dat_file(rows, out_file)
+
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(out_file_path, txt_file)
+
+    _build_txt_file(row_count, 'SF', gi03, out_file)
+
+    rows = _exec_query(fa_sql)
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'FA')
+    out_file = os.path.join(out_file_path, dat_file)
+
+    row_count = _write_dat_file(rows, out_file)
+
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(out_file_path, txt_file)
+
+    _build_txt_file(row_count, 'FA', gi03, out_file)
+
+    return sf_sql + '\n\n' + fa_sql
+
+
 def aa_mis_export(gi03, out_file_path, sql_only = False):
     '''
     Export Adult Edcation Assement Data(:redbold:`Has not been Implemented`)
@@ -781,84 +839,4 @@ def sl_mis_export(gi03, out_file_path, sql_only = False):
     '''
 
     return ''
-
-def sf_mis_export(gi03, out_file_path, sql_only = False):
-    '''
-    Export Student Financial Aid Data
-
-    :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
-
-    :param bool sql_only: Only return the generated sql, defaults to False
-
-    :return: The sql used to perform the export
-
-    :rtype: str
-
-    '''
-
-    attrs     = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']
-    gi03_attr = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']['GI03']
-    table     = DED_MIS_SPEC['SF']['CAL_GOLD_TABLE']
-
-    # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
-
-    if sql_only:
-        return sql
-
-    rows = _exec_query(sql)
-
-    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SF')
-    out_file = os.path.join(out_file_path, dat_file)
-
-    row_count = _write_dat_file(rows, out_file)
-
-    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
-
-    _build_txt_file(row_count, 'SF', gi03, out_file)
-
-    return sql
-
-def fa_mis_export(gi03, out_file_path, sql_only = False):
-    '''
-    Export Student Financial Aid Award Data(:redbold:`Has not been Implemented`)
-
-    :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
-
-    :param bool sql_only: Only return the generated sql, defaults to False
-
-    :return: The sql used to perform the export
-
-    :rtype: str
-
-    '''
-
-    attrs     = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']
-    gi03_attr = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']['GI03']
-    table     = DED_MIS_SPEC['FA']['CAL_GOLD_TABLE']
-
-    # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
-
-    if sql_only:
-        return sql
-
-    rows = _exec_query(sql)
-
-    dat_file = DAT_FILE_TEMPLATE % (gi03, 'FA')
-    out_file = os.path.join(out_file_path, dat_file)
-
-    row_count = _write_dat_file(rows, out_file)
-
-    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
-
-    _build_txt_file(row_count, 'FA', gi03, out_file)
-
-    return sql
 
