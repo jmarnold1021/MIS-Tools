@@ -69,7 +69,7 @@
             "SF01" : "CASTSF_APPLICANT_STATUS",
             "SF03" : "CASTSF_BUDGET_CATEGORY",
             "SF04" : "RIGHT( REPLICATE('0', 5) + CASTSF_BUDGET_AMT, 5)",
-            "SF05" : "CASTSF_APPLICANT_STATUS",
+            "SF05" : "CASTSF_DEPENDENCY_STATUS",
             "SF06" : "RIGHT( REPLICATE('0', 2) + CASTSF_HOUSEHOLD_SIZE, 2)",
             "SF07" : "CASTSF_FAMILY_STATUS",
             "SF08" : "RIGHT( REPLICATE('0', 7) + CASTSF_INCOME_AGI_PARENT, 7)",
@@ -144,7 +144,8 @@
             "CB23" : [191,192],
             "CB24" : [192,193],
             "CB25" : [193,194],
-            "CB26" : [194,195]
+            "CB26" : [194,195],
+            "CB27" : [195,196]
 
         },
 
@@ -180,7 +181,8 @@
             "CB24" : "CASE WHEN CASTCB_CB24 IS NOT NULL THEN CASTCB_CB24 ELSE ' ' END",
             "CB25" : "CASTCB_CB25",
             "CB26" : "CASTCB_CB26",
-            "FILLER" : "SPACE(26)"
+            "CB27" : "CASTCB_CB27",
+            "FILLER" : "SPACE(25)"
 
         },
 
@@ -319,7 +321,7 @@
             "XB01" : "CASTXB_XB01",
             "XB02" : "CASTXB_XB02",
             "XB03" : "SPACE(6)",
-            "XB04" : "CASTXB_XB04",
+            "XB04" : "CASE WHEN CASTXB_XB04 IS NOT NULL THEN CASTXB_XB04 ELSE 'Y' END",
             "XB05" : "CASTXB_XB05",
             "XB06" : "CASTXB_XB06",
             "XB07" : "SPACE(1)",
@@ -328,7 +330,8 @@
             "XB10" : "CASTXB_XB10",
             "XB11" : "CASTXB_XB11",
             "CB00" : "CASTXB_CB00",
-            "FILLER": "SPACE(7)"
+            "XB12" : "CASTXB_XB12",
+            "FILLER": "SPACE(6)"
         },
 
         "CAL_GOLD_TABLE" : "CAST_XB_RPT"
@@ -448,7 +451,7 @@
 
             "GI09" : "'SC'",
             "GI01" : "CASTSC_GI01",
-            "GI03" : "SUBSTRING(CAST_CALWORK_SC_WORK_ID,9, 3)",
+            "GI03" : "SUBSTRING(CAST_CALWORK_SC_WORK_ID, 9, 3)",
             "SB00" : "LEFT(CASTSC_SB00 + SPACE(9), 9)",
             "SC01" : "CASTSC_SC01",
             "SC02" : "CASTSC_SC02",
@@ -457,15 +460,15 @@
             "SC05" : "CASTSC_SC05",
             "SC06" : "RIGHT('0000' + CASTSC_SC06, 4)",
             "SC07" : "RIGHT('0000' + CASTSC_SC07, 4)",
-            "SC08" : "RIGHT('00' + CASTSC_SC08, 2)",
-            "SC09" : "RIGHT('00' + CASTSC_SC09, 2)",
+            "SC08" : "RIGHT('00'   + CASTSC_SC08, 2)",
+            "SC09" : "RIGHT('00'   + CASTSC_SC09, 2)",
             "SC10" : "CASTSC_SC10",
             "SC11" : "CASTSC_SC11",
             "SC18" : "CASTSC_SC18",
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CALWORK_SC_WORK"
+        "CAL_GOLD_TABLE" : "CAST_SC_RPT"
     },
 
     "CW" : {
@@ -501,7 +504,7 @@
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CALWORK_CW_WORK"
+        "CAL_GOLD_TABLE" : "CAST_CW_RPT"
     },
 
     "SS" : {
@@ -604,7 +607,7 @@
             "SY04" : "LEFT(CASTSY_SY04 + SPACE(3), 3)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SY_WORK"
+        "CAL_GOLD_TABLE" : "CAST_SY_RPT"
     },
 
     "SX" : {
@@ -879,17 +882,19 @@
 
         "POSITION" : {},
 
-        "CAL_GOLD_ATTRS" : {
-
-            "GI90" : "'AA'",
-            "GI01" : "'221'",
-            "GI03" : "GI03_Term",
-            "SB00" : "CASE WHEN (SSN IS NOT NULL /*AND SSNum = 'Y'*/) THEN SSN ELSE 'D' + StudentID + SPACE(1) END",
-            "AA01" : "RegDate",
-            "AA02" : "AA02_Result"
-        },
-
+        "CAL_GOLD_ATTRS" : {},
 
         "CAL_GOLD_TABLE" : "L56_AA"
+    },
+
+    "SL" : {
+
+        "LENGTH" : 28,
+
+        "POSITION" : {},
+
+        "CAL_GOLD_ATTRS" : {},
+
+        "CAL_GOLD_TABLE" : "L56_SL"
     }
 }

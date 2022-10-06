@@ -41,12 +41,17 @@ TXT_FILE_LINE ="tx220%s%s%su22%s%sdat"
 DAT_FILE_TEMPLATE = r'U22%s%s.DAT'
 
 
-def _build_sql(gi03, attrs, gi03_attr, table):
+def _build_sql(report, gi03, attrs, gi03_attr, table):
+
+    # EB uses a different prefix CAHR not CAST...
+    flag_filter = "\n      AND CAST_" + report + "_RPT_FLAG = 1"
+    if report == 'EB':
+        flag_filter = "\n      AND CAHR_" + report + "_RPT_FLAG = 1"
 
     return "SELECT "  + ' +\n       '.join(attrs.values()) + \
            "\nFROM "  + table + \
-           "\nWHERE " + gi03_attr + ' = ' + "'" + gi03 + "'"
-
+           "\nWHERE " + gi03_attr + ' = ' + "'" + gi03 + "'" + \
+           flag_filter
 
 def _exec_query(sql):
 
@@ -158,7 +163,7 @@ def sx_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SX']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SX', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -200,7 +205,7 @@ def sy_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SY']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SY', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -242,7 +247,7 @@ def ss_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SS']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SS', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -285,7 +290,7 @@ def sd_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SD']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SD', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -309,7 +314,7 @@ def sd_mis_export(gi03, out_file_path, sql_only = False):
 def sc_mis_export(gi03, out_file_path, sql_only = False):
 
     '''
-    Export Student Calworks Data to a Flat File(.DAT)
+    Export Student Calworks/Calworks Work Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
 
@@ -323,17 +328,30 @@ def sc_mis_export(gi03, out_file_path, sql_only = False):
 
     '''
 
+    SC_SQL_DELIM = '\n--\n'
+    sql_list = []
+
     attrs     = DED_MIS_SPEC['SC']['CAL_GOLD_ATTRS']
     gi03_attr = DED_MIS_SPEC['SC']['CAL_GOLD_ATTRS']['GI03']
     table     = DED_MIS_SPEC['SC']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sc_sql = _build_sql('SC', gi03, attrs, gi03_attr, table)
+    sql_list.append(sc_sql)
+
+    attrs     = DED_MIS_SPEC['CW']['CAL_GOLD_ATTRS']
+    gi03_attr = DED_MIS_SPEC['CW']['CAL_GOLD_ATTRS']['GI03']
+    table     = DED_MIS_SPEC['CW']['CAL_GOLD_TABLE']
+
+    # build sql from spec
+    cw_sql = _build_sql('CW', gi03, attrs, gi03_attr, table)
+    sql_list.append(cw_sql)
 
     if sql_only:
-        return sql
+        return SC_SQL_DELIM.join(sql_list)
 
-    rows = _exec_query(sql)
+    # SC export
+    rows = _exec_query(sc_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SC')
     out_file = os.path.join(out_file_path, dat_file)
@@ -345,37 +363,8 @@ def sc_mis_export(gi03, out_file_path, sql_only = False):
 
     _build_txt_file(row_count, 'SC', gi03, out_file)
 
-    return sql
-
-
-def cw_mis_export(gi03, out_file_path, sql_only = False):
-
-    '''
-    Export Calworks Positions Data to a Flat File(.DAT)
-
-    :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
-
-    :param bool sql_only: Only return the generated sql, defaults to False
-
-    :return: The sql used to perform the export
-
-    :rtype: str
-
-    '''
-
-    attrs     = DED_MIS_SPEC['CW']['CAL_GOLD_ATTRS']
-    gi03_attr = DED_MIS_SPEC['CW']['CAL_GOLD_ATTRS']['GI03']
-    table     = DED_MIS_SPEC['CW']['CAL_GOLD_TABLE']
-
-    # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
-
-    if sql_only:
-        return sql
-
-    rows = _exec_query(sql)
+    # CW export
+    rows = _exec_query(cw_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'CW')
     out_file = os.path.join(out_file_path, dat_file)
@@ -387,7 +376,7 @@ def cw_mis_export(gi03, out_file_path, sql_only = False):
 
     _build_txt_file(row_count, 'CW', gi03, out_file)
 
-    return sql
+    return SC_SQL_DELIM.join(sql_list)
 
 
 def sb_mis_export(gi03, out_file_path, sql_only = False):
@@ -412,7 +401,7 @@ def sb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SB']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SB', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -454,7 +443,7 @@ def sg_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SG']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SG', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -496,7 +485,7 @@ def cb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['CB']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('CB', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -538,7 +527,7 @@ def sv_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SV']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SV', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -580,7 +569,7 @@ def eb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['EB']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('EB', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -627,7 +616,7 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['XB']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    xb_sql = _build_sql(gi03, attrs, gi03_attr, table)
+    xb_sql = _build_sql('XB', gi03, attrs, gi03_attr, table)
     sql_list.append(xb_sql)
 
     # XF
@@ -636,7 +625,7 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['XF']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    xf_sql = _build_sql(gi03, attrs, gi03_attr, table)
+    xf_sql = _build_sql('XF', gi03, attrs, gi03_attr, table)
     sql_list.append(xf_sql)
 
     # XE
@@ -645,7 +634,7 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['XE']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    xe_sql = _build_sql(gi03, attrs, gi03_attr, table)
+    xe_sql = _build_sql('XE', gi03, attrs, gi03_attr, table)
     sql_list.append(xe_sql)
 
     if sql_only:
@@ -727,7 +716,7 @@ def sp_mis_export(gi03, out_file_path, sql_only = False):
     table     = DED_MIS_SPEC['SP']['CAL_GOLD_TABLE']
 
     # build sql from spec
-    sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sql = _build_sql('SP', gi03, attrs, gi03_attr, table)
 
     if sql_only:
         return sql
@@ -762,20 +751,25 @@ def sf_mis_export(gi03, out_file_path, sql_only = False):
 
     '''
 
+    SF_SQL_DELIM = '\n--\n'
+    sql_list = []
+
     attrs     = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']
     gi03_attr = DED_MIS_SPEC['SF']['CAL_GOLD_ATTRS']['GI03']
     table     = DED_MIS_SPEC['SF']['CAL_GOLD_TABLE']
 
-    sf_sql = _build_sql(gi03, attrs, gi03_attr, table)
+    sf_sql = _build_sql('SF', gi03, attrs, gi03_attr, table)
+    sql_list.append(sf_sql)
 
     attrs     = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']
     gi03_attr = DED_MIS_SPEC['FA']['CAL_GOLD_ATTRS']['GI03']
     table     = DED_MIS_SPEC['FA']['CAL_GOLD_TABLE']
 
-    fa_sql = _build_sql(gi03, attrs, gi03_attr, table)
+    fa_sql = _build_sql('FA', gi03, attrs, gi03_attr, table)
+    sql_list.append(fa_sql)
 
     if sql_only:
-        return sf_sql + '\n\n' + fa_sql
+        return SF_SQL_DELIM.join(sql_list)
 
     rows = _exec_query(sf_sql)
 
@@ -801,7 +795,7 @@ def sf_mis_export(gi03, out_file_path, sql_only = False):
 
     _build_txt_file(row_count, 'FA', gi03, out_file)
 
-    return sf_sql + '\n\n' + fa_sql
+    return SF_SQL_DELIM.join(sql_list)
 
 
 def aa_mis_export(gi03, out_file_path, sql_only = False):
@@ -816,7 +810,7 @@ def aa_mis_export(gi03, out_file_path, sql_only = False):
 
     :return: :redbold:`empty string`
 
-    :rtype: string
+    :rtype: str
 
     '''
 
