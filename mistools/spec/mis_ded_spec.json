@@ -17,7 +17,7 @@
             "SP04" : [35,40]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'SP'",
             "GI01" : "CASTSP_GI01",
@@ -32,7 +32,7 @@
             "FILLER": "SPACE(1)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SP_RPT"
+        "MIS_SRC_TABLE" : "CAST_SP_RPT"
     },
 
     "SF" : {
@@ -59,7 +59,7 @@
             "SF17" : [63,69]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'SF'",
             "GI01" : "CASTSF_COLLEGE_IDENTIFIER",
@@ -80,7 +80,7 @@
             "FILLER" : "SPACE(12)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SF_RPT"
+        "MIS_SRC_TABLE" : "CAST_SF_RPT"
     },
 
     "FA" : {
@@ -98,7 +98,7 @@
             "SF22"      : [23,28]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90"      : "'FA'",
             "GI01"      : "CASTFA_COLLEGE_IDENTIFIER",
@@ -110,7 +110,7 @@
             "FILLER" : "SPACE(23)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_FA_RPT"
+        "MIS_SRC_TABLE" : "CAST_FA_RPT"
     },
 
     "CB" : {
@@ -149,7 +149,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'CB'",
             "GI01" : "CASTCB_GI01",
@@ -186,7 +186,7 @@
 
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CB_RPT"
+        "MIS_SRC_TABLE" : "CAST_CB_RPT"
     },
 
     "SB" : {
@@ -234,7 +234,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SB'",
             "GI01" : "CASTSB_GI01",
@@ -282,7 +282,7 @@
 
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SB_WORK"
+        "MIS_SRC_TABLE" : "CAST_SB_RPT"
     },
 
 
@@ -310,7 +310,7 @@
         },
 
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XB'",
             "GI01" : "CASTXB_GI01",
@@ -334,7 +334,7 @@
             "FILLER": "SPACE(6)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XB_RPT"
+        "MIS_SRC_TABLE" : "CAST_XB_RPT"
     },
 
     "XF" : {
@@ -359,7 +359,7 @@
             "CB00" : [65,77]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XF'",
             "GI01" : "CASTXF_GI01",
@@ -378,7 +378,7 @@
             "FILLER" : "SPACE(4)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XF_RPT"
+        "MIS_SRC_TABLE" : "CAST_XF_RPT"
 
     },
 
@@ -402,7 +402,7 @@
             "CB00" : [52,63]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XE'",
             "GI01" : "CASTXE_GI01",
@@ -419,7 +419,7 @@
             "FILLER" : "SPACE(17)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XE_RPT"
+        "MIS_SRC_TABLE" : "CAST_XE_RPT"
 
     },
 
@@ -447,7 +447,7 @@
             "SC18" : [46,47]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SC'",
             "GI01" : "CASTSC_GI01",
@@ -468,7 +468,7 @@
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SC_RPT"
+        "MIS_SRC_TABLE" : "CAST_SC_RPT"
     },
 
     "CW" : {
@@ -489,7 +489,7 @@
             "SC17" : [43,46]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'CW'",
             "GI01" : "CASTCW_GI01",
@@ -504,7 +504,7 @@
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CW_RPT"
+        "MIS_SRC_TABLE" : "CAST_CW_RPT"
     },
 
     "SS" : {
@@ -542,7 +542,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SS'",
             "GI01" : "CASTSS_GI01",
@@ -572,7 +572,7 @@
             "FILLER" : "SPACE(13)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SS_WORK"
+        "MIS_SRC_TABLE" : "CAST_SS_RPT"
     },
 
     "SY" : {
@@ -593,7 +593,7 @@
             "SY04" : [53,56]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SY'",
             "GI01" : "CASTSY_GI01",
@@ -607,7 +607,7 @@
             "SY04" : "LEFT(CASTSY_SY04 + SPACE(3), 3)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SY_RPT"
+        "MIS_SRC_TABLE" : "CAST_SY_RPT"
     },
 
     "SX" : {
@@ -632,7 +632,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SX'",
             "GI01" : "CASTSX_GI01",
@@ -651,7 +651,7 @@
             "FILLER" : "SPACE(3)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SX_RPT"
+        "MIS_SRC_TABLE" : "CAST_SX_RPT"
     },
 
     "SD" : {
@@ -669,7 +669,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SD'",
             "GI01" : "CASTSD_GI01",
@@ -684,7 +684,7 @@
             "FILLER" : "SPACE(11)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SD_RPT"
+        "MIS_SRC_TABLE" : "CAST_SD_RPT"
     },
 
     "SG" : {
@@ -719,7 +719,7 @@
             "SG21" : [50,51]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SG'",
             "GI01" : "CASTSG_GI01",
@@ -750,7 +750,7 @@
             "FILLER" : "SPACE(10)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SG_WORK"
+        "MIS_SRC_TABLE" : "CAST_SG_WORK"
     },
 
     "SV" : {
@@ -775,7 +775,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SV'",
             "GI01" : "CASTSV_GI01",
@@ -796,7 +796,7 @@
         },
 
 
-        "CAL_GOLD_TABLE" : "CAST_SV_WORK"
+        "MIS_SRC_TABLE" : "CAST_SV_WORK"
     },
 
     "SE" : {
@@ -849,7 +849,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'EB'",
             "GI01" : "CAHREB_GI01",
@@ -873,7 +873,7 @@
         },
 
 
-        "CAL_GOLD_TABLE" : "CAHR_EB_RPT"
+        "MIS_SRC_TABLE" : "CAHR_EB_RPT"
     },
 
     "AA" : {
@@ -882,9 +882,9 @@
 
         "POSITION" : {},
 
-        "CAL_GOLD_ATTRS" : {},
+        "FORMAT" : {},
 
-        "CAL_GOLD_TABLE" : "L56_AA"
+        "MIS_SRC_TABLE" : "L56_AA"
     },
 
     "SL" : {
@@ -893,8 +893,8 @@
 
         "POSITION" : {},
 
-        "CAL_GOLD_ATTRS" : {},
+        "FORMAT" : {},
 
-        "CAL_GOLD_TABLE" : "L56_SL"
+        "MIS_SRC_TABLE" : "L56_SL"
     }
 }

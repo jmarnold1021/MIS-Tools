@@ -1,7 +1,7 @@
 import unittest
 
-from mistools import misffparser
-from mistools import misexport
+from mistools import misflatfile
+#from mistools import misflatfile
 
 
 ## currently theses tests really just ensure nothing has gone backwards
@@ -17,11 +17,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218CB.DAT"
 
-        data = misffparser.cb_mis_parse(ff_path)
+        data = misflatfile.cb_mis_parse(ff_path)
 
         self.assertEqual( len(data), 1116 )
 
-        data = misffparser.cb_mis_parse(ff_path, headers = True)
+        data = misflatfile.cb_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 1117 )
 
@@ -29,11 +29,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218SB.DAT"
 
-        data = misffparser.sb_mis_parse(ff_path)
+        data = misflatfile.sb_mis_parse(ff_path)
 
         self.assertEqual( len(data), 4251 )
 
-        data = misffparser.sb_mis_parse(ff_path, headers = True)
+        data = misflatfile.sb_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 4252 )
 
@@ -41,13 +41,13 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218XB.DAT"
 
-        data = misffparser.xb_mis_parse(ff_path)
+        data = misflatfile.xb_mis_parse(ff_path)
 
         self.assertEqual( len(data['XB']), 286)
         self.assertEqual( len(data['XF']), 400)
         self.assertEqual( len(data['XE']), 432)
 
-        data = misffparser.xb_mis_parse(ff_path, headers = True)
+        data = misflatfile.xb_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data['XB']), 287)
         self.assertEqual( len(data['XF']), 401)
@@ -62,13 +62,13 @@ class Test_Mis_FF_Parser(unittest.TestCase):
         ]
 
 
-        data = misffparser.xb_mis_parse(ff_paths)
+        data = misflatfile.xb_mis_parse(ff_paths)
 
         self.assertEqual( len(data['XB']), 416 )
         self.assertEqual( len(data['XF']), 585 )
         self.assertEqual( len(data['XE']), 625 )
 
-        data = misffparser.xb_mis_parse(ff_paths, headers = True)
+        data = misflatfile.xb_mis_parse(ff_paths, headers = True)
 
         self.assertEqual( len(data['XB']), 417 )
         self.assertEqual( len(data['XF']), 586 )
@@ -78,11 +78,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218SX.DAT"
 
-        data = misffparser.sx_mis_parse(ff_path)
+        data = misflatfile.sx_mis_parse(ff_path)
 
         self.assertEqual( len(data), 4589 )
 
-        data = misffparser.sx_mis_parse(ff_path, headers = True)
+        data = misflatfile.sx_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 4590 )
 
@@ -90,11 +90,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218SD.DAT"
 
-        data = misffparser.sd_mis_parse(ff_path)
+        data = misflatfile.sd_mis_parse(ff_path)
 
         self.assertEqual( len(data), 108 )
 
-        data = misffparser.sb_mis_parse(ff_path, headers = True)
+        data = misflatfile.sb_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 109 )
 
@@ -102,11 +102,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22216SC.DAT"
 
-        data = misffparser.sc_mis_parse(ff_path)
+        data = misflatfile.sc_mis_parse(ff_path)
 
         self.assertEqual( len(data), 4 )
 
-        data = misffparser.sc_mis_parse(ff_path, headers = True)
+        data = misflatfile.sc_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 5 )
 
@@ -114,11 +114,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22218SY.DAT"
 
-        data = misffparser.sy_mis_parse(ff_path)
+        data = misflatfile.sy_mis_parse(ff_path)
 
         self.assertEqual( len(data), 16 )
 
-        data = misffparser.sy_mis_parse(ff_path, headers = True)
+        data = misflatfile.sy_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 17 )
 
@@ -126,11 +126,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22216SS.DAT"
 
-        data = misffparser.ss_mis_parse(ff_path)
+        data = misflatfile.ss_mis_parse(ff_path)
 
         self.assertEqual( len(data), 2548 )
 
-        data = misffparser.ss_mis_parse(ff_path, headers = True)
+        data = misflatfile.ss_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 2549 )
 
@@ -138,11 +138,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22222SV.DAT"
 
-        data = misffparser.sv_mis_parse(ff_path)
+        data = misflatfile.sv_mis_parse(ff_path)
 
         self.assertEqual( len(data), 158 )
 
-        data = misffparser.sv_mis_parse(ff_path, headers = True)
+        data = misflatfile.sv_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 159 )
 
@@ -150,11 +150,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22214SE.DAT"
 
-        data = misffparser.se_mis_parse(ff_path)
+        data = misflatfile.se_mis_parse(ff_path)
 
         self.assertEqual( len(data), 71 )
 
-        data = misffparser.se_mis_parse(ff_path, headers = True)
+        data = misflatfile.se_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 72 )
 
@@ -162,11 +162,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22222EB.DAT"
 
-        data = misffparser.eb_mis_parse(ff_path)
+        data = misflatfile.eb_mis_parse(ff_path)
 
         self.assertEqual( len(data), 157 )
 
-        data = misffparser.eb_mis_parse(ff_path, headers = True)
+        data = misflatfile.eb_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 158 )
 
@@ -176,11 +176,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22210SP.DAT"
 
-        data = misffparser.sp_mis_parse(ff_path)
+        data = misflatfile.sp_mis_parse(ff_path)
 
         self.assertEqual( len(data), 210 )
 
-        data = misffparser.sp_mis_parse(ff_path, headers = True)
+        data = misflatfile.sp_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 211 )
 
@@ -192,11 +192,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
             TEST_FIXTURE_PATH_TEMPLATE % "U22210SP.DAT"
         ]
 
-        data = misffparser.sp_mis_parse(ff_paths)
+        data = misflatfile.sp_mis_parse(ff_paths)
 
         self.assertEqual( len(data), 420 )
 
-        data = misffparser.sp_mis_parse(ff_paths, headers = True)
+        data = misflatfile.sp_mis_parse(ff_paths, headers = True)
 
         self.assertEqual( len(data), 421 )
 
@@ -204,11 +204,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22210SF.DAT"
 
-        data = misffparser.sf_mis_parse(ff_path)
+        data = misflatfile.sf_mis_parse(ff_path)
 
         self.assertEqual( len(data), 2335 )
 
-        data = misffparser.sf_mis_parse(ff_path, headers = True)
+        data = misflatfile.sf_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 2336 )
 
@@ -216,11 +216,11 @@ class Test_Mis_FF_Parser(unittest.TestCase):
 
         ff_path = TEST_FIXTURE_PATH_TEMPLATE % "U22210FA.DAT"
 
-        data = misffparser.fa_mis_parse(ff_path)
+        data = misflatfile.fa_mis_parse(ff_path)
 
         self.assertEqual( len(data), 6681 )
 
-        data = misffparser.fa_mis_parse(ff_path, headers = True)
+        data = misflatfile.fa_mis_parse(ff_path, headers = True)
 
         self.assertEqual( len(data), 6682 )
 
@@ -228,62 +228,57 @@ class Test_Mis_Export(unittest.TestCase):
 
     def test_export_sx(self):
 
-        misexport.sx_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sx_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sy(self):
 
-        misexport.sy_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sy_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_ss(self):
 
-        misexport.ss_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.ss_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sd(self):
 
-        misexport.sd_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sd_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sc(self):
 
-        misexport.sc_mis_export('222', TEST_FIXTURE_PATH)
-        self.assertEqual(1,1)
-
-    def test_export_cw(self):
-
-        misexport.cw_mis_export('214', TEST_FIXTURE_PATH)
+        misflatfile.sc_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_xb(self):
 
-        misexport.xb_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.xb_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sb(self):
 
-        misexport.sb_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sb_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_cb(self):
 
-        misexport.cb_mis_export('224', TEST_FIXTURE_PATH)
+        misflatfile.cb_mis_export('224', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sg(self):
 
-        misexport.sg_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sg_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_sv(self):
 
-        misexport.sv_mis_export('222', TEST_FIXTURE_PATH)
+        misflatfile.sv_mis_export('222', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
     def test_export_eb(self):
 
-        misexport.eb_mis_export('224', TEST_FIXTURE_PATH)
+        misflatfile.eb_mis_export('224', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
 
