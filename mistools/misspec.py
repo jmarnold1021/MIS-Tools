@@ -2,12 +2,12 @@ import json
 import os
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
-DED_MIS_SPEC_PATH = "%s/spec/mis_spec.json" % LIB_ROOT
+DED_MIS_SPEC_PATH = "%s/spec/mis_ded_spec.json" % LIB_ROOT
 
 with open(DED_MIS_SPEC_PATH) as mis_spec_file:
     DED_MIS_SPEC = json.load(mis_spec_file)
 
-def mis_get_spec(indent=4, prnt = False):
+def mis_get_ded_spec(indent=4, prnt = False):
     '''
     Retrieve/Print the MIS Specification JSON, mainly used for documenting
     the spec. :orangebold:`Could potentially replace the file source in other tools`
