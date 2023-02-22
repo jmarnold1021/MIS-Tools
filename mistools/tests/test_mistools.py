@@ -1,7 +1,7 @@
 import unittest
 
 from mistools import misflatfile
-#from mistools import misflatfile
+from mistools import misdod
 
 
 ## currently theses tests really just ensure nothing has gone backwards
@@ -281,6 +281,19 @@ class Test_Mis_Export(unittest.TestCase):
         misflatfile.eb_mis_export('224', TEST_FIXTURE_PATH)
         self.assertEqual(1,1)
 
+class Test_Mis_Dod_Parser(unittest.TestCase):
+
+    def test_dod_parse_sx(self):
+
+        csv_path = TEST_FIXTURE_PATH_TEMPLATE % "SX222.txt"
+        dod_data = misdod.sx_dod_parse(csv_path)
+        self.assertEqual(len(dod_data), 4561)
+
+    def test_dod_parse_st(self):
+
+        csv_path = TEST_FIXTURE_PATH_TEMPLATE % "ST222.txt"
+        dod_data = misdod.sx_dod_parse(csv_path)
+        self.assertEqual(len(dod_data), 4601)
 
 if __name__ == '__main__':
     unittest.main()

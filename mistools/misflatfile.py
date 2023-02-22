@@ -1,12 +1,12 @@
 """
 The MIS Flat File Module contains
 functions for exporting and parsing
-MIS flat files(.DAT).
+MIS flat files(.DAT)..
 """
 
-import json
 import os
 import pyodbc
+import json
 
 from .lib import ffparser
 
@@ -57,9 +57,12 @@ def _exec_query(sql):
     cnxn = pyodbc.connect(CONNECTION_STRING)
     cursor = cnxn.cursor()
     cursor.execute(sql)
+    data = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    cnxn.close()
 
     # why make downstream care aabout pyodc rows?
-    return [row[0] for row in cursor.fetchall()]
+    return data
 
 def _write_dat_file(rows, out_file, mode = 'w'):
 
@@ -471,8 +474,9 @@ def cb_mis_export(gi03, out_file_path, sql_only = False):
 
 def sv_mis_export(gi03, out_file_path, sql_only = False):
 
+
     '''
-    Export Student VTEA Data to a Flat File(.DAT)
+    Export Student VTEA Data to a Flat File(:redbold:`Has not been Implemented`)
 
     :param str gi03: Term to export data from
 
@@ -480,31 +484,31 @@ def sv_mis_export(gi03, out_file_path, sql_only = False):
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
-    :return: The sql used to perform the export
+    :return: :redbold:`empty string`
 
     :rtype: str
 
     '''
-
+    return ''
     # build sql from spec
-    sql = _build_sql('SV', gi03)
+    #sql = _build_sql('SV', gi03)
 
-    if sql_only:
-        return sql
+    #if sql_only:
+    #    return sql
 
-    rows = _exec_query(sql)
+    #rows = _exec_query(sql)
 
-    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SV')
-    out_file = os.path.join(out_file_path, dat_file)
+    #dat_file = DAT_FILE_TEMPLATE % (gi03, 'SV')
+    #out_file = os.path.join(out_file_path, dat_file)
 
-    row_count = _write_dat_file(rows, out_file)
+    #row_count = _write_dat_file(rows, out_file)
 
-    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    #txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    #out_file = os.path.join(out_file_path, txt_file)
 
-    _build_txt_file(row_count, 'SV', gi03, out_file)
+    #_build_txt_file(row_count, 'SV', gi03, out_file)
 
-    return sql
+    #return sql
 
 
 def eb_mis_export(gi03, out_file_path, sql_only = False):
@@ -774,13 +778,16 @@ for report in DED_MIS_SPEC:
 
     for key in spec:
 
+        if type(spec[key]) == str:
+            continue
+
         spec[key][0] = spec[key][0] - 1
         spec[key][1] = spec[key][1] - 1
 
 
 # MIS specific parse options
 FF_OPTIONS = {
-    "fill_empty"  : "NA" # this could vary highly
+    "fill_empty"  : None # this could vary highly so kept in db standard aka null see constants in DED spec of deleted elements this would set the fill value for all elements in the report.
 }
 
 def _mis_add_headers(report, data):
@@ -903,7 +910,6 @@ def xb_mis_parse(xb_mis_file_path, headers = False):
     '''
 
     xb_mis_data = _xb_mis_split_ff(xb_mis_file_path)
-
     xb_mis_data['XB'] = _mis_parse_lines('XB', xb_mis_data['XB'])
     xb_mis_data['XF'] = _mis_parse_lines('XF', xb_mis_data['XF'])
     xb_mis_data['XE'] = _mis_parse_lines('XE', xb_mis_data['XE'])
@@ -912,7 +918,6 @@ def xb_mis_parse(xb_mis_file_path, headers = False):
         xb_mis_data['XB'] = _mis_add_headers('XB', xb_mis_data['XB'])
         xb_mis_data['XF'] = _mis_add_headers('XF', xb_mis_data['XF'])
         xb_mis_data['XE'] = _mis_add_headers('XE', xb_mis_data['XE'])
-
 
     return xb_mis_data
 
@@ -936,6 +941,43 @@ def sc_mis_parse(mis_file_path, headers = False):
 
     return mis_data
 
+def cw_mis_parse(mis_file_path, headers = False):
+    '''
+    Parse Student Calworks Work data from DAT files
+
+    :param str mis_file_path: path to cw dat file
+
+    :param bool headers: include headers
+
+    :rtype: list
+
+    '''
+
+    mis_data = _mis_parse_files('CW', mis_file_path)
+
+    if headers:
+        mis_data = _mis_add_headers('CW', mis_data)
+
+    return mis_data
+
+def sg_mis_parse(mis_file_path, headers = False):
+    '''
+    Parse Student Groups data from DAT files
+
+    :param str mis_file_path: path to sg dat file
+
+    :param bool headers: include headers
+
+    :rtype: list
+
+    '''
+
+    mis_data = _mis_parse_files('SG', mis_file_path)
+
+    if headers:
+        mis_data = _mis_add_headers('SG', mis_data)
+
+    return mis_data
 
 def sx_mis_parse(mis_file_path, headers = False):
     '''
@@ -1068,6 +1110,25 @@ def eb_mis_parse(mis_file_path, headers = False):
 
     if headers:
         mis_data = _mis_add_headers('EB', mis_data)
+
+    return mis_data
+
+def ej_mis_parse(mis_file_path, headers = False):
+    '''
+    Parse Employee Assignment data from DAT files
+
+    :param str mis_file_path: path to ej dat file
+
+    :param bool headers: include headers
+
+    :rtype: list
+
+    '''
+
+    mis_data = _mis_parse_files('EJ', mis_file_path)
+
+    if headers:
+        mis_data = _mis_add_headers('EJ', mis_data)
 
     return mis_data
 

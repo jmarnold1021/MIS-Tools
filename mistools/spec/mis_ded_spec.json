@@ -198,12 +198,12 @@
             "GI90" :     [1,3],
             "GI01" :     [3,6],
             "GI03" :     [6,9],
-            "SB02" :    [9,12],
+            "SB28" :    [9,12],
             "SB00" :   [12,21],
             "SB01" :   [21,22],
             "SB03" :   [22,30],
             "SB04" :   [30,31],
-            "SB06" :   [31,33],
+            "SB06" :   [33,34],
             "SB08" :   [35,44],
             "SB09" :   [44,49],
             "SB11" :   [50,55],
@@ -220,7 +220,6 @@
             "SB23" : [106,107],
             "SB24" : [107,108],
             "SB26" : [109,110],
-            "SB28" :    [9,12],
             "SB29" : [114,135],
             "SB30" : [135,136],
             "SB31" : [136,166],
@@ -298,15 +297,16 @@
             "CB01" : [12,24],
             "XB00" : [24,30],
             "XB01" : [30,31],
-            "XB02" : [31,36],
+            "XB02" : [31,37],
             "XB04" : [43,44],
             "XB05" : [44,48],
-            "XB06" : [48,51],
+            "XB06" : [48,52],
             "XB08" : [53,54],
             "XB09" : [54,55],
             "XB10" : [55,56],
             "XB11" : [56,62],
-            "CB00" : [62,74]
+            "CB00" : [62,74],
+            "XB12" : [74,75]
         },
 
 
@@ -409,7 +409,7 @@
             "GI03" : "CASTXE_GI03",
             "CB01" : "LEFT(CASTXE_COURSE_DEPT_NO + SPACE(12), 12)",
             "XB00" : "LEFT(CASTXE_SECTION_IDENTIFIER + SPACE(6), 6)",
-            "EB00" : "CASTXE_EB00",
+            "EB00" : "LEFT(CASTXE_EB00 + SPACE(9), 9)",
             "XF00" : "CASTXE_SESSION_IDENTIFIER",
             "XE01" : "CASE WHEN CASTXE_FAC_ASGMT_TYPE IS NOT NULL THEN CASTXE_FAC_ASGMT_TYPE ELSE ' ' END",
             "XE02" : "RIGHT('000' + CASTXE_FAC_ASGMT_PCT, 3)",
@@ -486,7 +486,7 @@
             "SC14" : [25,33],
             "SC15" : [33,41],
             "SC16" : [41,43],
-            "SC17" : [43,46]
+            "SC17" : [43,47]
         },
 
         "FORMAT" : {
@@ -550,7 +550,7 @@
             "SB02" : "LEFT(CASTSS_SB02 + SPACE(3), 3)",
             "SB00" : "LEFT(CASTSS_SB00 + SPACE(9), 9)",
             "SS01" : "CASTSS_SS01",
-            "SS02" : "CASE WHEN CASTSS_SS02 IS NOT NULL THEN LEFT(CASTSS_SS02 + SPACE(6), 6) ELSE SPACE(6) END",
+            "SS02" : "CASE WHEN CASTSS_SS02 IS NOT NULL THEN LEFT(CASTSS_SS02 + SPACE(6), 6) ELSE REPLICATE('0',6) END",
             "SS03" : "CASTSS_SS03",
             "SS04" : "CASTSS_SS04",
             "SS05" : "CASTSS_SS05",
@@ -665,6 +665,9 @@
             "SB02" : [9,12],
             "SB00" : [12,21],
             "SD01" : [21,22],
+            "SD02" : "000",
+            "SD03" : "N",
+            "SD04" : "000",
             "SD05" : [29,30]
 
         },
@@ -705,6 +708,7 @@
             "SG06" : [29,30],
             "SG07" : [30,31],
             "SG08" : [31,32],
+            "SG09" : "X",
             "SG10" : [34,35],
             "SG11" : [35,36],
             "SG12" : [36,41],
@@ -716,7 +720,9 @@
             "SG18" : [47,48],
             "SG19" : [48,49],
             "SG20" : [49,50],
-            "SG21" : [50,51]
+            "SG21" : [50,51],
+            "SG22" : [51,52],
+            "SG23" : [52,59]
         },
 
         "FORMAT" : {
@@ -747,10 +753,12 @@
             "SG19" : "CASTSG_SG19",
             "SG20" : "CASTSG_SG20",
             "SG21" : "CASTSG_SG21",
-            "FILLER" : "SPACE(10)"
+            "SG22" : "CASTSG_SG22",
+            "SG23" : "CASTSG_SG23A + CASTSG_SG23B + CASTSG_SG23C + CASTSG_SG23D + CASTSG_SG23E + CASTSG_SG23F + CASTSG_SG23G",
+            "FILLER" : "SPACE(2)"
         },
 
-        "MIS_SRC_TABLE" : "CAST_SG_WORK"
+        "MIS_SRC_TABLE" : "CAST_SG_RPT"
     },
 
     "SV" : {
@@ -762,9 +770,9 @@
             "GI90" : [1,3],
             "GI01" : [3,6],
             "GI03" : [6,9],
-            "SB02" : [9,12],
+            "SB28" : [9,12],
             "SB00" : [12,21],
-            "SV01" : [12,22],
+            "SV01" : [21,22],
             "SV03" : [23,25],
             "SV04" : [25,26],
             "SV05" : [26,27],
@@ -837,6 +845,7 @@
             "EB01" : [18,19],
             "EB02" : [19,27],
             "EB03" : [27,28],
+            "EB04" : "X",
             "EB05" : [30,31],
             "EB06" : [31,32],
             "EB07" : [32,33],
@@ -854,7 +863,53 @@
             "GI90" : "'EB'",
             "GI01" : "CAHREB_GI01",
             "GI03" : "CAHREB_GI03",
-            "EB00" : "CAHREB_EB00",
+            "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
+            "EB01" : "CAHREB_EB01",
+            "EB02" : "CAHREB_EB02",
+            "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",
+            "EB04" : "'X '",
+            "EB05" : "CASE WHEN CAHREB_EB05 IS NOT NULL THEN CAHREB_EB05 ELSE 'C' END",
+            "EB06" : "CASE WHEN CAHREB_EB06 IS NOT NULL THEN CAHREB_EB06 ELSE SPACE(1) END",
+            "EB07" : "CASE WHEN CAHREB_EB07 IS NOT NULL THEN CAHREB_EB07 ELSE SPACE(1) END",
+            "EB08" : "CASE WHEN CAHREB_EB08 IS NOT NULL THEN CAHREB_EB08 ELSE SPACE(1) END",
+            "EB09" : "CASE WHEN CAHREB_EB09 IS NOT NULL THEN CAHREB_EB09 ELSE SPACE(1) END",
+            "EB10" : "SPACE(6)",
+            "EB11" : "CASE WHEN CAHREB_EB11 IS NOT NULL THEN CAHREB_EB11 ELSE SPACE(1) END",
+            "EB12" : "RIGHT( '000000' + CAST(CAHREB_EB12 AS VARCHAR), 6)",
+            "EB13" : "RIGHT( '000000' + CAST(CAHREB_EB13 AS VARCHAR), 6)",
+            "EB14" : "CAHREB_EB14",
+            "FILLER" : "SPACE(6)"
+        },
+
+
+        "MIS_SRC_TABLE" : "CAHR_EB_RPT"
+    },
+
+    "EJ" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "EB00" : [9,18],
+            "EJ01" : [18,20],
+            "EJ02" : [20,21],
+            "EJ03" : [21,27],
+            "EJ04" : [27,30],
+            "EJ05" : [30,35],
+            "EJ08" : [45,50]
+
+        },
+
+        "FORMAT" : {
+
+            "GI90" : "'EB'",
+            "GI01" : "CAHREB_GI01",
+            "GI03" : "CAHREB_GI03",
+            "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
             "EB01" : "CAHREB_EB01",
             "EB02" : "CAHREB_EB02",
             "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",

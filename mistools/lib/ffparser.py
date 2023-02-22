@@ -11,6 +11,10 @@ def _parse_line(spec, line): # here be lines
 
     for rng in spec: # here be substring values
 
+        if type(rng) == str:
+            line_data.append(rng)
+            continue
+
         start = rng[0]
         end   = rng[1]
         val   = line[start:end].strip()

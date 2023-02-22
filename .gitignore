@@ -128,4 +128,4 @@ dmypy.json
 .pyre/
 
 configs/configs.json
-
+mistools/logs

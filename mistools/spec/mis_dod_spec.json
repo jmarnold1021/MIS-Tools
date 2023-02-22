@@ -1,0 +1,105 @@
+{
+
+    "CCCCOID" : [
+
+        "GI01",
+        "SB00",
+        "CCCCO_Assigned",
+        "SB01",
+        "GI03_F",
+        "GI03_FX",
+        "SB34",
+        "SB35"
+    ],
+
+    "SX" : [
+
+        "GI01",
+        "CCCCO_Assigned",
+        "GI03",
+        "CB01",
+        "XB00",
+        "CB00",
+        "SX01",
+        "SX02",
+        "SXD2",
+        "SXD3",
+        "SX03",
+        "SX04",
+        "SX05",
+        "SXD1",
+        "SXD4"
+    ],
+
+    "ST" : [
+
+        "GI01",
+        "CCCCO_Assigned",
+        "GI03",
+        "STD1",
+        "SB08",
+        "SB08B",
+        "SB09",
+        "SB11",
+        "SB12",
+        "SB15",
+        "SB16",
+        "SB17",
+        "SB18",
+        "SB19",
+        "SB20",
+        "SB21",
+        "STD8",
+        "STD9",
+        "SB22",
+        "SB23",
+        "SB24",
+        "SB25",
+        "SB14",
+        "SB31",
+        "SB32",
+        "SB04",
+        "SB06",
+        "SB26",
+        "STD2",
+        "STD3",
+        "STD6",
+        "STD4",
+        "STD5",
+        "STD7",
+        "SB27",
+        "SB29",
+        "STD10",
+        "SB30",
+        "SB33",
+        "SB36",
+        "SB37"
+
+    ],
+
+   "XB" : [
+
+        "GI01",
+        "GI03",
+        "CB01",
+        "XB00",
+        "CB00",
+        "XB01",
+        "XB02",
+        "XB04",
+        "XB05",
+        "XB06",
+        "XB07",
+        "XB08",
+        "XB09",
+        "XB10",
+        "XB11",
+        "XBD1",
+        "XBD3",
+        "XBD4",
+        "XBD5",
+        "XB12"
+   ]
+
+}
+
