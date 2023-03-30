@@ -39,7 +39,8 @@ OK
 
 ## Docs
 
-All api docs are built and readable in MIS-Docs Wiki found on the Standard IE Procedures File Share.
+All api docs are built and readable in Sphinx-Docstring Format...Some are dependant upon [sphinx_design](https://pypi.org/project/sphinx_design/) .
+
 
 
 ## Build
@@ -126,12 +127,49 @@ $ python
 
 ## Configuration
 
-Ensure misexport.py is pointed at the MIS Specification JSON at the top of the file. Reach out to MIS Programmer for the config. The configs directory should be created under PACKAGE_ROOT.
+Current Configuration options...
 
-``` python
+```javascript
 
-LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
+{
+
+    "DB" : {
+
+        "DB_CONFIG_NAME_1" : {
+            "SERVER_NAME": "...",
+            "DB_NAME": "..."
+        },
+
+        "DB_CONFIG_NAME_2" : {
+            "SERVER_NAME": "...",
+            "DB_NAME": "..."
+        },
+
+        "LOG_LEVEL" : "INFO"
+    },
+
+    "MIS_DOD" : {
+
+       "LOG_LEVEL" : "INFO",
+
+       "REF_FILES_ROOT" : "REF/FILE/ROOT/**/",
+       "ACC_FILES_ROOT" : "ACC_FILES_ROOT/**/"
+    },
+
+    "MIS_FLAT_FILE" : {
+
+        "LOG_LEVEL" : "INFO",
+
+        "MIS_FF_EXPORT_ROOT" : "SUBMISSION/FILES/ROOT",
+
+        "AUTHOR" : {
+
+            "FIRST_NAME"   : "MIS Author Info",
+            "LAST_NAME"    : "MIS Author Info",
+            "PHONE_NUMBER" : "MIS Author Phone #"
+        }
+    }
+}
 
 ```
 
