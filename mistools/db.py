@@ -1,8 +1,8 @@
 
 """
-The DB Singleton Module contains
-functions for reading/writing
-data to the database...
+The DB Class holds the a db connections object,
+and provides functions for Inserting, Deleting, and
+Querying data using the provided connection.
 """
 
 import pyodbc
@@ -37,7 +37,7 @@ class DB:
 
         :return: Instance of DB a connection
 
-        :rtype: None
+        :rtype: Object
 
         '''
         if db_config_name is None:
