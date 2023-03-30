@@ -9,12 +9,22 @@ import pyodbc
 import os
 import json
 
+from . import mislog
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
 
+with open(CONFIGS_PATH) as configs:
+    CONFIGS = json.load(configs)
+
+DB_CONFIGS = CONFIGS['DB']
+
+# possible globals/configs
 DB_CONN_STR_TEMPLATE = r'Driver=SQL Server;Server=%s;Database=%s;Trusted_Connection=yes;'
 DB_MAX_BATCH = 1000
+
+# global lib logger...
+db_log  = mislog.mis_console_logger('db_log', DB_CONFIGS['LOG_LEVEL'])
 
 class DB:
 
@@ -30,19 +40,81 @@ class DB:
         :rtype: None
 
         '''
+        if db_config_name is None:
+
+            db_log.critical('No DB name provided')
+            return
 
         db_config_name = db_config_name.strip().upper() # adjust user input
+
+        self.name = db_config_name # for logging instance stuff
 
         with open(CONFIGS_PATH) as configs:
             configs = json.load(configs)
 
-        server_name = configs['DB'][db_config_name]['SERVER_NAME']
-        db_name     = configs['DB'][db_config_name]['DB_NAME']
+        if db_config_name not in DB_CONFIGS or \
+           'SERVER_NAME'  not in DB_CONFIGS[db_config_name] or \
+           'DB_NAME'      not in DB_CONFIGS[db_config_name]:
+
+            db_log.critical('No DB configs found for %s' % db_config_name)
+            return
+
+        server_name = DB_CONFIGS[db_config_name]['SERVER_NAME']
+        db_name     = DB_CONFIGS[db_config_name]['DB_NAME']
 
         conn_str    = DB_CONN_STR_TEMPLATE % \
                       (server_name, db_name)
 
-        self.cnxn = pyodbc.connect(conn_str)
+        self.cnxn   = pyodbc.connect(conn_str)
+
+    # enter and exit interface provide ability to work with context managers and are not explicitly used...
+    def __enter__(self):
+
+        db_log.debug('Opening Context Manager Connection for %s' % self.name)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        db_log.debug('Calling Exit and Closing Connection for %s after context manager' % self.name)
+        self.close()
+
+    def truncate(self, table):
+
+        '''
+        Truncates the provided table.
+
+        :param str table: An sql table to truncate
+
+        :return: Nothing atm...
+
+        :rtype: None
+
+        '''
+        query = 'TRUNCATE TABLE %s' % table
+        cursor = self.cnxn.cursor()
+        cursor.execute( query )
+        cursor.commit()
+        cursor.close()
+
+    def exec_sp(self, sp_name):
+
+        '''
+        Executes the porvided stored procedure
+
+        :param str sp_name: The name of a Stored Procedure in this DB
+
+        :return: Nothing atm...
+
+        :rtype: None
+
+        '''
+
+        # can extend...https://stackoverflow.com/questions/28635671/using-sql-server-stored-procedures-from-python-pyodbc/42009222#42009222
+        sp = 'EXEC  %s' % sp_name
+        cursor = self.cnxn.cursor()
+        cursor.execute( sp )
+        cursor.commit()
+        cursor.close()
 
     def exec_query(self, sql, columns=False, dict_read=False):
 
@@ -63,6 +135,16 @@ class DB:
 
         cursor = self.cnxn.cursor()
         cursor.execute(sql)
+        if 'DELETE'   == sql[:6].upper() or \
+           'UPDATE'   == sql[:6].upper() or \
+           'INSERT'   == sql[:6].upper() or \
+           'TRUNCATE' == sql[:8].upper():
+
+            cursor.commit()
+            row_count = cursor.rowcount
+            cursor.close()
+            return row_count
+
         # why make downstream care aabout pyodc rows?
         # row[0] has data, not sure of rest yet...
         data = [list(row) for row in cursor.fetchall()]
@@ -101,21 +183,24 @@ class DB:
             batch_size = DB_MAX_BATCH
 
         # get values from dict data rows
-        if type(data[0]) == dict:
+        if len(data) != 0 and \
+           type(data[0]) == dict:
             data = [list(row.values()) for row in data]
 
         db_lines = [] # (..row[0]..), (..row[1]..), ...
         for row in data:
-            #print(row)
-            db_line = list(map(lambda x: x.replace( "'", "''"), row)) # add sql '' apostrophe in abbrevs
-            # this list conversion looks arbitrary...
-            db_line = list(map(lambda x: x.replace( x, "'" + x + "'"), db_line)) # create sql strings
+
+            # strings
+            db_line = map(lambda x: x.replace( "'", "''") if type(x) == str else x, row) # add sql '' apostrophe in abbrevs
+
+            db_line = map(lambda x: "'" + x + "'"  if type(x) == str else x, db_line)
+            # None
+            db_line = map(lambda x: 'NULL'  if x is None else x, db_line)
 
             db_line = ','.join(db_line) # create sql batch insert line
             db_line = '(' + db_line + ')'
 
             db_lines.append(db_line)
-
 
         cursor = self.cnxn.cursor()
 
@@ -129,13 +214,15 @@ class DB:
         while start <= stop:
 
             db_values = ','.join(db_lines[start:end])
-            start += inc
-            end   += inc
             query = db_insert + db_values
             cursor.execute( query )
             cursor.commit()
             if cursor.rowcount is not None:
                 row_count += cursor.rowcount
+
+            start += inc
+            end   += inc
+            #print('[DB][DEBUG]', str(start) + ':' +   str(end))
 
         cursor.close()
 
@@ -153,16 +240,4 @@ class DB:
         '''
 
         self.cnxn.close()
-
-
-
-
-
-
-
-
-
-
-
-
 

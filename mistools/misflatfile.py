@@ -8,7 +8,9 @@ import os
 import pyodbc
 import json
 
+# lib deps
 from .lib import ffparser
+from . import mislog
 
 #### All ####
 
@@ -19,23 +21,28 @@ DED_MIS_SPEC_PATH = "%s/spec/mis_ded_spec.json" % LIB_ROOT
 with open(DED_MIS_SPEC_PATH) as mis_spec_file:
     DED_MIS_SPEC = json.load(mis_spec_file)
 
+# pull in configs
+CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT # currently from lib root...
+with open(CONFIGS_PATH) as configs:
+    CONFIGS = json.load(configs)
 
+misff_log  = mislog.mis_console_logger('misflatfile', CONFIGS['MIS_FLAT_FILE']['LOG_LEVEL'])
 
 #### Export ####
 
 # DB configs
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
 
 CONNECTION_STRING = r'Driver=SQL Server;Server=%s;Database=%s;Trusted_Connection=yes;' % \
                     (CONFIGS['DB']['COLLEAGUE']['SERVER_NAME'],
                      CONFIGS['DB']['COLLEAGUE']['DB_NAME'])
 
-
+# MIS FF EXPORT CONFIGS
+MIS_FF_EXPORT_ROOT = CONFIGS['MIS_FLAT_FILE']['MIS_FF_EXPORT_ROOT']
 TXT_FILE_LINE ="tx220%s%s%su22%s%sdat"
 DAT_FILE_TEMPLATE = r'U22%s%s.DAT'
 
+
+# considered integrating with DB but no real reason yet very specific sql atm. should really decouple in spec...
 def _build_sql(report, gi03):
 
     attrs     = DED_MIS_SPEC[report]['FORMAT']
@@ -68,14 +75,14 @@ def _write_dat_file(rows, out_file, mode = 'w'):
 
     with open(out_file, mode) as f:
 
-        for row in rows:
+        for idx, row in enumerate(rows):
 
             if row is None: # as the exports are done and normalized this will be unnecessary.
                 # rows with null have a null value that was not converted
                 # to the specs auto fill value, 430 is sb length aka long long man
                 f.write( ('!' * 430) + '\n')
+                misff_log.critical('Empty record found at line %d' , (idx + 1))
                 continue
-
             f.write( row + '\n' )
 
     return len(rows) # return num rows for txt
@@ -129,9 +136,9 @@ def _build_txt_file(row_count, report, gi03, out_file):
          rpt_txt_lines = new_rpt_line
 
 
-    contact_info = CONFIGS['MIS']['AUTHOR']['LAST_NAME'] + (' ' * 8) + \
-                   CONFIGS['MIS']['AUTHOR']['FIRST_NAME'] + (' ' * 7) + \
-                   CONFIGS['MIS']['AUTHOR']['PHONE_NUMBER']
+    contact_info = CONFIGS['MIS_FLAT_FILE']['AUTHOR']['LAST_NAME'] + (' ' * 8) + \
+                   CONFIGS['MIS_FLAT_FILE']['AUTHOR']['FIRST_NAME'] + (' ' * 7) + \
+                   CONFIGS['MIS_FLAT_FILE']['AUTHOR']['PHONE_NUMBER']
 
     tx_txt_line = _build_txt_line(len(rpt_txt_lines) + 1, 'tx', gi03) + \
                   contact_info
@@ -143,14 +150,12 @@ def _build_txt_file(row_count, report, gi03, out_file):
 
 
 # MIS Export Interface
-def sx_mis_export(gi03, out_file_path, sql_only = False):
+def sx_mis_export(gi03, sql_only = False):
 
     '''
     Export Enrollemnt Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -169,26 +174,24 @@ def sx_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SX')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SX', gi03, out_file)
 
     return sql
 
 
-def sy_mis_export(gi03, out_file_path, sql_only = False):
+def sy_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Prior Learning to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -207,26 +210,24 @@ def sy_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SY')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SY', gi03, out_file)
 
     return sql
 
 
-def ss_mis_export(gi03, out_file_path, sql_only = False):
+def ss_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Success Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -245,12 +246,12 @@ def ss_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SS')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SS', gi03, out_file)
 
@@ -258,14 +259,12 @@ def ss_mis_export(gi03, out_file_path, sql_only = False):
 
 
 
-def sd_mis_export(gi03, out_file_path, sql_only = False):
+def sd_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Disablility Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -284,12 +283,12 @@ def sd_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SD')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SD', gi03, out_file)
 
@@ -297,14 +296,12 @@ def sd_mis_export(gi03, out_file_path, sql_only = False):
 
 
 
-def sc_mis_export(gi03, out_file_path, sql_only = False):
+def sc_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Calworks/Calworks Work Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -332,12 +329,12 @@ def sc_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sc_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SC')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SC', gi03, out_file)
 
@@ -345,26 +342,24 @@ def sc_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(cw_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'CW')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'CW', gi03, out_file)
 
     return SC_SQL_DELIM.join(sql_list)
 
 
-def sb_mis_export(gi03, out_file_path, sql_only = False):
+def sb_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Basic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -383,26 +378,24 @@ def sb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SB', gi03, out_file)
 
     return sql
 
 
-def sg_mis_export(gi03, out_file_path, sql_only = False):
+def sg_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Groups Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -421,26 +414,24 @@ def sg_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SG')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SG', gi03, out_file)
 
     return sql
 
 
-def cb_mis_export(gi03, out_file_path, sql_only = False):
+def cb_mis_export(gi03, sql_only = False):
 
     '''
     Export Course Basic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -460,27 +451,23 @@ def cb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'CB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'CB', gi03, out_file)
 
     return sql
 
 
-def sv_mis_export(gi03, out_file_path, sql_only = False):
+def sv_mis_export(gi03, sql_only = False):
 
 
     '''
     Export Student VTEA Data to a Flat File(:redbold:`Has not been Implemented`)
-
-    :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -499,26 +486,24 @@ def sv_mis_export(gi03, out_file_path, sql_only = False):
     #rows = _exec_query(sql)
 
     #dat_file = DAT_FILE_TEMPLATE % (gi03, 'SV')
-    #out_file = os.path.join(out_file_path, dat_file)
+    #out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     #row_count = _write_dat_file(rows, out_file)
 
     #txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    #out_file = os.path.join(out_file_path, txt_file)
+    #out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     #_build_txt_file(row_count, 'SV', gi03, out_file)
 
     #return sql
 
 
-def eb_mis_export(gi03, out_file_path, sql_only = False):
+def eb_mis_export(gi03, sql_only = False):
 
     '''
     Export Employee Demographic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -537,27 +522,25 @@ def eb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'EB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'EB', gi03, out_file)
 
     return sql
 
 
-def xb_mis_export(gi03, out_file_path, sql_only = False):
+def xb_mis_export(gi03, sql_only = False):
 
     '''
     Export Section/Session/Assignment Data to a Flat File(.DAT)
            :greenbold:`UNION ALL maintains the order of the union.`
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -589,7 +572,7 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(xb_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'XB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     xb_row_count = _write_dat_file(rows, out_file)
 
@@ -598,7 +581,7 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(xf_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'XB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     xf_row_count = _write_dat_file(rows, out_file, mode = 'a') # append
 
@@ -607,21 +590,21 @@ def xb_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(xe_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'XB')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     xe_row_count = _write_dat_file(rows, out_file, mode = 'a') # append
 
-
+    # get combined row count...
     row_count = xb_row_count + xf_row_count + xe_row_count
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, text_file)
 
     _build_txt_file(row_count, 'XB', gi03, out_file)
 
     return XB_SQL_UNION.join(sql_list)
 
-def se_mis_export(gi03, out_file_path, sql_only = False):
+def se_mis_export(gi03, sql_only = False):
     '''
     Export Student EOPS Data(:redbold:`Has not been Implemented`)
 
@@ -639,14 +622,12 @@ def se_mis_export(gi03, out_file_path, sql_only = False):
 
     return ''
 
-def sp_mis_export(gi03, out_file_path, sql_only = False):
+def sp_mis_export(gi03, sql_only = False):
 
     '''
     Export Student Programs Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -665,24 +646,22 @@ def sp_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SP')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SP', gi03, out_file)
 
     return sql
 
-def sf_mis_export(gi03, out_file_path, sql_only = False):
+def sf_mis_export(gi03, sql_only = False):
     '''
     Export Student Financial Aid Data
 
     :param str gi03: Term to export data from
-
-    :param str out_file_path: Path where .DAT file should be written
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -707,31 +686,31 @@ def sf_mis_export(gi03, out_file_path, sql_only = False):
     rows = _exec_query(sf_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'SF')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'SF', gi03, out_file)
 
     rows = _exec_query(fa_sql)
 
     dat_file = DAT_FILE_TEMPLATE % (gi03, 'FA')
-    out_file = os.path.join(out_file_path, dat_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
     row_count = _write_dat_file(rows, out_file)
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(out_file_path, txt_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'FA', gi03, out_file)
 
     return SF_SQL_DELIM.join(sql_list)
 
 
-def aa_mis_export(gi03, out_file_path, sql_only = False):
+def aa_mis_export(gi03, sql_only = False):
     '''
     Export Adult Edcation Assement Data(:redbold:`Has not been Implemented`)
 
@@ -749,7 +728,7 @@ def aa_mis_export(gi03, out_file_path, sql_only = False):
 
     return ''
 
-def sl_mis_export(gi03, out_file_path, sql_only = False):
+def sl_mis_export(gi03, sql_only = False):
     '''
     Export Student Placement Data(:redbold:`Has not been Implemented`)
 
