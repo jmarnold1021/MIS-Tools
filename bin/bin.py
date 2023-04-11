@@ -3,6 +3,8 @@ import os
 import sys
 import logging
 import glob
+from datetime import datetime
+from datetime import timedelta
 
 # third-party
 import click # cli dependancy
@@ -282,9 +284,15 @@ def ipeds_hr(safe, log_level):
 def test():
 
     test_log = mislog.mis_console_logger('test', 'DEBUG')
-    data = misdod.fa_enr_ipeds_parse(2023)
+    data = misflatfile.cc_mis_parse('//ltcc-app/MIS/230/U22230CC.dat', headers = True)
 
-    print(data[1])
+    print(data[0])
+    start_date = datetime.fromisoformat('2022-07-01')
+    print(start_date)
+    for row in data[1:]:
+        if row[9] == 'H':
+            td = timedelta(days = (int(row[3]) - 1))
+            print(start_date + td)
 
 
 if __name__ == "__main__":
