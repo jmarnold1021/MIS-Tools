@@ -1073,6 +1073,25 @@ def se_mis_parse(mis_file_path, headers = False):
 
     return mis_data
 
+def cc_mis_parse(mis_file_path, headers = False):
+    '''
+    Parse Student Calendar data from DAT files
+
+    :param str mis_file_path: path to se dat file
+
+    :param bool headers: include headers
+
+    :rtype: list
+
+    '''
+
+    mis_data = _mis_parse_files('CC', mis_file_path)
+
+    if headers:
+        mis_data = _mis_add_headers('CC', mis_data)
+
+    return mis_data
+
 def eb_mis_parse(mis_file_path, headers = False):
     '''
     Parse Employee Demographic data from DAT files
