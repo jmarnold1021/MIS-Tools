@@ -1,16 +1,17 @@
-# Example of TODO.md
+# MIS-Tools Tasks 
 
 
 ### Todo
 
-- [ ] Decouple SQL in DED spec Export, GI92 is most comnplicated I believe.
-  - [ ] What will determine the upstream keys and where will they be maintained.
-  - [ ] See what CWCS provides...as an upstream csv example...
-  - [ ] Clean DED spec...remove any unecessary blocks or implement them in general(requires decoupling)
 - [ ] Update setup.py with all specs/deps etc.
+  - [ ] Begin versioning if actually distributing...
 - [ ] Determine how unit tests should actually work. currently just help ensure nothing serious has happend
 - [ ] Need a way to provide a custom confituration.
   - [ ] Way to provide other types of db/upstream configurations.
+
+### In Progress
+
+- [ ] SP export SQL decouple initial changes...kind of a picnic
 
 ## More examples of TODO lists in github markdown.
 

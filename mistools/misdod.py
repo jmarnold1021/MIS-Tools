@@ -160,6 +160,38 @@ def sx_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None
 
     return dod_data
 
+def ss_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None):
+
+    '''
+    Parse Student Success data from DOD files.
+
+    :param list dod_file_path: A single or list of DOD file paths to parse.
+
+    :param bool dict_read: return data as a dict with headers for keys
+
+    :param bool headers: include headers
+
+    :param str fill_empty: filler string for missing data defautls to None
+
+    :rtype: list
+
+    '''
+
+    if dict_read:
+        dod_data = _dod_parse_file_dict('SS', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_adj_dates('SS', dod_data)
+
+        # convert to better date format
+        return dod_data
+
+    dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_adj_dates('SS', dod_data)
+
+    if headers:
+        dod_data = _dod_add_headers('SS', dod_data)
+
+    return dod_data
+
 def st_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None):
 
     '''
@@ -861,10 +893,12 @@ def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
         return dod_data # only do 1 ever...
 
-def ref_dod_parse(dict_read=False, headers=False, fill_empty=None):
+def ref_dod_parse(report = None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse all DOD data referential data
+
+    :param str report: only parse files for the provided report
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -878,8 +912,18 @@ def ref_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
+    rep_list = []
+    for rep in DOD_MIS_SPEC: # attempt to fetch all reports in spec honestly it's like a loop of 14 or something...so...
+
+        if report:
+            rep_list.append(report) # if param supplied use and go...
+            break
+
+        rep_list.append(rep)
+
+
     dod_data = {}
-    for report in DOD_MIS_SPEC:
+    for report in rep_list:
 
         dod_log.info('Started Parsing %s' % report)
 

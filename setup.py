@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 setup(
     name='mistools',
     packages=find_packages(include=['mistools', 'mistools.lib'], exclude=("mistools.tests",)), # include root module and local modules sub dirs with __init__ files...
-    package_data={'mistools' : ['spec/mis_ded_spec.json']},                 # include local config/data files from LIB_ROOT
+    package_data={'mistools' : ['spec/mis_ded_spec.json','spec/mis_dod_spec.json']},                 # include local config/data files from LIB_ROOT
     version='1.0.0',
     description='Library containing tools for working with MIS Data',
     author='Jared Arnold',

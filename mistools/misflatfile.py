@@ -7,6 +7,8 @@ MIS flat files(.DAT)..
 import os
 import pyodbc
 import json
+from datetime import datetime
+from dateutil import parser # for string dates with no format...
 
 # lib deps
 from .lib import ffparser
@@ -41,8 +43,127 @@ MIS_FF_EXPORT_ROOT = CONFIGS['MIS_FLAT_FILE']['MIS_FF_EXPORT_ROOT']
 TXT_FILE_LINE ="tx220%s%s%su22%s%sdat"
 DAT_FILE_TEMPLATE = r'U22%s%s.DAT'
 
+def _build_sql_g(report, gi03):
 
-# considered integrating with DB but no real reason yet very specific sql atm. should really decouple in spec...
+    schema = DED_MIS_SPEC[report]['SCHEMA']
+
+    if 'GI03' not in schema:
+        misff_log.critical('No GI03 Attribute Provided in Spec for report %s' % report)
+        return "SELECT 'No GI03 Attribute Provided in Spec for report %s'" % report
+
+    gi03_attr = schema['GI03']
+
+    if 'MIS_SRC_TABLE' not in schema:
+        misff_log.critical('No Source Table Provided in Spec for report %s' % report)
+        return "SELECT 'No Source Table Provided in Spec for report %s'" % report
+
+    table = schema['MIS_SRC_TABLE']
+
+    flag_filter = ''
+    if 'RPT_FLAG' in schema:
+        rpt_flag = schema['RPT_FLAG']
+        flag_filter = "      AND " + rpt_flag + " = 1"
+
+
+
+    return "SELECT *" + \
+           "\nFROM "  + table + \
+           "\nWHERE " + gi03_attr + ' = ' + "'" + gi03 + "'" + \
+           flag_filter
+
+def _exec_query_g(sql):
+
+    cnxn = pyodbc.connect(CONNECTION_STRING)
+    cursor = cnxn.cursor()
+    cursor.execute(sql)
+
+    data = [row for row in cursor.fetchall()]
+    if len(data) != 0:
+        columns = [column[0] for column in cursor.description]
+
+    cursor.close()
+    cnxn.close()
+
+    # why make downstream care aabout pyodc rows?
+    return [dict(zip(columns, elem)) for elem in data]
+
+def _write_dat_file_g(report, rows, out_file, mode = 'w'):
+
+    # data will need headers
+
+    schema  = DED_MIS_SPEC[report]['SCHEMA']
+    formats = DED_MIS_SPEC[report]['FORMAT_G']
+
+    # if enum type pre sort...
+    for attr, f in formats.items():
+        if 'TYPE' in f and f['TYPE'] == 'ENUM' \
+           and 'ORDER' in f:
+               rows = sorted(rows, key=lambda k: [k[schema[skey]] for skey in f['ORDER']] ) # cray line here...sorts by variable keys
+
+
+    ff_acc = []
+    enum_inc = 0
+    curr_enum = ''
+    for row in rows:
+
+        print(row)
+        ff_line_acc = ''
+
+        for attr, f in formats.items():
+            print(attr)
+            if 'TYPE' in f and f['TYPE'] == 'CONST' \
+               and 'VALUE' in f:
+
+                   ff_line_acc += f['VALUE']
+
+            elif 'TYPE' in f and f['TYPE'] == 'STR' \
+                 and 'START' in f and 'LENGTH' in f:
+
+                tok = row[schema[attr]][formats[attr]['START']:formats[attr]['LENGTH'] + 1]
+                if 'PADDING' in f and 'JUSTIFIED' in f:
+
+                    pad = formats[attr]['PADDING'] * formats[attr]['LENGTH']
+
+                    if f['JUSTIFIED'] == 'LEFT':
+
+                        tok = (tok + pad)[:formats[attr]['LENGTH']]
+
+                    elif f['JUSTIFIED'] == 'RIGHT':
+
+                        tok = (pad + tok)[-(formats[attr]['LENGTH']):]
+
+                ff_line_acc += tok
+
+            elif 'TYPE' in f and f['TYPE'] == 'DATE' \
+                 and 'FORMAT' in f:
+
+                tok = row[schema[attr]]
+
+                if type(tok) == str:
+                    tok = parser.parse(tok)
+
+                ff_line_acc += tok.strftime(formats[attr]['FORMAT'])
+
+            elif 'TYPE' in f and f['TYPE'] == 'ENUM' \
+                 and 'START' in f and 'OVER' in f:
+
+
+                     if row[schema[f['OVER']]] == curr_enum:
+                         enum_inc += 1
+                         ff_line_acc += str(f['START'] + enum_inc)
+                     else:
+                         enum_inc = 0
+                         ff_line_acc += str(f['START'])
+                         curr_enum = row[schema[f['OVER']]]
+
+
+            print(ff_line_acc)
+        ff_acc.append(ff_line_acc)
+        break
+
+    print(ff_acc)
+
+
 def _build_sql(report, gi03):
 
     attrs     = DED_MIS_SPEC[report]['FORMAT']
@@ -72,6 +193,8 @@ def _exec_query(sql):
     return data
 
 def _write_dat_file(rows, out_file, mode = 'w'):
+
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
 
     with open(out_file, mode) as f:
 
@@ -598,7 +721,7 @@ def xb_mis_export(gi03, sql_only = False):
     row_count = xb_row_count + xf_row_count + xe_row_count
 
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, text_file)
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
     _build_txt_file(row_count, 'XB', gi03, out_file)
 
@@ -650,6 +773,28 @@ def sp_mis_export(gi03, sql_only = False):
 
     row_count = _write_dat_file(rows, out_file)
 
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
+
+    _build_txt_file(row_count, 'SP', gi03, out_file)
+
+    return sql
+
+def sp_mis_export_g(gi03):
+
+
+    # build sql from spec
+    sql = _build_sql_g('SP', gi03)
+
+    rows = _exec_query_g(sql)
+
+    #print(rows[0])
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SP')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
+
+    row_count = _write_dat_file_g('SP', rows, out_file)
+    return
     txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
     out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
