@@ -45,9 +45,10 @@ def mis_export(report, gi03, sql_only, log_level):
     sys.exit(0)
 
 @bin.command(name='dod_refresh_all', help='Refresh all DOD data from source files')
+@click.option('-r', '--report', type=str, help='Only refresh the provided Report')
 @click.option('-s', '--safe', is_flag=True, help='Do not take vaolatile Actions...db uploads etc. Print summary of future refresh.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
-def dod_refresh_all(safe, log_level):
+def dod_refresh_all(report, safe, log_level):
 
     mis_log = mislog.mis_console_logger('dod_refresh_all', log_level)
 
@@ -55,7 +56,7 @@ def dod_refresh_all(safe, log_level):
     mis_log.info('Starting Refresh...\n')
 
     mis_log.info('Starting Parse...\n')
-    dod_data = misdod.ref_dod_parse()
+    dod_data = misdod.ref_dod_parse(report=report)
 
     print('')
     mis_log.info('Starting Batch upload...\n')
@@ -184,7 +185,7 @@ def dod_refresh_fr(safe, log_level):
     sys.exit(0)
 
 
-@bin.command(name='dod_refresh', help='Refresh the DOD StuId Mappings')
+@bin.command(name='dod_refresh', help='Refresh/Add DOD data for the provided report/Gi03 pair')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
 @click.option('-g', '--gi03', type=str, help='The GI03 term for the ST report')
 @click.option('--update', is_flag=True, help='Update the DOD data for the provided Gi03')
@@ -201,7 +202,7 @@ def dod_refresh(report, gi03, update, log_level):
 
     db = DB('ods')
 
-    # check what is there for provided gi03
+    # check what is there for provided gi03 only for feedback atm
     rows = db.exec_query("SELECT COUNT(*) FROM %s WHERE GI03 = '%s'" % (dod_table, gi03))
 
     if update: # remove this Gi03
@@ -283,16 +284,7 @@ def ipeds_hr(safe, log_level):
 @bin.command(name='test', help='Refresh the DOD StuId Mappings')
 def test():
 
-    test_log = mislog.mis_console_logger('test', 'DEBUG')
-    data = misflatfile.cc_mis_parse('//ltcc-app/MIS/230/U22230CC.dat', headers = True)
-
-    print(data[0])
-    start_date = datetime.fromisoformat('2022-07-01')
-    print(start_date)
-    for row in data[1:]:
-        if row[9] == 'H':
-            td = timedelta(days = (int(row[3]) - 1))
-            print(start_date + td)
+    misflatfile.sp_mis_export_g('220')
 
 
 if __name__ == "__main__":

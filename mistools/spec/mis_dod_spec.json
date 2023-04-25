@@ -506,6 +506,39 @@
         "FILENAME": "SFAW*.txt"
     },
 
+    "SS" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SS01",
+            "SS02",
+            "SS03",
+            "SS04",
+            "SS05",
+            "SS06",
+            "SS07",
+            "SS08",
+            "SS09",
+            "SS10",
+            "SS11",
+            "SS12",
+            "SS13",
+            "SS14",
+            "SS15",
+            "SS16",
+            "SS17",
+            "SS18",
+            "SS19",
+            "SS20"
+        ],
+
+        "FILENAME": "SS*.txt"
+
+    },
+
     "SP" : {
 
         "HEADERS": [

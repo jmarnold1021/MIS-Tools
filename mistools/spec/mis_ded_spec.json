@@ -69,6 +69,81 @@
             "FILLER": "SPACE(1)"
         },
 
+        "SCHEMA" : {
+
+            "GI01" : "CASTSP_GI01",
+            "GI03" : "CASTSP_GI03",
+            "SB02" : "CASTSP_SB02",
+            "SB00" : "CASTSP_SB00",
+            "SP01" : "CASTSP_SP01",
+            "SP02" : "CASTSP_SP02",
+            "SP03" : "CASTSP_SP03",
+            "SP04" : "CASTSP_SP04",
+            "RPT_FLAG" : "CAST_SP_RPT_FLAG",
+            "MIS_SRC_TABLE" : "CAST_SP_RPT"
+        },
+
+        "FORMAT_G" : {
+
+            "GI90" : {
+                         "TYPE"  : "CONST",
+                         "VALUE" : "SP"
+                     },
+            "GI01" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 3
+                     },
+            "GI03" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 3
+                     },
+            "SB02" : {
+                         "TYPE"      : "STR",
+                         "START"     : 0,
+                         "LENGTH"    : 3,
+                         "PADDING"   : " ",
+                         "JUSTIFIED" : "LEFT"
+                     },
+            "SB00" : {
+                         "TYPE"      : "STR",
+                         "START"     : 0,
+                         "LENGTH"    : 9,
+                         "PADDING"   : " ",
+                         "JUSTIFIED" : "LEFT"
+                     },
+            "SP01" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 6
+                     },
+            "SP02" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 1
+                     },
+            "SP03" : {
+                         "TYPE"   : "DATE",
+                         "FORMAT" : "%y%m%d"
+                     },
+            "G192" : {
+                         "TYPE"  : "ENUM",
+                         "START" : 0,
+                         "ORDER"  : ["SB00", "SP03"],
+                         "OVER"  : "SB00"
+                     },
+            "SP04" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 5
+                     },
+            "FILLER": {
+                        "TYPE"  : "CONST",
+                        "VALUE" : " "
+            }
+        },
+
         "MIS_SRC_TABLE" : "CAST_SP_RPT"
     },
 
@@ -220,7 +295,6 @@
             "CB26" : "CASTCB_CB26",
             "CB27" : "CASTCB_CB27",
             "FILLER" : "SPACE(25)"
-
         },
 
         "MIS_SRC_TABLE" : "CAST_CB_RPT"
@@ -791,7 +865,13 @@
             "SG20" : "CASTSG_SG20",
             "SG21" : "CASTSG_SG21",
             "SG22" : "CASTSG_SG22",
-            "SG23" : "CASTSG_SG23A + CASTSG_SG23B + CASTSG_SG23C + CASTSG_SG23D + CASTSG_SG23E + CASTSG_SG23F + CASTSG_SG23G",
+            "SG23_A" : "CASTSG_SG23A",
+            "SG23_B" : "CASTSG_SG23B",
+            "SG23_C" : "CASTSG_SG23C",
+            "SG23_D" : "CASTSG_SG23D",
+            "SG23_E" : "CASTSG_SG23E",
+            "SG23_F" : "CASTSG_SG23F",
+            "SG23_G" : "CASTSG_SG23G",
             "FILLER" : "SPACE(2)"
         },
 
