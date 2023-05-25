@@ -13,16 +13,25 @@ from datetime import datetime
 
 # lib deps
 from . import mislog
+from .db import DB
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 DOD_MIS_SPEC_PATH = "%s/spec/mis_dod_spec.json" % LIB_ROOT
 DOD_IPEDS_SPEC_PATH = "%s/spec/mis_ipeds_spec.json" % LIB_ROOT
+DOD_SCFF_SPEC_PATH = "%s/spec/mis_scff_spec.json" % LIB_ROOT
+DOD_SCHEMA_PATH = "%s/schema/" % LIB_ROOT
+DOD_SCHEMA_TEMPLATE = DOD_SCHEMA_PATH + 'dbo.L56_DOD_%s.Table.sql'
 
+
+# read in specs for different report/s
 with open(DOD_MIS_SPEC_PATH) as dod_spec_file:
     DOD_MIS_SPEC = json.load(dod_spec_file)
 
 with open(DOD_IPEDS_SPEC_PATH) as dod_spec_file:
     DOD_IPEDS_SPEC = json.load(dod_spec_file)
+
+with open(DOD_SCFF_SPEC_PATH) as dod_spec_file:
+    DOD_SCFF_SPEC = json.load(dod_spec_file)
 
 # DB configs
 CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
@@ -78,7 +87,7 @@ def _dod_adj_dates(report, data):
     return data
 
 def _dod_add_headers(report, data):
-
+    # adds headers from specs to 2d arrays as top array
     dod_header = DOD_MIS_SPEC[report]["HEADERS"]
 
     return [dod_header] + data
@@ -893,12 +902,86 @@ def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
         return dod_data # only do 1 ever...
 
-def ref_dod_parse(report = None, dict_read=False, headers=False, fill_empty=None):
+
+def ref_dod_update_db(data, report = None, gi03 = None, full = None, safe = False):
+    '''
+    Update any DOD data referential data in the Database
+
+    :param object data: Data to upload, if dict key is used as report, if array report is required
+
+    :param str report: Only parse files for the provided report/s
+
+    :param str gi03: Only parse files for this gi03 in each provided report
+
+    :param str full: Update table schema and upload provided Data
+
+    :rtype: int
 
     '''
-    Parse all DOD data referential data
+
+    if type(data) != dict:
+
+        if report:
+
+            data_tmp = data
+            data = {}
+            data[report] = data_tmp
+
+        else:
+
+            dod_log.critical('Data not in proper format.')
+            return 0
+
+
+    db = DB('ODS')
+
+    total_rows = 0
+    total_tables = 0
+    for report in data:
+
+        table = 'L56_DOD_%s' % report
+        total_rows += len(data[report])
+        total_tables += 1
+
+        if safe:
+
+            dod_log.info('Will clear and insert %d rows to %s' % (len(data[report]), table))
+            continue
+
+        if full:
+
+            schema_path = DOD_SCHEMA_TEMPLATE % report
+            dod_log.info('Updating schema for %s' % report)
+            db.exec_sql_file(schema_path, stmt_delim = 'GO')
+
+        elif gi03:
+
+            dod_log.info('Deleting %s from %s' % (gi03, report))
+            db.exec_query("DELETE FROM %s WHERE GI03 = '%s'" % (table, gi03))
+
+        else:
+
+            dod_log.info('Clearing %s' % report)
+            db.truncate(table)
+
+        table = 'L56_DOD_%s' % report
+        dod_log.info('Inserting %d rows into %s' % (len(data[report]), report))
+        cnt = db.insert_batch( table, data[report] )
+
+    dod_log.info('Refresh Complete...%d rows inserted into %d tables' % (total_rows, total_tables))
+
+    db.close()
+
+    return total_rows
+
+def ref_dod_parse(report = None, gi03 = None, dict_read=False, headers=False, fill_empty=None):
+
+    '''
+    Parse any DOD data referential data
 
     :param str report: only parse files for the provided report
+
+    :param str gi03: Only parse files for this gi03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -912,15 +995,9 @@ def ref_dod_parse(report = None, dict_read=False, headers=False, fill_empty=None
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    rep_list = []
-    for rep in DOD_MIS_SPEC: # attempt to fetch all reports in spec honestly it's like a loop of 14 or something...so...
-
-        if report:
-            rep_list.append(report) # if param supplied use and go...
-            break
-
-        rep_list.append(rep)
-
+    rep_list = [rep for rep in DOD_MIS_SPEC]
+    if report:
+      rep_list = [report.upper()]
 
     dod_data = {}
     for report in rep_list:
@@ -933,6 +1010,9 @@ def ref_dod_parse(report = None, dict_read=False, headers=False, fill_empty=None
         cnt = 0
         dod_data[report] = []
         for dod_file in glob.iglob( root, recursive=True ):
+
+            if gi03 and gi03 not in os.path.basename(dod_file):
+                continue
 
             dod_log.debug('Found DOD files - %s' % dod_file)
             cnt += 1
@@ -954,6 +1034,131 @@ def ref_dod_parse(report = None, dict_read=False, headers=False, fill_empty=None
             dod_data[report] = _dod_add_headers(report, dod_data[report])
 
     return dod_data
+
+
+def scff_dod_update_db(data, gi03 = None, full = None, safe = False):
+    '''
+    Update any DOD data referential data in the Database
+
+    :param object data: Data to upload, if dict key is used as report, if array report is required
+
+    :param str report: Only parse files for the provided report/s
+
+    :param str gi03: Only parse files for this gi03 in each provided report
+
+    :param str full: Update table schema and upload provided Data
+
+    :rtype: int
+
+    '''
+
+    if safe:
+        dod_log.info('Will clear and insert %d rows in SCFF' % len(data))
+        return 0
+
+    db = DB('ODS')
+
+    table = 'L56_DOD_SCFF'
+
+    if full:
+
+        schema_path = DOD_SCHEMA_TEMPLATE % 'SCFF'
+        dod_log.info('Updating schema for SCFF')
+        db.exec_sql_file(schema_path, stmt_delim = 'GO')
+
+    elif gi03:
+
+        dod_log.info('Deleting %s from SCFF' % gi03)
+        db.exec_query("DELETE FROM %s WHERE GI03 = '%s'" % (table, gi03))
+    else:
+
+        dod_log.info('Clearing %s' % report)
+        db.truncate(table)
+
+    dod_log.info('Inserting %d rows into SCFF' % len(data))
+    cnt = db.insert_batch( table, data)
+
+
+    db.close()
+
+    return len(data)
+
+def scff_dod_parse(gi03=None):
+
+    '''
+    Parse all DOD SCFF Pre-Allocation data
+
+    :param str gi03: The GI03 of the reports to pull
+
+    :rtype: list
+
+    '''
+
+    pa_path_root = MIS_DOD_CONFIGS['PRE_ALLOC_FILES_ROOT']
+
+    scff_filenames = DOD_SCFF_SPEC['SCFF']['FILENAMES']
+    scff_headers = DOD_SCFF_SPEC['SCFF']['HEADERS']
+
+    scff_gi03_file_paths = {}
+    for  filename in scff_filenames:
+
+        glob_path =  pa_path_root + filename
+
+        for file in glob.glob(glob_path):
+
+
+            scff_gi03 = os.path.dirname(file)[-3:]
+            if scff_gi03 not in scff_gi03_file_paths:
+                scff_gi03_file_paths[scff_gi03] = []
+
+            if gi03 and gi03 != scff_gi03:
+                continue
+
+            scff_gi03_file_paths[scff_gi03].append(file)
+
+
+
+    scff_data = []
+    for scff_gi03 in scff_gi03_file_paths:
+
+        scff_file_paths = scff_gi03_file_paths[scff_gi03]
+        scff_data_build = {}
+
+        for scff_file in scff_file_paths:
+
+            report = os.path.basename(scff_file).split('_')[0]
+            data = _dod_parse_file_dict(None, scff_file, delim='|')
+
+            dod_log.info('Parsing %d rows from %s for %s' % (len(data), report, scff_gi03))
+
+            for row in data:
+
+                if row['STUDENT_ID'] not in scff_data_build:
+
+                    scff_data_build[row['STUDENT_ID']] = dict(zip(scff_headers, \
+                                                        len(scff_headers) * [None]))
+
+                    scff_data_build[row['STUDENT_ID']]['SB00'] = row['STUDENT_ID']
+                    scff_data_build[row['STUDENT_ID']]['GI03'] = scff_gi03
+
+                if len(row.keys()) == 2:
+
+                    scff_data_build[row['STUDENT_ID']][report] = 'Y'
+
+                else:
+
+                    for key in row:
+
+                        scff_data_build[row['STUDENT_ID']][report] = 'Y'
+
+                        if row[key] == 'Y':
+
+                            scff_data_build[row['STUDENT_ID']][report + '_' + key] = 'Y'
+
+        scff_data += list(scff_data_build.values())
+
+    return scff_data
+
 
 def hr_ipeds_parse(ipeds_file_path, dict_read=False, headers=False, fill_empty=None):
 

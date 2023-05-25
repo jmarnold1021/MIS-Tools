@@ -65,7 +65,6 @@ def _build_sql_g(report, gi03):
         flag_filter = "      AND " + rpt_flag + " = 1"
 
 
-
     return "SELECT *" + \
            "\nFROM "  + table + \
            "\nWHERE " + gi03_attr + ' = ' + "'" + gi03 + "'" + \

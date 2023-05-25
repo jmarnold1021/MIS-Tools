@@ -116,6 +116,35 @@ class DB:
         cursor.commit()
         cursor.close()
 
+    def exec_sql_file(self, sql_file_path, stmt_delim = ';'):
+
+        '''
+        Executes an SQL script with this connection
+
+        :param str sql_file_path: The path to an SQL file.
+
+        :param str stmt_delim: Statement deliminator in the script
+
+        :return: Nothing atm...
+
+        :rtype: None
+
+        '''
+
+        with open(sql_file_path, 'r') as sql_lines:
+            sql_script = sql_lines.readlines()
+
+        sql_script = ''.join(sql_script) # return to buffer
+        #print(sql_script)
+
+        for stmt in sql_script.split(stmt_delim):
+            #print(stmt)
+
+            with self.cnxn.cursor() as cur:
+                cur.execute(stmt)
+                cur.commit()
+
+
     def exec_query(self, sql, columns=False, dict_read=False):
 
         '''
@@ -204,7 +233,7 @@ class DB:
 
         cursor = self.cnxn.cursor()
 
-        db_insert = 'INSERT INTO ' + resource + ' VALUES '
+        db_insert = 'INSERT INTO %s VALUES' % resource
 
         start  = 0
         end    = batch_size
