@@ -1,0 +1,564 @@
+{
+
+    "STUID" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "SB00",
+            "CCCCO_Assigned",
+            "SB01",
+            "GI03_F",
+            "GI03_FX",
+            "SB34",
+            "SB35"
+        ],
+
+        "FILENAME" : "*-StuIDRef.txt"
+    },
+
+    "FR" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "CCC_GI03",
+            "CCC_GI03_V",
+            "CCC_GI03_L",
+            "CCC_GI03_NSA",
+            "CCC_GI03_NSA_V",
+            "CCC_GI03_NSA_L",
+            "CCC_GI03_CR",
+            "CCC_GI03_CR_V",
+            "CCC_GI03_CR_L",
+            "CCC_GI03_CR_NSA",
+            "CCC_GI03_CR_NSA_V",
+            "CCC_GI03_CR_NSA_L",
+            "CCC_GI03_NCR",
+            "CCC_GI03_NCR_V",
+            "CCC_GI03_NCR_L",
+            "CCC_GI03_NCR_NSA",
+            "CCC_GI03_NCR_NSA_V",
+            "CCC_GI03_NCR_NSA_L",
+            "GI03",
+            "GI03_V",
+            "GI03_L",
+            "GI03_NSA",
+            "GI03_NSA_V",
+            "GI03_NSA_L",
+            "GI03_CR",
+            "GI03_CR_V",
+            "GI03_CR_L",
+            "GI03_CR_NSA",
+            "GI03_CR_NSA_V",
+            "GI03_CR_NSA_L",
+            "DIRECTED_YEAR",
+            "PREPARED_YEAR",
+            "FIRST_DATE_4YR",
+            "FIRST_SEGMENT_4YR",
+            "LAST_DATE_4YR",
+            "LAST_SEGMENT_4YR"
+        ],
+
+        "FILENAME" : "*-FirstsRef.txt"
+    },
+
+    "SB" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "SB03",
+            "SCD1",
+            "SCD2",
+            "SCD2_E",
+            "SCD4",
+            "SCD5",
+            "SCD3",
+            "SCD6"
+
+        ],
+
+        "FILENAME" : "*-StuBasic.txt",
+
+        "DATE_CONVS" : [
+
+            "SB03"
+        ]
+    },
+
+    "EB" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "GI03",
+            "EB00",
+            "EB01",
+            "EB02",
+            "STD1",
+            "EB03",
+            "EB05",
+            "EB06",
+            "EB07",
+            "EB08",
+            "EB09",
+            "EB11",
+            "EB12",
+            "EB13",
+            "EB14",
+            "EBD1"
+        ],
+
+        "FILENAME": "EB*.txt",
+
+        "DATE_CONVS" : [
+
+            "EB02"
+        ]
+    },
+
+    "EJ" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "GI03",
+            "EB00",
+            "EJ01",
+            "EJ02",
+            "EJ03",
+            "EJ03B",
+            "EJ04",
+            "EJ05",
+            "EJ08"
+        ],
+
+        "FILENAME": "EJ*.txt"
+    },
+
+    "SX" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "CB01",
+            "XB00",
+            "CB00",
+            "SX01",
+            "SX02",
+            "SXD2",
+            "SXD3",
+            "SX03",
+            "SX04",
+            "SX05",
+            "SXD1",
+            "SXD4"
+        ],
+
+        "FILENAME": "SX*.txt",
+
+        "DATE_CONVS" : [
+
+            "SX01",
+            "SX02"
+        ]
+    },
+
+    "ST" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "STD1",
+            "SB08",
+            "SB08B",
+            "SB09",
+            "SB11",
+            "SB12",
+            "SB15",
+            "SB16",
+            "SB17",
+            "SB18",
+            "SB19",
+            "SB20",
+            "SB21",
+            "STD8",
+            "STD9",
+            "SB22",
+            "SB23",
+            "SB24",
+            "SB25",
+            "SB14",
+            "SB31",
+            "SB32",
+            "SB04",
+            "SB06",
+            "SB26",
+            "STD2",
+            "STD3",
+            "STD6",
+            "STD4",
+            "STD5",
+            "STD7",
+            "SB27",
+            "SB29",
+            "STD10",
+            "SB30",
+            "SB33",
+            "SB36",
+            "SB37"
+        ],
+
+        "FILENAME": "ST*.txt"
+    },
+
+   "XB" : {
+
+       "HEADERS": [
+
+           "GI01",
+           "GI03",
+           "CB01",
+           "XB00",
+           "CB00",
+           "XB01",
+           "XB02",
+           "XB04",
+           "XB05",
+           "XB06",
+           "XB07",
+           "XB08",
+           "XB09",
+           "XB10",
+           "XB11",
+           "XBD1",
+           "XBD3",
+           "XBD4",
+           "XBD5",
+           "XB12"
+       ],
+
+       "FILENAME": "XB*.txt",
+
+       "DATE_CONVS" : [
+
+           "XB02"
+       ]
+
+   },
+
+   "CB" : {
+
+       "HEADERS": [
+
+            "GI01",
+            "GI03",
+            "CB01",
+            "CB00",
+            "CB02",
+            "CB03",
+            "CB04",
+            "CB05",
+            "CB06",
+            "CB07",
+            "CB08",
+            "CB09",
+            "CB10",
+            "CB11",
+            "CB13",
+            "CB14",
+            "CB15",
+            "CB19",
+            "CB20",
+            "CB21",
+            "CB22",
+            "CB23",
+            "CB01B",
+            "CB24",
+            "CB25",
+            "CB26",
+            "CB27"
+       ],
+
+       "FILENAME": "CB*.txt"
+   },
+
+    "XF" : {
+
+       "HEADERS": [
+
+            "GI01",
+            "GI03",
+            "CB01",
+            "XB00",
+            "CB00",
+            "XF00",
+            "XF01",
+            "XF02",
+            "XF03",
+            "XF04",
+            "XF05",
+            "XF06",
+            "XF07"
+       ],
+
+       "FILENAME": "XF*.txt",
+
+       "DATE_CONVS" : [
+
+           "XF02",
+           "XF03"
+       ]
+    },
+
+    "XE" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "GI03",
+            "CB01",
+            "XB00",
+            "CB00",
+            "XF00",
+            "EB00",
+            "XE01",
+            "XE02",
+            "XE03",
+            "XE04"
+        ],
+
+        "FILENAME": "XE*.txt"
+
+    },
+
+    "SE" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SE01",
+            "SE02",
+            "SE03",
+            "SE04",
+            "SE05",
+            "SE06",
+            "SE07",
+            "SE08",
+            "SE09",
+            "SE10"
+        ],
+
+        "FILENAME": "SE*.txt"
+
+    },
+
+    "SC" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SC01",
+            "SC02",
+            "SC03",
+            "SC04",
+            "SC05",
+            "SC06",
+            "SC07",
+            "SC08",
+            "SC09",
+            "SC10",
+            "SC11",
+            "SC18"
+        ],
+
+        "FILENAME": "CWA*.txt"
+    },
+
+    "CW" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SC12",
+            "SC13",
+            "SC14",
+            "SC15",
+            "SC16",
+            "SC17"
+        ],
+
+        "FILENAME": "CWW*.txt",
+
+        "DATE_CONVS" : [
+
+            "SC14",
+            "SC15"
+        ]
+
+    },
+
+
+
+    "SD" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SD01",
+            "SD02",
+            "SD03",
+            "SD04",
+            "SD05"
+        ],
+
+        "FILENAME": "SD*.txt"
+    },
+
+    "SG" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SG01",
+            "SG02",
+            "SG03",
+            "SG04",
+            "SG05",
+            "SG06",
+            "SG07",
+            "SG08",
+            "SG09",
+            "SG10",
+            "SG11",
+            "SG12",
+            "SG13",
+            "SG14",
+            "SG15",
+            "SG16",
+            "SG17",
+            "SG18",
+            "SG19",
+            "SG20",
+            "SG21",
+            "SG22",
+            "SG23"
+        ],
+
+        "FILENAME": "SG*.txt"
+    },
+
+
+    "SF" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SF01",
+            "SF02",
+            "SF03",
+            "SF04",
+            "SF05",
+            "SF06",
+            "SF07",
+            "SF08",
+            "SF09",
+            "SF10",
+            "SF11",
+            "SF17"
+
+        ],
+
+        "FILENAME": "SFAP*.txt"
+    },
+
+    "FA" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "GI03B",
+            "SF21",
+            "SF22"
+        ],
+
+        "FILENAME": "SFAW*.txt"
+    },
+
+    "SS" : {
+
+        "HEADERS" : [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SS01",
+            "SS02",
+            "SS03",
+            "SS04",
+            "SS05",
+            "SS06",
+            "SS07",
+            "SS08",
+            "SS09",
+            "SS10",
+            "SS11",
+            "SS12",
+            "SS13",
+            "SS14",
+            "SS15",
+            "SS16",
+            "SS17",
+            "SS18",
+            "SS19",
+            "SS20"
+        ],
+
+        "FILENAME": "SS*.txt"
+
+    },
+
+    "SP" : {
+
+        "HEADERS": [
+
+            "GI01",
+            "CCCCO_Assigned",
+            "GI03",
+            "SP01",
+            "SP02",
+            "SP03",
+            "GI92",
+            "SP04"
+        ],
+
+        "FILENAME": "SP*.txt",
+
+        "DATE_CONVS" : [
+
+            "SP03"
+        ]
+    }
+}
+

@@ -1,4 +1,41 @@
 {
+    "CC" : {
+
+        "LENGTH" : 40,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "CC01" : [9,12],
+            "CC02" : [12,13],
+            "CC03" : [13,14],
+            "CC04" : [14,15],
+            "CC05" : [15,16],
+            "CC06" : [16,17],
+            "CC07" : [17,18],
+            "CC08" : [18,19]
+        },
+
+        "FORMAT" : {
+
+            "GI90" : "'CC'",
+            "GI01" : "CASTSP_GI01",
+            "GI03" : "CASTSP_GI03",
+            "SB02" : "LEFT(CASTSP_SB02 + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSP_SB00 + SPACE(9), 9)",
+            "SP01" : "CASTSP_SP01",
+            "SP02" : "CASTSP_SP02",
+            "SP03" : "CONVERT(VARCHAR, CASTSP_SP03, 12)",
+            "GI92" : "CAST((ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1 AS VARCHAR)",
+            "SP04" : "CASTSP_SP04",
+            "FILLER": "SPACE(1)"
+        },
+
+        "MIS_SRC_TABLE" : "CAST_CC_RPT"
+    },
+
     "SP" : {
 
         "LENGTH" : 40,
@@ -17,7 +54,7 @@
             "SP04" : [35,40]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'SP'",
             "GI01" : "CASTSP_GI01",
@@ -26,12 +63,88 @@
             "SB00" : "LEFT(CASTSP_SB00 + SPACE(9), 9)",
             "SP01" : "CASTSP_SP01",
             "SP02" : "CASTSP_SP02",
-            "SP03" : "CASTSP_SP03",
-            "GI92" : "(ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1",
-            "SP04" : "CASTSP_SP04"
+            "SP03" : "CONVERT(VARCHAR, CASTSP_SP03, 12)",
+            "GI92" : "CAST((ROW_NUMBER() OVER ( PARTITION BY CASTSP_SB00 ORDER BY CASTSP_SB00, CASTSP_SP03 )) - 1 AS VARCHAR)",
+            "SP04" : "CASTSP_SP04",
+            "FILLER": "SPACE(1)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SP_RPT"
+        "SCHEMA" : {
+
+            "GI01" : "CASTSP_GI01",
+            "GI03" : "CASTSP_GI03",
+            "SB02" : "CASTSP_SB02",
+            "SB00" : "CASTSP_SB00",
+            "SP01" : "CASTSP_SP01",
+            "SP02" : "CASTSP_SP02",
+            "SP03" : "CASTSP_SP03",
+            "SP04" : "CASTSP_SP04",
+            "RPT_FLAG" : "CAST_SP_RPT_FLAG",
+            "MIS_SRC_TABLE" : "CAST_SP_RPT"
+        },
+
+        "FORMAT_G" : {
+
+            "GI90" : {
+                         "TYPE"  : "CONST",
+                         "VALUE" : "SP"
+                     },
+            "GI01" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 3
+                     },
+            "GI03" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 3
+                     },
+            "SB02" : {
+                         "TYPE"      : "STR",
+                         "START"     : 0,
+                         "LENGTH"    : 3,
+                         "PADDING"   : " ",
+                         "JUSTIFIED" : "LEFT"
+                     },
+            "SB00" : {
+                         "TYPE"      : "STR",
+                         "START"     : 0,
+                         "LENGTH"    : 9,
+                         "PADDING"   : " ",
+                         "JUSTIFIED" : "LEFT"
+                     },
+            "SP01" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 6
+                     },
+            "SP02" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 1
+                     },
+            "SP03" : {
+                         "TYPE"   : "DATE",
+                         "FORMAT" : "%y%m%d"
+                     },
+            "G192" : {
+                         "TYPE"  : "ENUM",
+                         "START" : 0,
+                         "ORDER"  : ["SB00", "SP03"],
+                         "OVER"  : "SB00"
+                     },
+            "SP04" : {
+                         "TYPE"   : "STR",
+                         "START"  : 0,
+                         "LENGTH" : 5
+                     },
+            "FILLER": {
+                        "TYPE"  : "CONST",
+                        "VALUE" : " "
+            }
+        },
+
+        "MIS_SRC_TABLE" : "CAST_SP_RPT"
     },
 
     "SF" : {
@@ -56,7 +169,30 @@
             "SF10" : [47,55],
             "SF11" : [55,63],
             "SF17" : [63,69]
-        }
+        },
+
+        "FORMAT" : {
+
+            "GI90" : "'SF'",
+            "GI01" : "CASTSF_COLLEGE_IDENTIFIER",
+            "GI03" : "CASTSF_TERM_IDENTIFIER",
+            "SB02" : "LEFT(CASTSF_STU_NAME_PARTIAL + SPACE(3), 3)",
+            "SB00" : "LEFT(CASTSF_STU_IDENTIFIER + SPACE(9), 9)",
+            "SF01" : "CASTSF_APPLICANT_STATUS",
+            "SF03" : "CASTSF_BUDGET_CATEGORY",
+            "SF04" : "RIGHT( REPLICATE('0', 5) + CASTSF_BUDGET_AMT, 5)",
+            "SF05" : "CASTSF_DEPENDENCY_STATUS",
+            "SF06" : "RIGHT( REPLICATE('0', 2) + CASTSF_HOUSEHOLD_SIZE, 2)",
+            "SF07" : "CASTSF_FAMILY_STATUS",
+            "SF08" : "RIGHT( REPLICATE('0', 7) + CASTSF_INCOME_AGI_PARENT, 7)",
+            "SF09" : "RIGHT( REPLICATE('0', 7) + CASTSF_INCOME_AGI_STUDENT, 7)",
+            "SF10" : "RIGHT( REPLICATE('0', 8) + CASTSF_UNTAX_INC_PARENT, 8)",
+            "SF11" : "RIGHT( REPLICATE('0', 8) + CASTSF_UNTAX_INC_STUDENT, 8)",
+            "SF17" : "RIGHT( REPLICATE('0', 6) + CASTSF_EXP_FAMILY_CONTRIB, 6)",
+            "FILLER" : "SPACE(12)"
+        },
+
+        "MIS_SRC_TABLE" : "CAST_SF_RPT"
     },
 
     "FA" : {
@@ -72,7 +208,21 @@
             "SB00"      : [12,21],
             "SF21"      : [21,23],
             "SF22"      : [23,28]
-        }
+        },
+
+        "FORMAT" : {
+
+            "GI90"      : "'FA'",
+            "GI01"      : "CASTFA_COLLEGE_IDENTIFIER",
+            "GI03"      : "CASTFA_TOS_TERM_IDENTIFIER",
+            "GI03_TERM" : "SUBSTRING(CASTFA_UNIQUE_KEY, 12, 3)",
+            "SB00"      : "LEFT(CASTFA_SB00_ID + SPACE(9), 9)",
+            "SF21"      : "SUBSTRING(CASTFA_UNIQUE_KEY, 9, 2)",
+            "SF22"      : "RIGHT( REPLICATE('0', 5) + CASTFA_AWARD_AMOUNT, 5)",
+            "FILLER" : "SPACE(23)"
+        },
+
+        "MIS_SRC_TABLE" : "CAST_FA_RPT"
     },
 
     "CB" : {
@@ -106,11 +256,12 @@
             "CB23" : [191,192],
             "CB24" : [192,193],
             "CB25" : [193,194],
-            "CB26" : [194,195]
+            "CB26" : [194,195],
+            "CB27" : [195,196]
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'CB'",
             "GI01" : "CASTCB_GI01",
@@ -142,11 +293,11 @@
             "CB24" : "CASE WHEN CASTCB_CB24 IS NOT NULL THEN CASTCB_CB24 ELSE ' ' END",
             "CB25" : "CASTCB_CB25",
             "CB26" : "CASTCB_CB26",
-            "FILLER" : "SPACE(26)"
-
+            "CB27" : "CASTCB_CB27",
+            "FILLER" : "SPACE(25)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CB_RPT"
+        "MIS_SRC_TABLE" : "CAST_CB_RPT"
     },
 
     "SB" : {
@@ -158,12 +309,12 @@
             "GI90" :     [1,3],
             "GI01" :     [3,6],
             "GI03" :     [6,9],
-            "SB02" :    [9,12],
+            "SB28" :    [9,12],
             "SB00" :   [12,21],
             "SB01" :   [21,22],
             "SB03" :   [22,30],
             "SB04" :   [30,31],
-            "SB06" :   [31,33],
+            "SB06" :   [33,34],
             "SB08" :   [35,44],
             "SB09" :   [44,49],
             "SB11" :   [50,55],
@@ -180,7 +331,6 @@
             "SB23" : [106,107],
             "SB24" : [107,108],
             "SB26" : [109,110],
-            "SB28" :    [9,12],
             "SB29" : [114,135],
             "SB30" : [135,136],
             "SB31" : [136,166],
@@ -194,7 +344,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SB'",
             "GI01" : "CASTSB_GI01",
@@ -208,7 +358,7 @@
             "SB06" : "CASTSB_SB06",
             "SB07" : "SPACE(1)",
             "SB08" : "CASTSB_SB08",
-            "SB09" : "CASTSB_SB09",
+            "SB09" : "CASE WHEN CASTSB_SB09 IS NOT NULL THEN CASTSB_SB09 ELSE 'XXXXX' END",
             "SB10" : "SPACE(1)",
             "SB11" : "CASTSB_SB11",
             "SB12" : "CASTSB_SB12",
@@ -242,7 +392,7 @@
 
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SB_WORK"
+        "MIS_SRC_TABLE" : "CAST_SB_RPT"
     },
 
 
@@ -258,19 +408,20 @@
             "CB01" : [12,24],
             "XB00" : [24,30],
             "XB01" : [30,31],
-            "XB02" : [31,36],
+            "XB02" : [31,37],
             "XB04" : [43,44],
             "XB05" : [44,48],
-            "XB06" : [48,51],
+            "XB06" : [48,52],
             "XB08" : [53,54],
             "XB09" : [54,55],
             "XB10" : [55,56],
             "XB11" : [56,62],
-            "CB00" : [62,74]
+            "CB00" : [62,74],
+            "XB12" : [74,75]
         },
 
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XB'",
             "GI01" : "CASTXB_GI01",
@@ -281,7 +432,7 @@
             "XB01" : "CASTXB_XB01",
             "XB02" : "CASTXB_XB02",
             "XB03" : "SPACE(6)",
-            "XB04" : "CASTXB_XB04",
+            "XB04" : "CASE WHEN CASTXB_XB04 IS NOT NULL THEN CASTXB_XB04 ELSE 'Y' END",
             "XB05" : "CASTXB_XB05",
             "XB06" : "CASTXB_XB06",
             "XB07" : "SPACE(1)",
@@ -290,10 +441,11 @@
             "XB10" : "CASTXB_XB10",
             "XB11" : "CASTXB_XB11",
             "CB00" : "CASTXB_CB00",
-            "FILLER": "SPACE(7)"
+            "XB12" : "CASTXB_XB12",
+            "FILLER": "SPACE(6)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XB_RPT"
+        "MIS_SRC_TABLE" : "CAST_XB_RPT"
     },
 
     "XF" : {
@@ -318,7 +470,7 @@
             "CB00" : [65,77]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XF'",
             "GI01" : "CASTXF_GI01",
@@ -337,7 +489,7 @@
             "FILLER" : "SPACE(4)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XF_RPT"
+        "MIS_SRC_TABLE" : "CAST_XF_RPT"
 
     },
 
@@ -361,14 +513,14 @@
             "CB00" : [52,63]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'XE'",
             "GI01" : "CASTXE_GI01",
             "GI03" : "CASTXE_GI03",
             "CB01" : "LEFT(CASTXE_COURSE_DEPT_NO + SPACE(12), 12)",
             "XB00" : "LEFT(CASTXE_SECTION_IDENTIFIER + SPACE(6), 6)",
-            "EB00" : "CASTXE_EB00",
+            "EB00" : "LEFT(CASTXE_EB00 + SPACE(9), 9)",
             "XF00" : "CASTXE_SESSION_IDENTIFIER",
             "XE01" : "CASE WHEN CASTXE_FAC_ASGMT_TYPE IS NOT NULL THEN CASTXE_FAC_ASGMT_TYPE ELSE ' ' END",
             "XE02" : "RIGHT('000' + CASTXE_FAC_ASGMT_PCT, 3)",
@@ -378,7 +530,7 @@
             "FILLER" : "SPACE(17)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_XE_RPT"
+        "MIS_SRC_TABLE" : "CAST_XE_RPT"
 
     },
 
@@ -406,11 +558,11 @@
             "SC18" : [46,47]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SC'",
             "GI01" : "CASTSC_GI01",
-            "GI03" : "SUBSTRING(CAST_CALWORK_SC_WORK_ID,9, 3)",
+            "GI03" : "SUBSTRING(CAST_CALWORK_SC_WORK_ID, 9, 3)",
             "SB00" : "LEFT(CASTSC_SB00 + SPACE(9), 9)",
             "SC01" : "CASTSC_SC01",
             "SC02" : "CASTSC_SC02",
@@ -419,15 +571,15 @@
             "SC05" : "CASTSC_SC05",
             "SC06" : "RIGHT('0000' + CASTSC_SC06, 4)",
             "SC07" : "RIGHT('0000' + CASTSC_SC07, 4)",
-            "SC08" : "RIGHT('00' + CASTSC_SC08, 2)",
-            "SC09" : "RIGHT('00' + CASTSC_SC09, 2)",
+            "SC08" : "RIGHT('00'   + CASTSC_SC08, 2)",
+            "SC09" : "RIGHT('00'   + CASTSC_SC09, 2)",
             "SC10" : "CASTSC_SC10",
             "SC11" : "CASTSC_SC11",
             "SC18" : "CASTSC_SC18",
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CALWORK_SC_WORK"
+        "MIS_SRC_TABLE" : "CAST_SC_RPT"
     },
 
     "CW" : {
@@ -445,10 +597,10 @@
             "SC14" : [25,33],
             "SC15" : [33,41],
             "SC16" : [41,43],
-            "SC17" : [43,46]
+            "SC17" : [43,47]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'CW'",
             "GI01" : "CASTCW_GI01",
@@ -463,7 +615,7 @@
             "FILLER" : "SPACE(34)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_CALWORK_CW_WORK"
+        "MIS_SRC_TABLE" : "CAST_CW_RPT"
     },
 
     "SS" : {
@@ -501,7 +653,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SS'",
             "GI01" : "CASTSS_GI01",
@@ -509,7 +661,7 @@
             "SB02" : "LEFT(CASTSS_SB02 + SPACE(3), 3)",
             "SB00" : "LEFT(CASTSS_SB00 + SPACE(9), 9)",
             "SS01" : "CASTSS_SS01",
-            "SS02" : "CASE WHEN CASTSS_SS02 IS NOT NULL THEN LEFT(CASTSS_SS02 + SPACE(6), 6) ELSE SPACE(6) END",
+            "SS02" : "CASE WHEN CASTSS_SS02 IS NOT NULL THEN LEFT(CASTSS_SS02 + SPACE(6), 6) ELSE REPLICATE('0',6) END",
             "SS03" : "CASTSS_SS03",
             "SS04" : "CASTSS_SS04",
             "SS05" : "CASTSS_SS05",
@@ -531,7 +683,7 @@
             "FILLER" : "SPACE(13)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SS_WORK"
+        "MIS_SRC_TABLE" : "CAST_SS_RPT"
     },
 
     "SY" : {
@@ -552,7 +704,7 @@
             "SY04" : [53,56]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SY'",
             "GI01" : "CASTSY_GI01",
@@ -566,7 +718,7 @@
             "SY04" : "LEFT(CASTSY_SY04 + SPACE(3), 3)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SY_WORK"
+        "MIS_SRC_TABLE" : "CAST_SY_RPT"
     },
 
     "SX" : {
@@ -591,7 +743,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SX'",
             "GI01" : "CASTSX_GI01",
@@ -610,7 +762,7 @@
             "FILLER" : "SPACE(3)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SX_RPT"
+        "MIS_SRC_TABLE" : "CAST_SX_RPT"
     },
 
     "SD" : {
@@ -624,11 +776,14 @@
             "SB02" : [9,12],
             "SB00" : [12,21],
             "SD01" : [21,22],
+            "SD02" : "000",
+            "SD03" : "N",
+            "SD04" : "000",
             "SD05" : [29,30]
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SD'",
             "GI01" : "CASTSD_GI01",
@@ -643,7 +798,7 @@
             "FILLER" : "SPACE(11)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SD_RPT"
+        "MIS_SRC_TABLE" : "CAST_SD_RPT"
     },
 
     "SG" : {
@@ -664,6 +819,7 @@
             "SG06" : [29,30],
             "SG07" : [30,31],
             "SG08" : [31,32],
+            "SG09" : "X",
             "SG10" : [34,35],
             "SG11" : [35,36],
             "SG12" : [36,41],
@@ -675,10 +831,12 @@
             "SG18" : [47,48],
             "SG19" : [48,49],
             "SG20" : [49,50],
-            "SG21" : [50,51]
+            "SG21" : [50,51],
+            "SG22" : [51,52],
+            "SG23" : [52,59]
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SG'",
             "GI01" : "CASTSG_GI01",
@@ -687,7 +845,7 @@
             "SG01" : "CASE WHEN CASTSG_SG01 IS NOT NULL THEN CASTSG_SG01 ELSE REPLICATE('X', 4) END",
             "SG02" : "CASE WHEN CASTSG_SG02 IS NOT NULL THEN CASTSG_SG02 ELSE REPLICATE('X', 4) END",
             "SG03" : "CASTSG_SG03",
-            "SG04" : "CASTSG_SG04",
+            "SG04" : "CASE WHEN CASTSG_SG04 IS NOT NULL THEN CASTSG_SG04 ELSE 'X' END",
             "SG05" : "CASTSG_SG05",
             "SG06" : "CASTSG_SG06",
             "SG07" : "CASTSG_SG07",
@@ -706,10 +864,18 @@
             "SG19" : "CASTSG_SG19",
             "SG20" : "CASTSG_SG20",
             "SG21" : "CASTSG_SG21",
-            "FILLER" : "SPACE(10)"
+            "SG22" : "CASTSG_SG22",
+            "SG23_A" : "CASTSG_SG23A",
+            "SG23_B" : "CASTSG_SG23B",
+            "SG23_C" : "CASTSG_SG23C",
+            "SG23_D" : "CASTSG_SG23D",
+            "SG23_E" : "CASTSG_SG23E",
+            "SG23_F" : "CASTSG_SG23F",
+            "SG23_G" : "CASTSG_SG23G",
+            "FILLER" : "SPACE(2)"
         },
 
-        "CAL_GOLD_TABLE" : "CAST_SG_WORK"
+        "MIS_SRC_TABLE" : "CAST_SG_RPT"
     },
 
     "SV" : {
@@ -721,9 +887,9 @@
             "GI90" : [1,3],
             "GI01" : [3,6],
             "GI03" : [6,9],
-            "SB02" : [9,12],
+            "SB28" : [9,12],
             "SB00" : [12,21],
-            "SV01" : [12,22],
+            "SV01" : [21,22],
             "SV03" : [23,25],
             "SV04" : [25,26],
             "SV05" : [26,27],
@@ -734,7 +900,7 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI09" : "'SV'",
             "GI01" : "CASTSV_GI01",
@@ -755,7 +921,7 @@
         },
 
 
-        "CAL_GOLD_TABLE" : "CAST_SV_WORK"
+        "MIS_SRC_TABLE" : "CAST_SV_WORK"
     },
 
     "SE" : {
@@ -796,6 +962,7 @@
             "EB01" : [18,19],
             "EB02" : [19,27],
             "EB03" : [27,28],
+            "EB04" : "X",
             "EB05" : [30,31],
             "EB06" : [31,32],
             "EB07" : [32,33],
@@ -808,12 +975,12 @@
 
         },
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {
 
             "GI90" : "'EB'",
             "GI01" : "CAHREB_GI01",
             "GI03" : "CAHREB_GI03",
-            "EB00" : "CAHREB_EB00",
+            "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
             "EB01" : "CAHREB_EB01",
             "EB02" : "CAHREB_EB02",
             "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",
@@ -832,7 +999,53 @@
         },
 
 
-        "CAL_GOLD_TABLE" : "CAHR_EB_RPT"
+        "MIS_SRC_TABLE" : "CAHR_EB_RPT"
+    },
+
+    "EJ" : {
+
+        "LENGTH" : 80,
+
+        "POSITION" : {
+
+            "GI90" : [1,3],
+            "GI01" : [3,6],
+            "GI03" : [6,9],
+            "EB00" : [9,18],
+            "EJ01" : [18,20],
+            "EJ02" : [20,21],
+            "EJ03" : [21,27],
+            "EJ04" : [27,30],
+            "EJ05" : [30,35],
+            "EJ08" : [45,50]
+
+        },
+
+        "FORMAT" : {
+
+            "GI90" : "'EB'",
+            "GI01" : "CAHREB_GI01",
+            "GI03" : "CAHREB_GI03",
+            "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
+            "EB01" : "CAHREB_EB01",
+            "EB02" : "CAHREB_EB02",
+            "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",
+            "EB04" : "'X '",
+            "EB05" : "CASE WHEN CAHREB_EB05 IS NOT NULL THEN CAHREB_EB05 ELSE 'C' END",
+            "EB06" : "CASE WHEN CAHREB_EB06 IS NOT NULL THEN CAHREB_EB06 ELSE SPACE(1) END",
+            "EB07" : "CASE WHEN CAHREB_EB07 IS NOT NULL THEN CAHREB_EB07 ELSE SPACE(1) END",
+            "EB08" : "CASE WHEN CAHREB_EB08 IS NOT NULL THEN CAHREB_EB08 ELSE SPACE(1) END",
+            "EB09" : "CASE WHEN CAHREB_EB09 IS NOT NULL THEN CAHREB_EB09 ELSE SPACE(1) END",
+            "EB10" : "SPACE(6)",
+            "EB11" : "CASE WHEN CAHREB_EB11 IS NOT NULL THEN CAHREB_EB11 ELSE SPACE(1) END",
+            "EB12" : "RIGHT( '000000' + CAST(CAHREB_EB12 AS VARCHAR), 6)",
+            "EB13" : "RIGHT( '000000' + CAST(CAHREB_EB13 AS VARCHAR), 6)",
+            "EB14" : "CAHREB_EB14",
+            "FILLER" : "SPACE(6)"
+        },
+
+
+        "MIS_SRC_TABLE" : "CAHR_EB_RPT"
     },
 
     "AA" : {
@@ -841,17 +1054,19 @@
 
         "POSITION" : {},
 
-        "CAL_GOLD_ATTRS" : {
+        "FORMAT" : {},
 
-            "GI90" : "'AA'",
-            "GI01" : "'221'",
-            "GI03" : "GI03_Term",
-            "SB00" : "CASE WHEN (SSN IS NOT NULL /*AND SSNum = 'Y'*/) THEN SSN ELSE 'D' + StudentID + SPACE(1) END",
-            "AA01" : "RegDate",
-            "AA02" : "AA02_Result"
-        },
+        "MIS_SRC_TABLE" : "L56_AA"
+    },
 
+    "SL" : {
 
-        "CAL_GOLD_TABLE" : "L56_AA"
+        "LENGTH" : 28,
+
+        "POSITION" : {},
+
+        "FORMAT" : {},
+
+        "MIS_SRC_TABLE" : "L56_SL"
     }
 }

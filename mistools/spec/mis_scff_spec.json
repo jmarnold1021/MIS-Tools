@@ -1,0 +1,50 @@
+{
+    "SCFF" : {
+
+        "FILENAMES" : [
+
+            "CCPG_*.txt",
+            "PELL_*.txt",
+            "ADT_*.txt",
+            "AAAS_*.txt",
+            "BABS_*.txt",
+            "CERT_*.txt",
+            "CTE_*.txt",
+            "WAGE_*.txt",
+            "XFER_*.txt",
+            "XFERLEVEL_*.txt"
+        ],
+
+        "HEADERS" : [
+
+            "GI03",
+            "SB00",
+            "CCPG",
+            "PELL",
+            "ADT",
+            "ADT_CCPG",
+            "ADT_PELL",
+            "AAAS",
+            "AAAS_CCPG",
+            "AAAS_PELL",
+            "BABS",
+            "BABS_CCPG",
+            "BABS_PELL",
+            "CERT",
+            "CERT_CCPG",
+            "CERT_PELL",
+            "XFERLEVEL",
+            "XFERLEVEL_CCPG",
+            "XFERLEVEL_PELL",
+            "CTE",
+            "CTE_CCPG",
+            "CTE_PELL",
+            "XFER",
+            "XFER_CCPG",
+            "XFER_PELL",
+            "WAGE",
+            "WAGE_CCPG",
+            "WAGE_PELL"
+        ]
+    }
+}
