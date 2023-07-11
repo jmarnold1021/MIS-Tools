@@ -6,7 +6,7 @@
 - [ ] Update setup.py with all specs/deps etc.
   - [ ] Begin versioning if actually distributing...
 - [ ] Determine how unit tests should actually work. currently just help ensure nothing serious has happend
-- [ ] Need a way to provide a custom confituration.
+- [ ] Need a way to provide a custom configuration.
   - [ ] Way to provide other types of db/upstream configurations.
 
 ### In Progress

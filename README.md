@@ -2,6 +2,46 @@
 
 Various tools for working with MIS-Data
 
+## Usage
+
+
+```powershell
+
+[2023-07-11 11:09 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py --help
+Usage: bin.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  coci_refresh  Refresh The COCI data from Curriculum Inventory
+  dod_refresh   Refresh all DOD data from source files
+  mis_export    Export MIS Data to Flat Files from Colleague RPT Tables
+  scff_refresh  Refresh The SCFF data from source files
+
+
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py mis_export --help
+Usage: bin.py mis_export [OPTIONS]
+
+  Export MIS Data to Flat Files from Colleague RPT Tables
+
+Options:
+  -r, --report TEXT     The MIS report to export data from
+  -g, --gi03 TEXT       The GI03 term for the report
+  -s, --sql-only        Print the SQL rather than create the export
+  -l, --log-level TEXT  Set the logging level for the command defaults to
+                        ERROR, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]
+  --help                Show this message and exit.
+
+
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py mis_export -r XB -g 234
+...
+ 
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py coci_refresh -c --safe
+...
+
+```
+ 
 ## Conventions
 
 * The PACKAGE_ROOT Directory is MIS-Tools

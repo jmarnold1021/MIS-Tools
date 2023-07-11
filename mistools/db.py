@@ -99,7 +99,7 @@ class DB:
     def exec_sp(self, sp_name):
 
         '''
-        Executes the porvided stored procedure
+        Executes the provided stored procedure
 
         :param str sp_name: The name of a Stored Procedure in this DB
 
@@ -167,7 +167,8 @@ class DB:
         if 'DELETE'   == sql[:6].upper() or \
            'UPDATE'   == sql[:6].upper() or \
            'INSERT'   == sql[:6].upper() or \
-           'TRUNCATE' == sql[:8].upper():
+           'TRUNCATE' == sql[:8].upper() or \
+           'ALTER'    == sql[:5].upper():
 
             cursor.commit()
             row_count = cursor.rowcount

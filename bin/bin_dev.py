@@ -17,13 +17,14 @@ sys.path.append("%s/../../MIS-Tools" % SCRIPT_DIR)
 from mistools    import misflatfile
 from mistools    import misdod
 from mistools    import mislog
+from mistools    import miscoci
 from mistools.db import DB
 
 @click.group(name='bin_dev')
 def bin_dev():
     pass
 
-@bin.command(name='dod_refresh_stuid', help='Refresh the DOD StuId Mappings')
+@bin_dev.command(name='dod_refresh_stuid', help='Refresh the DOD StuId Mappings')
 @click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to ERROR, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
 def dod_refresh_stuid(safe, log_level):
@@ -56,7 +57,7 @@ def dod_refresh_stuid(safe, log_level):
 
     sys.exit(0)
 
-@bin.command(name='dod_refresh_sb', help='Refresh the DOD StuId Mappings')
+@bin_dev.command(name='dod_refresh_sb', help='Refresh the DOD StuId Mappings')
 @click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to ERROR, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
 def dod_refresh_sb(safe, log_level):
@@ -88,7 +89,7 @@ def dod_refresh_sb(safe, log_level):
 
     sys.exit(0)
 
-@bin.command(name='dod_refresh_fr', help='Refresh the DOD StuId Mappings')
+@bin_dev.command(name='dod_refresh_fr', help='Refresh the DOD StuId Mappings')
 @click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to ERROR, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
 def dod_refresh_fr(safe, log_level):
@@ -122,7 +123,7 @@ def dod_refresh_fr(safe, log_level):
     sys.exit(0)
 
 
-@bin.command(name='dod_refresh_bac', help='Refresh/Add DOD data for the provided report/Gi03 pair')
+@bin_dev.command(name='dod_refresh_bac', help='Refresh/Add DOD data for the provided report/Gi03 pair')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
 @click.option('-g', '--gi03', type=str, help='The GI03 term for the ST report')
 @click.option('--update', is_flag=True, help='Update the DOD data for the provided Gi03')
@@ -157,7 +158,7 @@ def dod_refresh(report, gi03, update, log_level):
     db.close()
     sys.exit(0)
 
-@bin.command(name='ipeds_hr', help='Refresh the DOD StuId Mappings')
+@bin_dev.command(name='ipeds_hr', help='Refresh the DOD StuId Mappings')
 @click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
 def ipeds_hr(safe, log_level):
@@ -181,13 +182,13 @@ def ipeds_hr(safe, log_level):
     sys.exit(0)
 
 
-@bin.command(name='test', help='Run Stuff')
+@bin_dev.command(name='test', help='Run Stuff')
 def test():
 
     #misflatfile.sp_mis_export_g('220')
     #db = DB('ods')
     #db.exec_sql_file(SCRIPT_DIR + '/../mistools/schema/L56_DOD_SCHEMA.sql', stmt_delim = 'GO')
-    misdod.ref_dod_update_schema(report='SE')
+    miscoci.mis_coci_courses_parse()
 
 if __name__ == "__main__":
     bin_dev()
