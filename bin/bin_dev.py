@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import glob
+import json
 from datetime import datetime
 from datetime import timedelta
 
@@ -12,12 +13,14 @@ import click # cli dependancy
 
 # local deps
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+PACKAGE_DIR = '%s/..' % SCRIPT_DIR
 sys.path.append("%s/../../MIS-Tools" % SCRIPT_DIR)
 
 from mistools    import misflatfile
 from mistools    import misdod
 from mistools    import mislog
 from mistools    import miscoci
+from mistools    import mis320
 from mistools.db import DB
 
 @click.group(name='bin_dev')
@@ -185,10 +188,9 @@ def ipeds_hr(safe, log_level):
 @bin_dev.command(name='test', help='Run Stuff')
 def test():
 
-    #misflatfile.sp_mis_export_g('220')
-    #db = DB('ods')
-    #db.exec_sql_file(SCRIPT_DIR + '/../mistools/schema/L56_DOD_SCHEMA.sql', stmt_delim = 'GO')
-    miscoci.mis_coci_courses_parse()
+    mis320.mis_320_summary_parse('C:/Users/admin_ja/LTCCD/MIS-Tools/tmp/320_Section_summary_P3.txt')
+
+
 
 if __name__ == "__main__":
     bin_dev()
