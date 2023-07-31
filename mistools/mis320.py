@@ -8,13 +8,12 @@ from dateutil import parser # for string dates with no format...
 # lib deps
 from .lib import ffparser
 from . import mislog
+from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 MIS_320_SPEC_PATH = "%s/spec/mis_320_spec.json" % LIB_ROOT
 
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT # currently from lib root...
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
+CONFIGS = misconfig.mis_load_config()
 
 with open(MIS_320_SPEC_PATH) as mis_spec_file:
     MIS_320_SPEC = json.load(mis_spec_file)

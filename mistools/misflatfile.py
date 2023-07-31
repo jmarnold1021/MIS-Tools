@@ -13,6 +13,7 @@ from dateutil import parser # for string dates with no format...
 # lib deps
 from .lib import ffparser
 from . import mislog
+from . import misconfig
 
 #### All ####
 
@@ -23,10 +24,7 @@ DED_MIS_SPEC_PATH = "%s/spec/mis_ded_spec.json" % LIB_ROOT
 with open(DED_MIS_SPEC_PATH) as mis_spec_file:
     DED_MIS_SPEC = json.load(mis_spec_file)
 
-# pull in configs
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT # currently from lib root...
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
+CONFIGS = misconfig.mis_load_config()
 
 misff_log  = mislog.mis_console_logger('misflatfile', CONFIGS['MIS_FLAT_FILE']['LOG_LEVEL'])
 
@@ -42,6 +40,8 @@ CONNECTION_STRING = r'Driver=SQL Server;Server=%s;Database=%s;Trusted_Connection
 MIS_FF_EXPORT_ROOT = CONFIGS['MIS_FLAT_FILE']['MIS_FF_EXPORT_ROOT']
 TXT_FILE_LINE ="tx220%s%s%su22%s%sdat"
 DAT_FILE_TEMPLATE = r'U22%s%s.DAT'
+
+########################### EXPERIMENTAL SQL Decouple ################################################
 
 def _build_sql_g(report, gi03):
 
@@ -157,11 +157,35 @@ def _write_dat_file_g(report, rows, out_file, mode = 'w'):
 
 
             print(ff_line_acc)
+
         ff_acc.append(ff_line_acc)
         break
 
     print(ff_acc)
 
+def sp_mis_export_g(gi03):
+
+
+    # build sql from spec
+    sql = _build_sql_g('SP', gi03)
+
+    rows = _exec_query_g(sql)
+
+    #print(rows[0])
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SP')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
+
+    row_count = _write_dat_file_g('SP', rows, out_file)
+    return
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
+
+    _build_txt_file(row_count, 'SP', gi03, out_file)
+
+    return sql
+
+########################### EXPERIMENTAL SQL Decouple ################################################
 
 def _build_sql(report, gi03):
 
@@ -779,27 +803,6 @@ def sp_mis_export(gi03, sql_only = False):
 
     return sql
 
-def sp_mis_export_g(gi03):
-
-
-    # build sql from spec
-    sql = _build_sql_g('SP', gi03)
-
-    rows = _exec_query_g(sql)
-
-    #print(rows[0])
-
-    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SP')
-    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
-
-    row_count = _write_dat_file_g('SP', rows, out_file)
-    return
-    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
-
-    _build_txt_file(row_count, 'SP', gi03, out_file)
-
-    return sql
 
 def sf_mis_export(gi03, sql_only = False):
     '''

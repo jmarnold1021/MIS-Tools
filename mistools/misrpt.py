@@ -15,6 +15,7 @@ from datetime import datetime
 # lib deps
 from . import mislog
 from .db import DB
+from . import misconfig
 
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
@@ -36,9 +37,7 @@ LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 #    DOD_SCFF_SPEC = json.load(dod_spec_file)
 #
 ## DB configs
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
+CONFIGS = misconfig.mis_load_config()
 #
 MIS_RPT_CONFIGS = CONFIGS['MIS_RPT']
 #
