@@ -14,6 +14,7 @@ from datetime import datetime
 # lib deps
 from . import mislog
 from .db import DB
+from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 DOD_MIS_SPEC_PATH = "%s/spec/mis_dod_spec.json" % LIB_ROOT
@@ -33,11 +34,7 @@ with open(DOD_IPEDS_SPEC_PATH) as dod_spec_file:
 with open(DOD_SCFF_SPEC_PATH) as dod_spec_file:
     DOD_SCFF_SPEC = json.load(dod_spec_file)
 
-# DB configs
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
-
+CONFIGS = misconfig.mis_load_config()
 MIS_DOD_CONFIGS = CONFIGS['MIS_DOD']
 
 # possible configs/future globals

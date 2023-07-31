@@ -187,9 +187,9 @@ def ipeds_hr(safe, log_level):
 
 @bin_dev.command(name='test', help='Run Stuff')
 def test():
-
-    mis320.mis_320_summary_parse('C:/Users/admin_ja/LTCCD/MIS-Tools/tmp/320_Section_summary_P3.txt')
-
+    print(sys.platform)
+    print(sys.platlibdir)
+    print(os.environ)
 
 
 if __name__ == "__main__":

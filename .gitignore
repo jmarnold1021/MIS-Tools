@@ -127,6 +127,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# added by mistools
 configs/configs.json
 mistools/logs
 tmp/*
+*.swp

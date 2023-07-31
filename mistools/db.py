@@ -1,6 +1,6 @@
 
 """
-The DB Class holds the a db connections object,
+The DB Class holds a db connection object,
 and provides functions for Inserting, Deleting, and
 Querying data using the provided connection.
 """
@@ -10,13 +10,11 @@ import os
 import json
 
 from . import mislog
+from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
 
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
-
+CONFIGS = misconfig.mis_load_config()
 DB_CONFIGS = CONFIGS['DB']
 
 # possible globals/configs

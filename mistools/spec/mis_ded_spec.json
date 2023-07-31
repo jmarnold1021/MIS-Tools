@@ -581,8 +581,9 @@
 
         "MIS_SRC_TABLE" : "CAST_SC_RPT"
     },
-
     "CW" : {
+
+
 
         "LENGTH" : 80,
 
@@ -610,7 +611,7 @@
             "SC13" : "CASTCW_SC13",
             "SC14" : "CASTCW_SC14",
             "SC15" : "CASTCW_SC15",
-            "SC16" : "RIGHT( '00' + CASTCW_SC16, 2)",
+            "SC16" : "CASE WHEN CASTCW_SC16 IS NULL THEN '00' ELSE RIGHT( '00' + CASTCW_SC16, 2) END",
             "SC17" : "CASTCW_SC17",
             "FILLER" : "SPACE(34)"
         },

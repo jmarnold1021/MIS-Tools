@@ -15,23 +15,17 @@ import requests # I forget if this is third party
 # lib deps
 from . import mislog
 from .db import DB
-
+from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 
-# DB configs
-CONFIGS_PATH = "%s/../configs/configs.json" % LIB_ROOT
-with open(CONFIGS_PATH) as configs:
-    CONFIGS = json.load(configs)
-
+CONFIGS = misconfig.mis_load_config()
 MIS_COCI_CONFIGS = CONFIGS['MIS_COCI']
 
-# set up global lib logger
+# set up lib logger
 coci_log  = mislog.mis_console_logger('miscoci', MIS_COCI_CONFIGS['LOG_LEVEL'])
 
-MIS_COCI_COURSES_URL = "https://coci2.ccctechcenter.org/courses/excel?college_filter[]=LAKE TAHOE"
-MIS_COCI_PROGRAMS_URL = "https://coci2.ccctechcenter.org/programs/excel?college_filter[]=LAKE TAHOE"
-
+MIS_COCI_URL = "https://coci2.ccctechcenter.org/%s/excel?college_filter[]=%s"
 MIS_COCI_SRC_DT_FRMT = '%Y-%m-%d'
 MIS_COCI_ADJ_DT_FRMT = '%Y%m%d' # better for sql etc..
 MIS_COCI_DEFAULT_DATE = '1908-08-08' # this is the default that DOD provides...so ccccco default...
@@ -41,13 +35,14 @@ def mis_coci_courses_parse():
     '''
     Parse Course data from Curriculum Inventory(COCI)
 
-    :return: The 2d array of coci data
+    :return: The 2d array of coci course data
 
     :rtype: list
 
     '''
 
-    r = requests.get(MIS_COCI_COURSES_URL)
+    courses_url = MIS_COCI_URL % ('courses', MIS_COCI_CONFIGS['COLLEGE'])
+    r = requests.get(courses_url)
 
     if r.status_code != 200:
         coci_log.critical('Error fetching COCI Course Data: code %d' % r.status_code)
@@ -81,13 +76,14 @@ def mis_coci_programs_parse():
     '''
     Parse Program data from Curriculum Inventory(COCI)
 
-    :return: The 2d array of coci data
+    :return: The 2d array of coci program data
 
     :rtype: list
 
     '''
 
-    r = requests.get(MIS_COCI_PROGRAMS_URL)
+    programs_url = MIS_COCI_URL % ('programs', MIS_COCI_CONFIGS['COLLEGE'])
+    r = requests.get(programs_url)
 
     if r.status_code != 200:
         coci_log.critical('Error fetching COCI Course Data: code %d' % r.status_code)
