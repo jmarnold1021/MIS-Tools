@@ -1,4 +1,4 @@
-# MIS-Tools Tasks 
+# MIS-Tools Tasks
 
 
 ### Todo
@@ -6,12 +6,15 @@
 - [ ] Update setup.py with all specs/deps etc.
   - [ ] Begin versioning if actually distributing...
 - [ ] Determine how unit tests should actually work. currently just help ensure nothing serious has happend
-- [ ] Need a way to provide a custom configuration.
-  - [ ] Way to provide other types of db/upstream configurations.
+- [ ] Way to provide other types of db/upstream configurations.
 
 ### In Progress
 
-- [ ] SP export SQL decouple initial changes...kind of a picnic
+- [ ] SP export SQL decouple initial changes...kind of a picnic not sure if worth it...
+
+
+### Done
+- [x] Need a way to provide a custom configuration.
 
 ## More examples of TODO lists in github markdown.
 
