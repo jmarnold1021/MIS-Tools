@@ -7,8 +7,8 @@ Various tools for working with MIS-Data
 
 ```powershell
 
-[2023-07-11 11:09 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py --help
-Usage: bin.py [OPTIONS] COMMAND [ARGS]...
+[2023-07-11 11:09 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\misbin.py --help
+Usage: misbin.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
@@ -17,11 +17,11 @@ Commands:
   coci_refresh  Refresh The COCI data from Curriculum Inventory
   dod_refresh   Refresh all DOD data from source files
   mis_export    Export MIS Data to Flat Files from Colleague RPT Tables
+  mis_version   List the currently installed version of MIS-Tools
   scff_refresh  Refresh The SCFF data from source files
 
-
-[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py mis_export --help
-Usage: bin.py mis_export [OPTIONS]
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\misbin.py mis_export --help
+Usage: misbin.py mis_export [OPTIONS]
 
   Export MIS Data to Flat Files from Colleague RPT Tables
 
@@ -34,14 +34,17 @@ Options:
   --help                Show this message and exit.
 
 
-[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py mis_export -r XB -g 234
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\misbin.py mis_version
 ...
- 
-[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\bin.py coci_refresh -c --safe
+
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\misbin.py mis_export -r XB -g 234
+...
+
+[2023-07-11 11:13 admin_ja@JAREDSERVER MIS-Tools]$ python .\bin\misbin.py coci_refresh -c --safe
 ...
 
 ```
- 
+
 ## Conventions
 
 * The PACKAGE_ROOT Directory is MIS-Tools
@@ -53,6 +56,8 @@ Options:
 * Ensure unit tests still pass
 
 ```powershell
+
+**Needs update...**
 
 # From PACKAGE_ROOT run
 $ .\bin\test.ps1
@@ -134,10 +139,11 @@ $
 
 ```
 
-If no new dependancies are needed can run...
+If no new dependancies are needed can run...it will update the globally installed version regardless of any version changes!!!
 
 ```powershell
 
+# handy for dev...
 .\bin\build.ps1
 
 ```
@@ -153,6 +159,9 @@ To get a new version with updated source code.
 # installed package version
 $ pip install .\dist\mistools-0.10.4-py3-none-any.whl [-U]
 
+# will reinstall if the version has not been changed in setup.py handy for dev...
+$ pip install --force-reinstall .\dist\mistools-0.10.4-py3-none-any.whl
+
 # check installation
 $ pip list | grep mistools
 => mistools                  0.10.4
@@ -165,7 +174,11 @@ $ python
 
 ```
 
+It will install the Binary misbin.py to the Root Python install directory under Scripts...May need to add this to path.
+
 ## Configuration
+
+On Windows the config should be placed in C:/Users/%USER%/Documents/MIS-Tools/configs.json atm.
 
 Current Configuration options...
 
@@ -212,8 +225,6 @@ Current Configuration options...
 }
 
 ```
-
-**This will change soon since installed versions will need a way to have configs provided probably using a path paramater. Packaged version will fail atm sourcing this file!!!**
 
 ## Python Packaging Help Docs I Roughly Used
 [Packaging Docs](https://medium.com/analytics-vidhya/how-to-create-a-python-library-7d5aea80cc3f)<br>

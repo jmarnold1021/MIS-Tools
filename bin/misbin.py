@@ -6,6 +6,9 @@ import glob
 from datetime import datetime
 from datetime import timedelta
 
+# build deps
+import pkg_resources  # part of setuptools
+
 # third-party
 import click # cli dependancy
 
@@ -22,6 +25,18 @@ from mistools.db import DB
 @click.group(name='bin')
 def bin():
     pass
+
+@bin.command(name='mis_version', help='List the currently installed version of MIS-Tools')
+def mis_version():
+
+    mis_log = mislog.mis_console_logger('mis_version', 'INFO')
+    try:
+        version = pkg_resources.require("mistools")[0].version
+    except pkg_resources.DistributionNotFound as e:
+        version = 'Local Copy'
+
+
+    mis_log.info('MIS-Tools version: %s' % version)
 
 @bin.command(name='mis_export', help='Export MIS Data to Flat Files from Colleague RPT Tables')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
