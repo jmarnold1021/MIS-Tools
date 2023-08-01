@@ -6,7 +6,7 @@ setup(
     scripts=['bin/misbin.py'],
     packages=find_packages(include=['mistools', 'mistools.lib'], exclude=("mistools.tests",)), # include root module and local modules sub dirs with __init__ files...
     package_data={'mistools' : ['schema/*', 'spec/*']},                 # include local config/data files from LIB_ROOT
-    version='1.0.0',
+    version='1.1.0',
     description='Library containing tools for working with MIS Data',
     author='Jared Arnold',
     license='MIT',
