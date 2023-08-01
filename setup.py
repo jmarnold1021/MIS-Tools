@@ -1,12 +1,15 @@
 from setuptools import find_packages, setup
+import json
 
+with open('version.json') as version_file:
+    version = json.load(version_file)['version']
 
 setup(
     name='mistools',
     scripts=['bin/misbin.py'],
     packages=find_packages(include=['mistools', 'mistools.lib'], exclude=("mistools.tests",)), # include root module and local modules sub dirs with __init__ files...
     package_data={'mistools' : ['schema/*', 'spec/*']},                 # include local config/data files from LIB_ROOT
-    version='1.1.0',
+    version=version,
     description='Library containing tools for working with MIS Data',
     author='Jared Arnold',
     license='MIT',
