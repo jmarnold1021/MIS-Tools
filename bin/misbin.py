@@ -3,6 +3,7 @@ import os
 import sys
 import logging
 import glob
+import json
 from datetime import datetime
 from datetime import timedelta
 
@@ -30,13 +31,28 @@ def bin():
 def mis_version():
 
     mis_log = mislog.mis_console_logger('mis_version', 'INFO')
+    try: # nice for dev...an checking version upateds happen
+
+        with open('%s/../version.json' % SCRIPT_DIR) as version_file:
+            local_version = json.load(version_file)['version']
+
+        mis_log.info("Local Version: %s" % local_version)
+
+    except FileNotFoundError as e:
+
+        pass #... no local version
+
+
     try:
+
         version = pkg_resources.require("mistools")[0].version
+        mis_log.info("Global Version: %s" % version)
+
     except pkg_resources.DistributionNotFound as e:
-        version = 'Local Copy'
 
+        if not local_version and not version: # I don't believe there should ever not be one of these around.
+            mis_log.critical("No version info found fix this!!!!!")
 
-    mis_log.info('MIS-Tools version: %s' % version)
 
 @bin.command(name='mis_export', help='Export MIS Data to Flat Files from Colleague RPT Tables')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
