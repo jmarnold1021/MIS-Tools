@@ -16,6 +16,8 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 PACKAGE_DIR = '%s/..' % SCRIPT_DIR
 sys.path.append("%s/../../MIS-Tools" % SCRIPT_DIR)
 
+import pkg_resources  # part of setuptools
+
 from mistools    import misflatfile
 from mistools    import misdod
 from mistools    import mislog
@@ -187,10 +189,42 @@ def ipeds_hr(safe, log_level):
 
 @bin_dev.command(name='test', help='Run Stuff')
 def test():
-    print(sys.platform)
-    print(sys.platlibdir)
-    print(os.environ)
 
+    mis_log = mislog.mis_console_logger('test', 'INFO')
+    local_version = None
+    version = None
+    try: # nice for dev...an checking version upateds happen
+
+        with open('%s/../version.son' % SCRIPT_DIR) as version_file:
+            local_version = json.load(version_file)['version']
+
+        mis_log.info("Local Version: %s" % local_version)
+
+    except FileNotFoundError as e:
+
+        pass #... no local version
+
+
+    try:
+
+        version = pk_resources.require("mistools")[0].version # pulls version from package insalled package
+        mis_log.info("Global Version: %s" % version)
+ 
+    except pkg_resources.DistributionNotFound as e:
+
+        if not local_version and not version: # I don't believe there should ever not be one of these around.
+
+            mis_log.critical("No version info found fix this!!!!!")
+            sys.exit(1)
+
+    except Exception as e:
+
+        if not local_version and not version: # I don't believe there should ever not be one of these around.
+
+            mis_log.critical("No version info found fix this!!!!!")
+            sys.exit(1)
+
+    sys.exit(0)
 
 if __name__ == "__main__":
     bin_dev()

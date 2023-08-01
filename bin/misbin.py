@@ -31,28 +31,41 @@ def bin():
 def mis_version():
 
     mis_log = mislog.mis_console_logger('mis_version', 'INFO')
+
+    local_version = None
+    version = None
+
     try: # nice for dev...an checking version upateds happen
 
         with open('%s/../version.json' % SCRIPT_DIR) as version_file:
             local_version = json.load(version_file)['version']
 
-        mis_log.info("Local Version: %s" % local_version)
-
     except FileNotFoundError as e:
 
-        pass #... no local version
+        pass #... no local version don't really need to show this...
 
 
     try:
 
-        version = pkg_resources.require("mistools")[0].version
-        mis_log.info("Global Version: %s" % version)
+        version = pkg_resources.require("mistools")[0].version # pulls version from package insalled package
 
     except pkg_resources.DistributionNotFound as e:
 
         if not local_version and not version: # I don't believe there should ever not be one of these around.
-            mis_log.critical("No version info found fix this!!!!!")
 
+            mis_log.critical("No version info found fix this!!!!!")
+            sys.exit(1)
+
+
+    if version == local_version or not local_version:
+        mis_log.info("Version: %s" % version)
+        sys.exit(0)
+
+   
+    mis_log.info("Local Version: %s" % local_version)
+    mis_log.info("Installed Version: %s" % version)
+
+    sys.exit(0)
 
 @bin.command(name='mis_export', help='Export MIS Data to Flat Files from Colleague RPT Tables')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
