@@ -340,7 +340,8 @@
             "SB35" : [216,226],
             "SB36" : [226,227],
             "SB37" : [227,228],
-            "SB38" : [228,422]
+            "SB38" : [228,422],
+            "SB39" : [422,424]
 
         },
 
@@ -388,7 +389,9 @@
             "SB36" : "CASTSB_SB36",
             "SB37" : "CASTSB_SB37",
             "SB38" : "REPLICATE('N', '194')",
-            "FILLER" : "SPACE(9)"
+            "SB39_A" : "CASE WHEN CASTSB_SB39A IS NOT NULL THEN CASTSB_SB39A ELSE 'X' END",
+            "SB39_B" : "CASE WHEN CASTSB_SB39B IS NOT NULL THEN CASTSB_SB39B ELSE 'X' END",
+            "FILLER" : "SPACE(7)"
 
         },
 
@@ -834,7 +837,10 @@
             "SG20" : [49,50],
             "SG21" : [50,51],
             "SG22" : [51,52],
-            "SG23" : [52,59]
+            "SG23" : [52,59],
+            "SG24" : [59,60],
+            "SG25" : [60,61],
+            "SG26" : [61,63]
         },
 
         "FORMAT" : {
@@ -873,7 +879,11 @@
             "SG23_E" : "CASTSG_SG23E",
             "SG23_F" : "CASTSG_SG23F",
             "SG23_G" : "CASTSG_SG23G",
-            "FILLER" : "SPACE(2)"
+            "SG24" : "CASE WHEN CASTSG_SG24 IS NOT NULL THEN CASTSG_SG24 ELSE 'X' END",
+            "SG25" : "CASE WHEN CASTSG_SG25 IS NOT NULL THEN CASTSG_SG25 ELSE 'Y' END",
+            "SG26_A" : "CASE WHEN CASTSG_SG26A IS NOT NULL THEN CASTSG_SG26A ELSE 'X' END",
+            "SG26_B" : "CASE WHEN CASTSG_SG26B IS NOT NULL THEN CASTSG_SG26B ELSE 'X' END",
+            "FILLER" : "SPACE(8)"
         },
 
         "MIS_SRC_TABLE" : "CAST_SG_RPT"
