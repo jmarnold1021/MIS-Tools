@@ -23,6 +23,8 @@ from mistools    import misdod
 from mistools    import mislog
 from mistools    import miscoci
 from mistools    import mis320
+from mistools    import misrpt
+from mistools    import misnsc
 from mistools.db import DB
 
 @click.group(name='bin_dev')
@@ -189,42 +191,7 @@ def ipeds_hr(safe, log_level):
 
 @bin_dev.command(name='test', help='Run Stuff')
 def test():
-
-    mis_log = mislog.mis_console_logger('test', 'INFO')
-    local_version = None
-    version = None
-    try: # nice for dev...an checking version upateds happen
-
-        with open('%s/../version.son' % SCRIPT_DIR) as version_file:
-            local_version = json.load(version_file)['version']
-
-        mis_log.info("Local Version: %s" % local_version)
-
-    except FileNotFoundError as e:
-
-        pass #... no local version
-
-
-    try:
-
-        version = pk_resources.require("mistools")[0].version # pulls version from package insalled package
-        mis_log.info("Global Version: %s" % version)
- 
-    except pkg_resources.DistributionNotFound as e:
-
-        if not local_version and not version: # I don't believe there should ever not be one of these around.
-
-            mis_log.critical("No version info found fix this!!!!!")
-            sys.exit(1)
-
-    except Exception as e:
-
-        if not local_version and not version: # I don't believe there should ever not be one of these around.
-
-            mis_log.critical("No version info found fix this!!!!!")
-            sys.exit(1)
-
-    sys.exit(0)
+    pass
 
 if __name__ == "__main__":
     bin_dev()

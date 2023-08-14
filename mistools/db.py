@@ -8,20 +8,21 @@ Querying data using the provided connection.
 import pyodbc
 import os
 import json
+from decimal import Decimal
+from datetime import datetime
 
 from . import mislog
 from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 
-CONFIGS = misconfig.mis_load_config()
-DB_CONFIGS = CONFIGS['DB']
-
 # possible globals/configs
 DB_CONN_STR_TEMPLATE = r'Driver=SQL Server;Server=%s;Database=%s;Trusted_Connection=yes;'
 DB_MAX_BATCH = 1000
 
 # global lib logger...
+CONFIGS = misconfig.mis_load_config()
+DB_CONFIGS = CONFIGS['DB']
 db_log  = mislog.mis_console_logger('db_log', DB_CONFIGS['LOG_LEVEL'])
 
 class DB:
@@ -46,9 +47,6 @@ class DB:
         db_config_name = db_config_name.strip().upper() # adjust user input
 
         self.name = db_config_name # for logging instance stuff
-
-        with open(CONFIGS_PATH) as configs:
-            configs = json.load(configs)
 
         if db_config_name not in DB_CONFIGS or \
            'SERVER_NAME'  not in DB_CONFIGS[db_config_name] or \
@@ -75,6 +73,26 @@ class DB:
 
         db_log.debug('Calling Exit and Closing Connection for %s after context manager' % self.name)
         self.close()
+
+    def get_attrs(self, table):
+
+        '''
+        Return the DB attrs for a provided table.
+
+        :param str table_name
+
+        :return: list of attrs
+
+        :rtype: list
+
+        '''
+
+        query = 'SELECT TOP(1)* FROM %s' % table
+        cursor = self.cnxn.cursor()
+        cursor.execute( query )
+        columns = [column[0] for column in cursor.description]
+
+        return columns
 
     def truncate(self, table):
 
@@ -129,14 +147,20 @@ class DB:
 
         '''
 
-        with open(sql_file_path, 'r') as sql_lines:
-            sql_script = sql_lines.readlines()
+        try:
 
-        sql_script = ''.join(sql_script) # return to buffer
-        #print(sql_script)
+            with open(sql_file_path, 'r') as sql_lines:
+                sql_script = sql_lines.readlines()
+
+            sql_script = ''.join(sql_script) # return to buffer
+
+        except Exception as e: # not the best way to do this should check for valid types/paths first
+            sql_script = sql_file_path
 
         for stmt in sql_script.split(stmt_delim):
-            #print(stmt)
+
+            if len(stmt) == 0:
+                continue
 
             with self.cnxn.cursor() as cur:
                 cur.execute(stmt)
@@ -190,7 +214,7 @@ class DB:
 
         return data
 
-    def insert_batch(self, resource, data, batch_size=DB_MAX_BATCH):
+    def insert_batch(self, resource, data, dt_format = '%Y%m%d', batch_size=DB_MAX_BATCH):
 
         '''
         Batch inserts the provided data to the provided resource
@@ -198,6 +222,8 @@ class DB:
         :param str resource: db table/destination.
 
         :param list data: list of lists containt data elements to insert.
+
+        :param int dt_format: Specify the format of Datetime's for downstream
 
         :param int batch_size: How many rows to insert in a single batch
 
@@ -210,13 +236,19 @@ class DB:
         if batch_size > DB_MAX_BATCH:
             batch_size = DB_MAX_BATCH
 
+
+        if len(data) == 0:
+            return 0
+
         # get values from dict data rows
-        if len(data) != 0 and \
-           type(data[0]) == dict:
+        if type(data[0]) == dict:
+
             data = [list(row.values()) for row in data]
 
         db_lines = [] # (..row[0]..), (..row[1]..), ...
         for row in data:
+
+            # all these maps and lambda's need to go.....
 
             # strings
             db_line = map(lambda x: x.replace( "'", "''") if type(x) == str else x, row) # add sql '' apostrophe in abbrevs
@@ -225,8 +257,31 @@ class DB:
             # None
             db_line = map(lambda x: 'NULL'  if x is None else x, db_line)
 
+            # better below
+            db_line = list(db_line)
+
+            # bools/ints/dates oh my!!!
+            for idx in range(0, len(db_line)):
+
+                if type(db_line[idx]) == int or type(db_line[idx]) == Decimal:
+                    db_line[idx] = str(db_line[idx])
+
+                if type(db_line[idx]) == bool:
+                   if not db_line[idx]:
+                       db_line[idx] = '0'
+                   else:
+                       db_line[idx] = '1'
+
+                if type(db_line[idx]) == datetime:
+                        db_line[idx] = db_line[idx].strftime(dt_format)
+
+
+            #print(list(db_line))
             db_line = ','.join(db_line) # create sql batch insert line
             db_line = '(' + db_line + ')'
+
+
+            #print(db_line)
 
             db_lines.append(db_line)
 

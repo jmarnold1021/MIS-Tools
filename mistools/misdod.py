@@ -44,7 +44,6 @@ MIS_DOD_ADJ_DT_FRMT = '%Y%m%d' # better for sql etc..
 # set up global lib logger
 dod_log  = mislog.mis_console_logger('misdod', MIS_DOD_CONFIGS['LOG_LEVEL'])
 
-
 def _dod_ipeds_adj_year(data):
 
    for row in data:
@@ -900,7 +899,7 @@ def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
         return dod_data # only do 1 ever...
 
 
-def ref_dod_update_db(data, report = None, gi03 = None, full = None, safe = False):
+def ref_dod_update_db(data, report = None, gi03 = None, full = None):
     '''
     Update any DOD data referential data in the Database
 
@@ -940,16 +939,14 @@ def ref_dod_update_db(data, report = None, gi03 = None, full = None, safe = Fals
         total_rows += len(data[report])
         total_tables += 1
 
-        if safe:
-
-            dod_log.info('Will clear and insert %d rows to %s' % (len(data[report]), table))
+        if total_rows == 0:
             continue
 
         if full:
 
             schema_path = DOD_SCHEMA_TEMPLATE % report
             dod_log.info('Updating schema for %s' % report)
-            db.exec_sql_file(schema_path, stmt_delim = 'GO')
+            db.exec_sql_file(schema_path, stmt_delim = 'GO\n')
 
         elif gi03:
 
@@ -1061,7 +1058,7 @@ def scff_dod_update_db(data, gi03 = None, full = None, safe = False):
 
         schema_path = DOD_SCHEMA_TEMPLATE % 'SCFF'
         dod_log.info('Updating schema for SCFF')
-        db.exec_sql_file(schema_path, stmt_delim = 'GO')
+        db.exec_sql_file(schema_path, stmt_delim = 'GO\n')
 
     elif gi03:
 

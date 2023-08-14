@@ -1,0 +1,36 @@
+{
+    "STUDENT_TRACKER": [
+
+        "RecordKey",
+        "ColleaguePersonId",
+        "RecordFound",
+        "SearchDate",
+        "CollegeCode",
+        "CollegeName",
+        "CollegeState",
+        "CollegeType",
+        "CollegePublicPrivate",
+        "CaliforniaCommunityCollege",
+        "EnrollmentBegin",
+        "EnrollmentEnd",
+        "EnrollmentStatus",
+        "ClassLevel",
+        "Major1",
+        "Cip1",
+        "Major2",
+        "Cip2",
+        "Graduated",
+        "GraduationDate",
+        "DegreeTitle",
+        "DegreeMajor1",
+        "DegreeCip1",
+        "DegreeMajor2",
+        "DegreeCip2",
+        "DegreeMajor3",
+        "DegreeCip3",
+        "DegreeMajor4",
+        "DegreeCip4",
+        "CollegeSequence",
+        "MisPersonId"
+    ]
+}
