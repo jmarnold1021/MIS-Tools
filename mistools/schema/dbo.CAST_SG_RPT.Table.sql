@@ -1,0 +1,63 @@
+DROP TABLE [dbo].[CAST_SG_RPT]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CAST_SG_RPT]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[CAST_SG_RPT](
+	[CAST_SG_RPT_ID] [int] NOT NULL,
+	[CAST_SG_RPT_FLAG] [bit] NOT NULL,
+	[CAST_SG_WORK_ID] [varchar](10) NULL,
+	[CASTSG_GI01] [varchar](3) NULL,
+	[CASTSG_GI03] [varchar](3) NULL,
+	[CASTSG_SB00] [varchar](9) NULL,
+	[CASTSG_SG01] [varchar](4) NULL,
+	[CASTSG_SG02] [varchar](4) NULL,
+	[CASTSG_SG03] [varchar](1) NULL,
+	[CASTSG_SG04] [varchar](1) NULL,
+	[CASTSG_SG05] [varchar](1) NULL,
+	[CASTSG_SG06] [varchar](1) NULL,
+	[CASTSG_SG07] [varchar](1) NULL,
+	[CASTSG_SG09] [varchar](2) NULL,
+	[CASTSG_SG10] [varchar](1) NULL,
+	[CASTSG_SG08] [varchar](1) NULL,
+	[CASTSG_STUDENT_ID] [varchar](7) NULL,
+	[CASTSG_SG11] [varchar](1) NULL,
+	[CASTSG_SG12] [varchar](5) NULL,
+	[CASTSG_SG13] [varchar](1) NULL,
+	[CASTSG_SG14_SOURCE] [varchar](1) NULL,
+	[CASTSG_SG14_STATUS] [varchar](1) NULL,
+	[CASTSG_SG15] [varchar](1) NULL,
+	[CASTSG_SG16] [varchar](1) NULL,
+	[CASTSG_SG17] [varchar](1) NULL,
+	[CASTSG_SG18] [varchar](1) NULL,
+	[CASTSG_SG19] [varchar](1) NULL,
+	[CASTSG_SG20] [varchar](1) NULL,
+	[CASTSG_SG21] [varchar](1) NULL,
+	[CASTSG_KEY_IDX] [varchar](25) NULL,
+	[CASTSG_SG22] [varchar](1) NULL,
+	[CASTSG_SG23A] [varchar](1) NULL,
+	[CASTSG_SG23B] [varchar](1) NULL,
+	[CASTSG_SG23C] [varchar](1) NULL,
+	[CASTSG_SG23D] [varchar](1) NULL,
+	[CASTSG_SG23E] [varchar](1) NULL,
+	[CASTSG_SG23F] [varchar](1) NULL,
+	[CASTSG_SG23G] [varchar](1) NULL,
+	[CASTSG_SG24] [varchar](1) NULL,
+	[CASTSG_SG25] [varchar](1) NULL,
+	[CASTSG_SG26A] [varchar](1) NULL,
+	[CASTSG_SG26B] [varchar](1) NULL,
+ CONSTRAINT [PK_SG_RPT_ID] PRIMARY KEY CLUSTERED 
+(
+	[CAST_SG_RPT_ID] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF__CAST_SG_R__CAST___5C0B0FC3]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[CAST_SG_RPT] ADD  DEFAULT ((1)) FOR [CAST_SG_RPT_FLAG]
+END
+GO

@@ -30,7 +30,7 @@ MIS_COCI_SRC_DT_FRMT = '%Y-%m-%d'
 MIS_COCI_ADJ_DT_FRMT = '%Y%m%d' # better for sql etc..
 MIS_COCI_DEFAULT_DATE = '1908-08-08' # this is the default that DOD provides...so ccccco default...
 
-def mis_coci_courses_parse():
+def mis_coci_courses_parse(dict_read=False, headers=False):
 
     '''
     Parse Course data from Curriculum Inventory(COCI)
@@ -61,7 +61,7 @@ def mis_coci_courses_parse():
 
         data.append(row_adj)
 
-    return data
+    return data # no headers/keys
 
 def mis_coci_courses_update_db(data):
 

@@ -2,7 +2,6 @@ from setuptools import find_packages, setup
 import json
 import sys
 
-version = '0.0.0'
 with open('version.json') as version_file:
     version = json.load(version_file)['version']
 
@@ -10,7 +9,7 @@ with open('version.json') as version_file:
 scripts = ['bin/misbin.py']
 
 
-# Platform Dependant Scripts ...  not this requires the app is built on the same platform it is being distributed too.................real thinky.....
+# Platform Dependant Scripts...
 if sys.platform.startswith('win32'): # WINDOWS
     scripts.append('bin/mis_rpt_backup.ps1')
 

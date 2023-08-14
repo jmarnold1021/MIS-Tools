@@ -1,14 +1,11 @@
-USE [ODS_production]
-GO
-/****** Object:  Table [dbo].[L56_DOD_EB]    Script Date: 5/12/2023 12:01:39 PM ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[L56_DOD_EB]') AND type in (N'U'))
 DROP TABLE [dbo].[L56_DOD_EB]
 GO
-/****** Object:  Table [dbo].[L56_DOD_EB]    Script Date: 5/12/2023 12:01:39 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[L56_DOD_EB]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[L56_DOD_EB](
 	[GI01] [varchar](3) NULL,
 	[GI03] [varchar](3) NOT NULL,
@@ -33,4 +30,5 @@ CREATE TABLE [dbo].[L56_DOD_EB](
 	[EB00] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO

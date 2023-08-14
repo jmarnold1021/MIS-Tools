@@ -1,0 +1,58 @@
+DROP TABLE [dbo].[CAST_SS_RPT]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CAST_SS_RPT]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[CAST_SS_RPT](
+	[CAST_SS_RPT_ID] [int] NOT NULL,
+	[CAST_SS_RPT_FLAG] [bit] NOT NULL,
+	[CAST_SS_WORK_ID] [varchar](10) NULL,
+	[CAST_SS_WORK_ADDDATE] [datetime] NULL,
+	[CAST_SS_WORK_ADDOPR] [varchar](20) NULL,
+	[CAST_SS_WORK_ADDTIME] [datetime] NULL,
+	[CAST_SS_WORK_CHGDATE] [datetime] NULL,
+	[CAST_SS_WORK_CHGOPR] [varchar](20) NULL,
+	[CAST_SS_WORK_CHGTIME] [datetime] NULL,
+	[CASTSS_GI01] [varchar](3) NULL,
+	[CASTSS_GI03] [varchar](3) NULL,
+	[CASTSS_SB00] [varchar](64) NULL,
+	[CASTSS_SB02] [varchar](3) NULL,
+	[CASTSS_SS01] [varchar](1) NULL,
+	[CASTSS_SS02] [varchar](6) NULL,
+	[CASTSS_SS03] [varchar](2) NULL,
+	[CASTSS_SS04] [varchar](2) NULL,
+	[CASTSS_SS05] [varchar](2) NULL,
+	[CASTSS_SS06] [varchar](1) NULL,
+	[CASTSS_SS07] [varchar](4) NULL,
+	[CASTSS_SS08] [varchar](1) NULL,
+	[CASTSS_SS09] [varchar](1) NULL,
+	[CASTSS_SS10] [varchar](1) NULL,
+	[CASTSS_SS11] [varchar](4) NULL,
+	[CASTSS_STUDENT_ID] [varchar](10) NULL,
+	[CASTSS_GI01_INST_ID] [varchar](10) NULL,
+	[CASTSS_SS02_ACAD_PROG] [varchar](20) NULL,
+	[CASTSS_SS12] [varchar](6) NULL,
+	[CASTSS_SS12_ACAD_PROG] [varchar](20) NULL,
+	[CASTSS_SS13] [varchar](2) NULL,
+	[CASTSS_SS14] [varchar](2) NULL,
+	[CASTSS_SS15] [varchar](2) NULL,
+	[CASTSS_SS16] [varchar](1) NULL,
+	[CASTSS_SS17] [varchar](4) NULL,
+	[CASTSS_SS18] [varchar](1) NULL,
+	[CASTSS_SS19] [varchar](1) NULL,
+	[CASTSS_SS20] [varchar](3) NULL,
+ CONSTRAINT [PK_SS_RPT_ID] PRIMARY KEY CLUSTERED 
+(
+	[CAST_SS_RPT_ID] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF__CAST_SS_R__CAST___4DD8F34A]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[CAST_SS_RPT] ADD  DEFAULT ((1)) FOR [CAST_SS_RPT_FLAG]
+END
+GO

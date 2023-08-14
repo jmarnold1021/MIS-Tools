@@ -1,0 +1,34 @@
+DROP TABLE [dbo].[CAST_SC_RPT]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CAST_SC_RPT]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[CAST_SC_RPT](
+	[CAST_SC_RPT_ID] [bigint] NOT NULL,
+	[CAST_SC_RPT_FLAG] [bit] NOT NULL,
+	[CAST_CALWORK_SC_WORK_ID] [varchar](25) NOT NULL,
+	[CASTSC_SC01] [varchar](1) NULL,
+	[CASTSC_SC02] [varchar](1) NULL,
+	[CASTSC_SC03] [varchar](1) NULL,
+	[CASTSC_SC04] [varchar](1) NULL,
+	[CASTSC_SC05] [varchar](5) NULL,
+	[CASTSC_SC06] [varchar](4) NULL,
+	[CASTSC_SC07] [varchar](4) NULL,
+	[CASTSC_SC08] [varchar](2) NULL,
+	[CASTSC_SC09] [varchar](2) NULL,
+	[CASTSC_SC10] [varchar](1) NULL,
+	[CASTSC_SC11] [varchar](6) NULL,
+	[CASTSC_ENROLL_STATUS] [varchar](1) NULL,
+	[CASTSC_SB00] [varchar](9) NULL,
+	[CASTSC_GI01] [varchar](3) NULL,
+	[CAST_CALWORK_SC_WORK_ADDOPR] [varchar](20) NULL,
+	[CAST_CALWORK_SC_WORK_ADDDATE] [datetime] NULL,
+	[CAST_CALWORK_SC_WORK_CHGOPR] [varchar](20) NULL,
+	[CAST_CALWORK_SC_WORK_CHGDATE] [datetime] NULL,
+	[CASTSC_SC18] [varchar](1) NULL
+) ON [PRIMARY]
+END
+GO
