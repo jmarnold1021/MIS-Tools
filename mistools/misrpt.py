@@ -34,7 +34,7 @@ RPT_ADJ_DT_FRMT = "%Y-%m-%d"
 
 def _fetch_upstream_data(prefix, report):
 
-    db = DB('COLLEAGUE')
+    db = DB(MIS_RPT_CONFIGS['SRC_DB_NAME'])
     sql = """
           SELECT *
           FROM %s_%s_RPT
@@ -74,14 +74,14 @@ def _update_table_name(prefix, report, schema_lines):
 
 def _refresh_schema(sql_script):
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     db.exec_sql_file(sql_script, stmt_delim = 'GO\n')
     db.close()
 
 def mis_ods_cb_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for CB in the ODS
+    Builds/Executes the SQL Sccript for CB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -107,7 +107,7 @@ def mis_ods_cb_refresh_schema(sql_only = False):
 def mis_ods_cb_refresh_data(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for CB in the ODS
+    Builds/Executes the SQL Sccript for CB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -123,7 +123,7 @@ def mis_ods_cb_refresh_data(sql_only = False):
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data)
     db.close()
 
@@ -132,7 +132,7 @@ def mis_ods_cb_refresh_data(sql_only = False):
 def mis_ods_xb_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XB in the ODS
+    Builds/Executes the SQL Sccript for XB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -157,7 +157,7 @@ def mis_ods_xb_refresh_schema(sql_only = False):
 def mis_ods_xb_refresh_data(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XB in the ODS
+    Builds/Executes the SQL Sccript for XB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -173,7 +173,7 @@ def mis_ods_xb_refresh_data(sql_only = False):
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data)
     db.close()
 
@@ -182,7 +182,7 @@ def mis_ods_xb_refresh_data(sql_only = False):
 def mis_ods_xf_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XF in the ODS
+    Builds/Executes the SQL Sccript for XF in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -207,7 +207,7 @@ def mis_ods_xf_refresh_schema(sql_only = False):
 def mis_ods_xf_refresh_data(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XF in the ODS
+    Builds/Executes the SQL Sccript for XF in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -223,7 +223,7 @@ def mis_ods_xf_refresh_data(sql_only = False):
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data)
     db.close()
 
@@ -232,7 +232,7 @@ def mis_ods_xf_refresh_data(sql_only = False):
 def mis_ods_xe_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XE in the ODS
+    Builds/Executes the SQL Sccript for XE in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -257,7 +257,7 @@ def mis_ods_xe_refresh_schema(sql_only = False):
 def mis_ods_xe_refresh_data(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for XE in the ODS
+    Builds/Executes the SQL Sccript for XE in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -273,7 +273,7 @@ def mis_ods_xe_refresh_data(sql_only = False):
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data)
     db.close()
 
@@ -282,7 +282,7 @@ def mis_ods_xe_refresh_data(sql_only = False):
 def mis_ods_sx_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SX in the ODS
+    Builds/Executes the SQL Sccript for SX in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -307,7 +307,7 @@ def mis_ods_sx_refresh_schema(sql_only = False):
 def mis_ods_sx_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SX in the ODS
+    Builds/Executes the SQL Sccript for SX in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -323,7 +323,7 @@ def mis_ods_sx_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data)
     db.close()
 
@@ -332,7 +332,7 @@ def mis_ods_sx_refresh_data():
 def mis_ods_eb_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for EB in the ODS
+    Builds/Executes the SQL Sccript for EB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -357,7 +357,7 @@ def mis_ods_eb_refresh_schema(sql_only = False):
 def mis_ods_eb_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for EB in the ODS
+    Builds/Executes the SQL Sccript for EB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -373,7 +373,7 @@ def mis_ods_eb_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -382,7 +382,7 @@ def mis_ods_eb_refresh_data():
 def mis_rpt_ods_ej_refresh(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for EJ in the ODS(:redbold:1Has not been Implemented`)
+    Builds/Executes the SQL Sccript for EJ in the LTCC_MIS(:redbold:1Has not been Implemented`)
 
     :param bool sql_only: Only return the Script
 
@@ -408,7 +408,7 @@ def mis_rpt_ods_ej_refresh(sql_only = False):
 def mis_ods_sb_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -433,7 +433,7 @@ def mis_ods_sb_refresh_schema(sql_only = False):
 def mis_ods_sb_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -447,7 +447,7 @@ def mis_ods_sb_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -456,7 +456,7 @@ def mis_ods_sb_refresh_data():
 def mis_ods_ss_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SS in the ODS
+    Builds/Executes the SQL Sccript for SS in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -481,7 +481,7 @@ def mis_ods_ss_refresh_schema(sql_only = False):
 def mis_ods_ss_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -495,7 +495,7 @@ def mis_ods_ss_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -504,7 +504,7 @@ def mis_ods_ss_refresh_data():
 def mis_ods_sc_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SC in the ODS
+    Builds/Executes the SQL Sccript for SC in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -529,7 +529,7 @@ def mis_ods_sc_refresh_schema(sql_only = False):
 def mis_ods_sc_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -543,7 +543,7 @@ def mis_ods_sc_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -552,7 +552,7 @@ def mis_ods_sc_refresh_data():
 def mis_ods_cw_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for CW in the ODS
+    Builds/Executes the SQL Sccript for CW in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -577,7 +577,7 @@ def mis_ods_cw_refresh_schema(sql_only = False):
 def mis_ods_cw_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -591,7 +591,7 @@ def mis_ods_cw_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -600,7 +600,7 @@ def mis_ods_cw_refresh_data():
 def mis_ods_sd_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SD in the ODS
+    Builds/Executes the SQL Sccript for SD in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -625,7 +625,7 @@ def mis_ods_sd_refresh_schema(sql_only = False):
 def mis_ods_sd_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -639,7 +639,7 @@ def mis_ods_sd_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
@@ -648,7 +648,7 @@ def mis_ods_sd_refresh_data():
 def mis_ods_sy_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SY in the ODS
+    Builds/Executes the SQL Sccript for SY in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -673,7 +673,7 @@ def mis_ods_sy_refresh_schema(sql_only = False):
 def mis_ods_sy_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SB in the ODS
+    Builds/Executes the SQL Sccript for SB in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -687,41 +687,16 @@ def mis_ods_sy_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
 
     return num_rows
 
-def mis_rpt_ods_sd_refresh(sql_only = False):
+def mis_ods_sg_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SD in the ODS
-
-    :param bool sql_only: Only return the Script
-
-    :return: The sql script used to maintain the schema
-
-    :rtype: str
-
-    '''
-
-    prefix = "CAST"
-    report = "SD"
-
-    schema_lines = _read_rpt_sql_schema(prefix, report)
-    ods_script = _update_table_name(prefix, report, schema_lines)
-
-    if sql_only:
-        return ods_script
-
-    _refresh_schema(ods_script)
-    return ods_script
-
-def mis_rpt_ods_sg_refresh(sql_only = False):
-
-    '''
-    Builds/Executes the SQL Sccript for SG in the ODS
+    Builds/Executes the SQL Sccript for SG in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -743,10 +718,33 @@ def mis_rpt_ods_sg_refresh(sql_only = False):
     _refresh_schema(ods_script)
     return ods_script
 
+def mis_ods_sg_refresh_data():
+
+    '''
+    Builds/Executes the SQL Sccript for SP in the LTCC_MIS
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix    = "CAST"
+    report    = "SG"
+    dst_table = 'L56_%s_%s_RPT' % (prefix, report)
+
+    data = _fetch_upstream_data(prefix, report)
+
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
+    num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
+    db.close()
+
+    return num_rows
+
 def mis_ods_sp_refresh_schema(sql_only = False):
 
     '''
-    Builds/Executes the SQL Sccript for SP in the ODS
+    Builds/Executes the SQL Sccript for SP in the LTCC_MIS
 
     :param bool sql_only: Only return the Script
 
@@ -771,7 +769,7 @@ def mis_ods_sp_refresh_schema(sql_only = False):
 def mis_ods_sp_refresh_data():
 
     '''
-    Builds/Executes the SQL Sccript for SP in the ODS
+    Builds/Executes the SQL Sccript for SP in the LTCC_MIS
 
     :return: The sql script used to maintain the schema
 
@@ -785,7 +783,9 @@ def mis_ods_sp_refresh_data():
 
     data = _fetch_upstream_data(prefix, report)
 
-    db = DB('ODS')
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
     num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
     db.close()
+
+    return num_rows
 

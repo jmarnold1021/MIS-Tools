@@ -31,6 +31,8 @@ MIS_NSC_CONFIGS = CONFIGS['MIS_NSC']
 
 nsc_log  = mislog.mis_console_logger('misnsc', MIS_NSC_CONFIGS['LOG_LEVEL'])
 
+NSC_ST_FILENAME="*DETLRPT_*_import_file.csv" # this is a specification...
+
 def _nsc_parse_file(nsc_path, headers=False):
 
 
@@ -47,7 +49,7 @@ def _nsc_parse_file(nsc_path, headers=False):
 
     return rows
 
-def _nsc_parse_file_dict(nsc_path, delim = '\t', fill_empty=None):
+def _nsc_parse_file_dict(nsc_path, fill_empty=None):
 
     rows = []
 
@@ -60,10 +62,10 @@ def _nsc_parse_file_dict(nsc_path, delim = '\t', fill_empty=None):
 
     return rows
 
-def mis_st_results_parse():
+def mis_ltcc_st_results_parse():
 
     '''
-    Parse NSC Student Tracker Results
+    Parse NSC LTCC Student Tracker Results
 
     :param str term: term to parse results for
 
@@ -72,7 +74,6 @@ def mis_st_results_parse():
     '''
 
     archive = MIS_NSC_CONFIGS["STUDENT_TRACKER_LTCC"] + '/**/'
-    NSC_ST_FILENAME="*DETLRPT_*_import_file.csv"
 
     root = os.path.join(archive, NSC_ST_FILENAME)
 
@@ -90,12 +91,60 @@ def mis_st_results_parse():
 
     return rows
 
-def mis_st_results_update_db(data):
+def mis_ltcc_st_results_update_db(data):
 
 
     db = DB('ODS')
     db.truncate('L56_NscDetailFileStage')
     num_rows = db.insert_batch('L56_NscDetailFileStage', data)
     db.close()
+
     return num_rows
 
+def mis_ltusd_st_results_parse():
+
+    '''
+    Parse NSC LTUSD Student Tracker Results
+
+    :param str term: term to parse results for
+
+    :rtype: list
+
+    '''
+
+    archive = MIS_NSC_CONFIGS["STUDENT_TRACKER_LTUSD"] + '/**/'
+
+    root = os.path.join(archive, NSC_ST_FILENAME)
+
+    # get newest results file from ltusd archive.
+    new_results = None
+    newest_ctime = 0
+    for res_file in glob.iglob( root, recursive=True ):
+
+        if os.stat(res_file).st_ctime > newest_ctime:
+            new_results = res_file
+            newest_ctime = os.stat(res_file).st_ctime
+
+    nsc_log.info("Parsing newest results from %s" % new_results)
+    rows = _nsc_parse_file_dict(new_results)
+
+    return rows
+
+def mis_ltusd_st_results_update_db(data):
+
+
+    db = DB('ODS')
+    db.truncate('L56_LtusdNscDetailFileStage')
+    num_rows = db.insert_batch('L56_LtusdNscDetailFileStage', data)
+    db.close()
+
+    return num_rows
+
+
+def mis_st_exec_adams_sp():
+
+
+    db = DB('ODS')
+    db.exec_sp('dbo.L56_IMPORT_STUDENT_TRACKER')
+    db.close()
+    return num_rows

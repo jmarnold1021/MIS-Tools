@@ -1205,12 +1205,12 @@ def ef_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=None):
 
            return dod_data
 
-def enr_12_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=None):
+def ipeds_e12_parse(latter_year, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse IPEDS 12 Month Rates DOD files
 
-    :param int trail_year: The trailing year of the Grad file being parsed.
+    :param int latter_year: The latter year of the Grad file being parsed.
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -1224,10 +1224,10 @@ def enr_12_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=No
 
     ref_files_root = MIS_DOD_CONFIGS['ACC_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_IPEDS_SPEC['ENR_12']['FILENAME'])
+    root = os.path.join(ref_files_root, DOD_IPEDS_SPEC['E12']['FILENAME'])
     for dod_file in glob.iglob( root, recursive=True ):
-        if str(later_year)[-2:] in os.path.basename(dod_file) and \
-           str(later_year-1) in os.path.basename(dod_file):
+        if str(latter_year)[-2:] in os.path.basename(dod_file) and \
+           str(latter_year-1) in os.path.basename(dod_file):
 
            dod_data = _dod_parse_file_dict(None, dod_file,  delim = ',')
            dod_data = _dod_ipeds_adj_year(dod_data)

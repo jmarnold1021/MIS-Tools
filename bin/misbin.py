@@ -17,17 +17,22 @@ import click          # cli dependancy...
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append("%s/../../MIS-Tools" % SCRIPT_DIR)
 
+# internal modules...
 from mistools    import misflatfile
 from mistools    import misdod
 from mistools    import mislog
 from mistools    import miscoci
 from mistools    import misrpt
 from mistools    import misnsc
+from mistools    import misltusd
+from mistools    import miscalgrant
 from mistools.db import DB
+
 
 @click.group(name='bin')
 def bin():
     pass
+
 
 @bin.command(name='mis_version', help='List the currently installed version of MIS-Tools.')
 def mis_version():
@@ -37,7 +42,7 @@ def mis_version():
     local_version = None
     version       = None
 
-    try: # nice for dev...an checking version upateds happen
+    try: # nice for dev...an checking version upates happen
 
         with open('%s/../version.json' % SCRIPT_DIR) as version_file:
             local_version = json.load(version_file)['version']
@@ -76,9 +81,10 @@ def mis_version():
 @bin.command(name='mis_export', help='Export MIS Data to Flat Files from Colleague RPT Tables.')
 @click.option('-r', '--report', type=str, help='The MIS report to export data from')
 @click.option('-g', '--gi03', type=str, help='The GI03 term for the report')
+@click.option('-b', '--backup', is_flag=True, type=bool, help='Backup the prev dat file for this (gi03,report)')
 @click.option('-s', '--sql-only', is_flag=True, type=bool, help='Print the SQL rather than create the export')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to ERROR, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
-def mis_export(report, gi03, sql_only, log_level):
+def mis_export(report, gi03, backup, sql_only, log_level):
 
     mis_log = mislog.mis_console_logger('mis_export', log_level)
 
@@ -88,12 +94,17 @@ def mis_export(report, gi03, sql_only, log_level):
 
         mis_log.info("Generating %s Export Query for %s\n" % (report.upper(), gi03))
         sql = eval(EXPORT_FUNC)(gi03, sql_only = sql_only)
-        print('Export SQL\n' + sql)
+        print('-- Export SQL\n\n' + sql)
+        print('')
         sys.exit(0)
 
 
     mis_log.info("Generating %s Export File for %s" % (report.upper(), gi03))
-    eval(EXPORT_FUNC)(gi03)
+    if backup:
+        mis_log.info("Backing %s Export File up for %s" % (report.upper(), gi03))
+        eval(EXPORT_FUNC)(gi03, backup)
+    else:
+        eval(EXPORT_FUNC)(gi03)
     sys.exit(0)
 
 @bin.command(name='dod_refresh', help='Refresh all DOD data from source files')
@@ -303,6 +314,21 @@ def ods_rpt_refresh(report, sql_only, log_level):
             num_rows = misrpt.mis_ods_sd_refresh_data()
             mis_log.info('Refreshed %d SD RPT Rows\n' % num_rows)
 
+    if not report or report.lower() == 'sg':
+
+        if sql_only:
+
+            mis_log.info('Generating Schema for SG RPT\n')
+            script = misrpt.mis_ods_sg_refresh_schema(sql_only=True)
+            print(script)
+
+        else:
+
+            mis_log.info('Refreshing SG RPT Tables\n')
+            script = misrpt.mis_ods_sg_refresh_schema()
+            num_rows = misrpt.mis_ods_sg_refresh_data()
+            mis_log.info('Refreshed %d SG RPT Rows\n' % num_rows)
+
     if not report or report.lower() == 'sy':
 
         if sql_only:
@@ -336,23 +362,76 @@ def ods_rpt_refresh(report, sql_only, log_level):
     sys.exit(0)
 
 @bin.command(name='nsc_st_refresh', help='Refresh The Student Tracker Data from result')
-@click.option('-s', '--safe', is_flag=True, help='Will only output the Schemas')
+@click.option('-h', '--ltusd', is_flag=True, help='Will only update LTUSD')
+@click.option('-c', '--ltcc', is_flag=True, help='Will only update LTCC')
+@click.option('-s', '--safe', is_flag=True, help='Do not take volatile actions db updates etc...print summary of refresh.')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
-def nsc_st_refresh(safe,log_level):
+def nsc_st_refresh(ltusd, ltcc, safe, log_level):
+
+    print('')
 
     mis_log = mislog.mis_console_logger('nsc_st_refresh', log_level)
 
-    data = misnsc.mis_st_results_parse()
+    if ltusd or (not ltusd and not ltcc):
 
-    mis_log.info('Parsed %d rows from most recent Student Tracker results\n' % len(data))
+        ltusd_data = misnsc.mis_ltusd_st_results_parse()
+
+        mis_log.info('Parsed %d rows from most recent LTUSD Student Tracker results\n' % len(ltusd_data))
+
+        if safe:
+
+            for i in range(0, 10):
+                print(ltusd_data[i])
+
+            print('')
+
+        else:
+
+            mis_log.info('Refreshing LTUSD Student Tracker Results Table\n')
+            num_rows = misnsc.mis_ltusd_st_results_update_db(ltusd_data)
+            mis_log.info('Refreshed %d Rows in Student Tracker Results\n' % num_rows)
+
+    if ltcc or (not ltusd and not ltcc):
+
+        ltcc_data = misnsc.mis_ltcc_st_results_parse()
+
+        mis_log.info('Parsed %d rows from most recent LTCC Student Tracker results\n' % len(ltcc_data))
+
+        if safe:
+
+            for i in range(0, 10):
+                print(ltcc_data[i])
+
+            print('')
+
+        else:
+
+            mis_log.info('Refreshing LTCC Student Tracker Results Table\n')
+            num_rows = misnsc.mis_ltcc_st_results_update_db(ltcc_data)
+            mis_log.info('Refreshed %d Rows in LTCC Student Tracker Results\n' % num_rows)
+
+    #mis_log.info("Exec Adam's Stored procedure...")
+    #misnsc.mis_st_exec_adams_sp()
+
+@bin.command(name='ltusd_grad_refresh', help='Refresh The LTUSD data from source files')
+@click.option('-p', '--path',  type=str, help='Path to LTUSD Grad Data')
+@click.option('-s', '--safe', is_flag=True, help='Do not take volatile Actions...db uploads etc. Print summary of future refresh.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
+def ltusd_grad_refresh(path, safe, log_level):
+
+    mis_log = mislog.mis_console_logger('ltusd_grad_refresh', log_level)
+
+    data = misltusd.mis_ltusd_grad_parse(path)
+
     if safe:
+
         for i in range(0, 10):
             print(data[i])
         sys.exit(0)
 
-    mis_log.info('Refreshing Student Tracker Results Table\n')
-    num_rows = misnsc.mis_st_results_update_db(data)
-    mis_log.info('Refreshed %d Rows in Student Tracker Results\n' % num_rows)
+    mis_log.info('Appending LTUSD Grad Data Table\n')
+    num_rows = misltusd.mis_ltusd_grads_update_db(data)
+    mis_log.info('Refreshed %d Rows to LTUSD Grad Results\n' % num_rows)
 
 @bin.command(name='coci_refresh', help='Refresh The COCI data from Curriculum Inventory')
 @click.option('-c', '--courses', is_flag=True, help='Only consider COCI Courses in Refresh Operations')
@@ -412,41 +491,49 @@ def coci_refresh(courses, programs, safe, log_level):
 
     sys.exit(0)
 
+@bin.command(name='cal_grant_enr', help='Get up to date cal-grant fall enrolment')
+@click.option('-s', '--safe', is_flag=True, help='Do not take volatile Actions...db uploads etc. Print summary of future refresh.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
+def cal_grant_enr(safe, log_level):
 
-#@bin.command(name='ipeds_ef', help='Refresh the DOD Ipeds Fall HR data')
-#@click.option('-y', '--later-year',  type=int, help='The later survey year')
-#@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
-#@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
-#def ipeds_hr(later_year, safe, log_level):
-#
-#    mis_log = mislog.mis_console_logger('ipeds_fa_enr', log_level)
-#
-#    fa_enr_table  = 'L56_DOD_IPEDS_EF'
-#    fa_enr_data = misdod.ef_ipeds_parse(later_year)
-#    db = DB('ods')
-#    #db.truncate(fa_enr_table)
-#    cnt = db.insert_batch( fa_enr_table, fa_enr_data )
-#    mis_log.info('Inserted %d rows into %s' % (cnt, fa_enr_table))
-#    db.close()
-#    sys.exit(0)
-#
-#@bin.command(name='ipeds_enr_12', help='Refresh the DOD Ipeds Fall HR data')
-#@click.option('-y', '--later-year',  type=int, help='The later survey year')
-#@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
-#@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
-#def ipeds_hr(later_year, safe, log_level):
-#
-#    mis_log = mislog.mis_console_logger('ipeds_enr_12', log_level)
-#
-#    enr_12_table  = 'L56_DOD_IPEDS_ENR_12'
-#    enr_12_data = misdod.enr_12_ipeds_parse(later_year)
-#
-#    db = DB('ods')
-#    #db.truncate(enr_12_table)
-#    cnt = db.insert_batch( enr_12_table, enr_12_data )
-#    mis_log.info('Inserted %d rows into %s' % (cnt, enr_12_table))
-#    db.close()
-#    sys.exit(0)
+    miscalgrant.mis_cg_enr_generate(None) # not implemented for other terms yet. yet...
+
+
+
+@bin.command(name='ipeds_ef', help='Refresh the DOD Ipeds Fall HR data')
+@click.option('-y', '--later-year',  type=int, help='The later survey year')
+@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
+def ipeds_ef(later_year, safe, log_level):
+
+    mis_log = mislog.mis_console_logger('ipeds_fa_enr', log_level)
+
+    fa_enr_table  = 'L56_DOD_IPEDS_EF'
+    fa_enr_data = misdod.ef_ipeds_parse(later_year)
+    print(fa_enr_data)
+    #db = DB('ods')
+    ##db.truncate(fa_enr_table)
+    #cnt = db.insert_batch( fa_enr_table, fa_enr_data )
+    #mis_log.info('Inserted %d rows into %s' % (cnt, fa_enr_table))
+    #db.close()
+    #sys.exit(0)
+
+@bin.command(name='ipeds_e12', help='Refresh the DOD Ipeds Fall HR data')
+@click.option('-y', '--latter-year',  type=int, help='The latter survey year')
+@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
+def ipeds_e12(latter_year, safe, log_level):
+
+    mis_log = mislog.mis_console_logger('ipeds_e12', log_level)
+
+    e12_table  = 'L56_DOD_IPEDS_E12'
+    e12_data = misdod.ipeds_e12_parse(latter_year)
+    db = DB('ods')
+    #db.truncate(enr_12_table)
+    cnt = db.insert_batch( e12_table, e12_data )
+    mis_log.info('Inserted %d rows into %s' % (cnt, e12_table))
+    db.close()
+    sys.exit(0)
 
 if __name__ == "__main__":
     bin()

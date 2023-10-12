@@ -8,6 +8,6 @@ modules for working with MIS Data
    from mistools import misrpt       # Tools for working with RPT Tables, refreshing the ODS
    from mistools import misdod       # Tools for working with dod file data
    from mistools import miscoci      # Tools for working with the COCI Course/Program Inventory
-   from mistools.db import DB        # Basic db driver 
+   from mistools.db import DB        # Basic db driver
 
 '''

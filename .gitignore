@@ -132,3 +132,4 @@ configs/configs.json
 mistools/logs
 tmp/*
 *.swp
+reports
