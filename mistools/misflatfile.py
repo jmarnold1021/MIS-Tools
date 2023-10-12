@@ -7,6 +7,7 @@ MIS flat files(.DAT)..
 import os
 import pyodbc
 import json
+import shutil
 from datetime import datetime
 from dateutil import parser # for string dates with no format...
 
@@ -294,14 +295,28 @@ def _build_txt_file(row_count, report, gi03, out_file):
         f.write('\n'.join(rpt_txt_lines))
         f.write( '\n' + tx_txt_line )
 
+def _backup_dat_file(gi03, report):
+
+    root = os.path.join(MIS_FF_EXPORT_ROOT, gi03)
+    bpath = os.path.join(root, 'Backups')
+    os.makedirs(bpath, exist_ok=True)
+
+    # is the only file in root/gi03 and has report name in basename
+    dat_file = [f for f in os.listdir(root) if os.path.isfile(os.path.join(root,f)) and f[6:8] == report.upper()][0]
+
+    # ctime of file as timestamp and convert to date of type string with format
+    mdate = datetime.fromtimestamp(os.path.getmtime(os.path.join(root, dat_file))).strftime("%y%m%d")
+    shutil.move(os.path.join(root, dat_file), os.path.join(bpath,dat_file + '_' + mdate))
 
 # MIS Export Interface
-def sx_mis_export(gi03, sql_only = False):
+def sx_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Enrollemnt Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -310,6 +325,9 @@ def sx_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SX')
 
     # build sql from spec
     sql = _build_sql('SX', gi03)
@@ -332,12 +350,14 @@ def sx_mis_export(gi03, sql_only = False):
     return sql
 
 
-def sy_mis_export(gi03, sql_only = False):
+def sy_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Prior Learning to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -346,6 +366,9 @@ def sy_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SY')
 
     # build sql from spec
     sql = _build_sql('SY', gi03)
@@ -368,12 +391,14 @@ def sy_mis_export(gi03, sql_only = False):
     return sql
 
 
-def ss_mis_export(gi03, sql_only = False):
+def ss_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Success Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -382,6 +407,9 @@ def ss_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SS')
 
     # build sql from spec
     sql = _build_sql('SS', gi03)
@@ -405,20 +433,25 @@ def ss_mis_export(gi03, sql_only = False):
 
 
 
-def sd_mis_export(gi03, sql_only = False):
+def sd_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Disablility Data to a Flat File(.DAT)
 
-    :param str gi03: Term to export data from
+    :param str gi03: Term to export data from.
 
-    :param bool sql_only: Only return the generated sql, defaults to False
+    :param bool backup: Backup the Prev dat file for this report also.
 
-    :return: The sql used to perform the export
+    :param bool sql_only: Only return the generated sql, defaults to False.
+
+    :return: The sql used to perform the export.
 
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SD')
 
     # build sql from spec
     sql = _build_sql('SD', gi03)
@@ -442,12 +475,14 @@ def sd_mis_export(gi03, sql_only = False):
 
 
 
-def sc_mis_export(gi03, sql_only = False):
+def sc_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Calworks/Calworks Work Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -456,6 +491,10 @@ def sc_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SC')
+        _backup_dat_file(gi03, 'CW')
 
     SC_SQL_DELIM = '\n--\n'
     sql_list = []
@@ -500,12 +539,14 @@ def sc_mis_export(gi03, sql_only = False):
     return SC_SQL_DELIM.join(sql_list)
 
 
-def sb_mis_export(gi03, sql_only = False):
+def sb_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Basic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -514,6 +555,9 @@ def sb_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SB')
 
     # build sql from spec
     sql = _build_sql('SB', gi03)
@@ -536,12 +580,14 @@ def sb_mis_export(gi03, sql_only = False):
     return sql
 
 
-def sg_mis_export(gi03, sql_only = False):
+def sg_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Groups Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -550,6 +596,9 @@ def sg_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SG')
 
     # build sql from spec
     sql = _build_sql('SG', gi03)
@@ -572,12 +621,14 @@ def sg_mis_export(gi03, sql_only = False):
     return sql
 
 
-def cb_mis_export(gi03, sql_only = False):
+def cb_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Course Basic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -587,6 +638,8 @@ def cb_mis_export(gi03, sql_only = False):
 
     '''
 
+    if backup:
+        _backup_dat_file(gi03, 'CB')
 
     # build sql from spec
     sql = _build_sql('CB', gi03)
@@ -609,11 +662,13 @@ def cb_mis_export(gi03, sql_only = False):
     return sql
 
 
-def sv_mis_export(gi03, sql_only = False):
+def sv_mis_export(gi03, backup = False, sql_only = False):
 
 
     '''
     Export Student VTEA Data to a Flat File(:redbold:`Has not been Implemented`)
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -622,34 +677,39 @@ def sv_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
-    return ''
+
+    if backup:
+        _backup_dat_file(gi03, 'SV')
+
     # build sql from spec
-    #sql = _build_sql('SV', gi03)
+    sql = _build_sql('SV', gi03)
 
-    #if sql_only:
-    #    return sql
+    if sql_only:
+        return sql
 
-    #rows = _exec_query(sql)
+    rows = _exec_query(sql)
 
-    #dat_file = DAT_FILE_TEMPLATE % (gi03, 'SV')
-    #out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'SV')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
 
-    #row_count = _write_dat_file(rows, out_file)
+    row_count = _write_dat_file(rows, out_file)
 
-    #txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
-    #out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
 
-    #_build_txt_file(row_count, 'SV', gi03, out_file)
+    _build_txt_file(row_count, 'SV', gi03, out_file)
 
-    #return sql
+    return sql
 
 
-def eb_mis_export(gi03, sql_only = False):
+def eb_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Employee Demographic Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -658,6 +718,9 @@ def eb_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'EB')
 
     # build sql from spec
     sql = _build_sql('EB', gi03)
@@ -680,13 +743,15 @@ def eb_mis_export(gi03, sql_only = False):
     return sql
 
 
-def xb_mis_export(gi03, sql_only = False):
+def xb_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Section/Session/Assignment Data to a Flat File(.DAT)
            :greenbold:`UNION ALL maintains the order of the union.`
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -695,6 +760,11 @@ def xb_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'XB')
+        _backup_dat_file(gi03, 'XF')
+        _backup_dat_file(gi03, 'XE')
 
     XB_SQL_UNION = '\nUNION ALL\n'
     sql_list = []
@@ -750,13 +820,13 @@ def xb_mis_export(gi03, sql_only = False):
 
     return XB_SQL_UNION.join(sql_list)
 
-def se_mis_export(gi03, sql_only = False):
+def se_mis_export(gi03, backup = False, sql_only = False):
     '''
     Export Student EOPS Data(:redbold:`Has not been Implemented`)
 
     :param str gi03: Term to export data from
 
-    :param str out_file_path: Path where .DAT file should be written
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -768,12 +838,14 @@ def se_mis_export(gi03, sql_only = False):
 
     return ''
 
-def sp_mis_export(gi03, sql_only = False):
+def sp_mis_export(gi03, backup = False, sql_only = False):
 
     '''
     Export Student Programs Data to a Flat File(.DAT)
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -782,6 +854,9 @@ def sp_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SP')
 
     # build sql from spec
     sql = _build_sql('SP', gi03)
@@ -804,11 +879,13 @@ def sp_mis_export(gi03, sql_only = False):
     return sql
 
 
-def sf_mis_export(gi03, sql_only = False):
+def sf_mis_export(gi03, backup = False, sql_only = False):
     '''
     Export Student Financial Aid Data
 
     :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
 
     :param bool sql_only: Only return the generated sql, defaults to False
 
@@ -817,6 +894,10 @@ def sf_mis_export(gi03, sql_only = False):
     :rtype: str
 
     '''
+
+    if backup:
+        _backup_dat_file(gi03, 'SF')
+        _backup_dat_file(gi03, 'FA')
 
     SF_SQL_DELIM = '\n--\n'
     sql_list = []
