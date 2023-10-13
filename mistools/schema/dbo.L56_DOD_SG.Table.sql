@@ -33,6 +33,9 @@ CREATE TABLE [dbo].[L56_DOD_SG](
 	[SG21] [varchar](1) NULL,
 	[SG22] [varchar](1) NULL,
 	[SG23] [varchar](7) NULL,
+	[SG24] [varchar](1) NULL,
+	[SG25] [varchar](1) NULL,
+	[SG26] [varchar](2) NULL,
  CONSTRAINT [PK_DOD_SG_GI03_CCCCO_Assigned] PRIMARY KEY CLUSTERED 
 (
 	[GI03] DESC,

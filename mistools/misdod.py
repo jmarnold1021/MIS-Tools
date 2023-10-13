@@ -44,6 +44,29 @@ MIS_DOD_ADJ_DT_FRMT = '%Y%m%d' # better for sql etc..
 # set up global lib logger
 dod_log  = mislog.mis_console_logger('misdod', MIS_DOD_CONFIGS['LOG_LEVEL'])
 
+def _dod_fill_missing(report, data):
+
+    dod_header = DOD_MIS_SPEC[report]["HEADERS"]
+
+    if len(dod_header) > len(data[0]):
+
+        for i in range(0, len(data)):
+
+            if type(data[i]) == dict:
+
+                keys = list(data.keys())
+                missing_keys = list(dod_header) - list(keys)
+                missing_dict = dict.fromkeys(missing_keys)
+                data.update(missing_dict)
+
+            elif type(data[i]) == list:
+
+                data[i] = data[i] + ( (len(dod_header) - len(data[i])) * [None] )
+
+    return data
+
+
+
 def _dod_ipeds_adj_year(data):
 
    for row in data:
@@ -152,12 +175,14 @@ def sx_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None
 
     if dict_read:
         dod_data = _dod_parse_file_dict('SX', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SX', dod_data)
         dod_data = _dod_adj_dates('SX', dod_data)
 
         # convert to better date format
         return dod_data
 
     dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('SX', dod_data)
     dod_data = _dod_adj_dates('SX', dod_data)
 
     if headers:
@@ -184,12 +209,14 @@ def ss_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None
 
     if dict_read:
         dod_data = _dod_parse_file_dict('SS', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SS', dod_data)
         dod_data = _dod_adj_dates('SS', dod_data)
 
         # convert to better date format
         return dod_data
 
     dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('SS', dod_data)
     dod_data = _dod_adj_dates('SS', dod_data)
 
     if headers:
@@ -216,10 +243,12 @@ def st_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
 
     if dict_read:
         dod_data = _dod_parse_file_dict('ST', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('ST', dod_data)
         dod_data = _dod_adj_dates('ST', dod_data)
         return dod_data
 
     dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('ST', dod_data)
     dod_data = _dod_adj_dates('ST', dod_data)
 
     if headers:
@@ -246,11 +275,13 @@ def xb_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
     if dict_read:
 
         dod_data = _dod_parse_file_dict('XB', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('XB', dod_data)
         dod_data = _dod_adj_dates('XB', dod_data)
 
         return dod_data
 
     dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('XB', dod_data)
     dod_data = _dod_adj_dates('XB', dod_data)
 
     if headers:
@@ -278,11 +309,13 @@ def xf_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
     if dict_read:
 
         dod_data = _dod_parse_file_dict('XF', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('XF', dod_data)
         dod_data = _dod_adj_dates('XF', dod_data)
 
         return dod_data
 
     dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('XF', dod_data)
     dod_data = _dod_adj_dates('XF', dod_data)
 
     if headers:
@@ -310,11 +343,13 @@ def xe_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
     if dict_read:
 
         dod_data = _dod_parse_file_dict('XE', dod_file_path, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('XE', dod_data)
         dod_data = _dod_adj_dates('XE', dod_data)
 
         return dod_data
 
     dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
+    dod_data = _dod_fill_missing('XE', dod_data)
     dod_data = _dod_adj_dates('XE', dod_data)
 
     if headers:
@@ -351,11 +386,13 @@ def cb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('CB', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('CB', dod_data)
             dod_data = _dod_adj_dates('CB', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('CB', dod_data)
         dod_data = _dod_adj_dates('CB', dod_data)
 
         if headers:
@@ -394,11 +431,13 @@ def se_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SE', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SE', dod_data)
             dod_data = _dod_adj_dates('SE', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SE', dod_data)
         dod_data = _dod_adj_dates('SE', dod_data)
 
         if headers:
@@ -437,11 +476,13 @@ def eb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('EB', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('EB', dod_data)
             dod_data = _dod_adj_dates('EB', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('EB', dod_data)
         dod_data = _dod_adj_dates('EB', dod_data)
 
         if headers:
@@ -480,11 +521,13 @@ def ej_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('EJ', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('EJ', dod_data)
             dod_data = _dod_adj_dates('EJ', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('EJ', dod_data)
         dod_data = _dod_adj_dates('EJ', dod_data)
 
         if headers:
@@ -523,11 +566,13 @@ def sc_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SC', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SC', dod_data)
             dod_data = _dod_adj_dates('SC', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SC', dod_data)
         dod_data = _dod_adj_dates('SC', dod_data)
 
         if headers:
@@ -566,11 +611,13 @@ def cw_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('CW', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('CW', dod_data)
             dod_data = _dod_adj_dates('CW', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('CW', dod_data)
         dod_data = _dod_adj_dates('CW', dod_data)
 
         if headers:
@@ -609,11 +656,13 @@ def sd_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SD', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SD', dod_data)
             dod_data = _dod_adj_dates('SD', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SD', dod_data)
         dod_data = _dod_adj_dates('SD', dod_data)
 
         if headers:
@@ -652,11 +701,13 @@ def sg_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SG', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SG', dod_data)
             dod_data = _dod_adj_dates('SG', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SG', dod_data)
         dod_data = _dod_adj_dates('SG', dod_data)
 
         if headers:
@@ -695,11 +746,13 @@ def sf_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SF', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SF', dod_data)
             dod_data = _dod_adj_dates('SF', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SF', dod_data)
         dod_data = _dod_adj_dates('SF', dod_data)
 
         if headers:
@@ -738,11 +791,13 @@ def fa_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('FA', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('FA', dod_data)
             dod_data = _dod_adj_dates('FA', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('FA', dod_data)
         dod_data = _dod_adj_dates('FA', dod_data)
 
         if headers:
@@ -781,11 +836,13 @@ def sp_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SP', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SP', dod_data)
             dod_data = _dod_adj_dates('SP', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SP', dod_data)
         dod_data = _dod_adj_dates('SP', dod_data)
 
         if headers:
@@ -819,11 +876,13 @@ def sb_dod_parse(dict_read=False, headers=False, fill_empty=None):
         if dict_read:
 
             dod_data = _dod_parse_file_dict('SB', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('SB', dod_data)
             dod_data = _dod_adj_dates('SB', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('SB', dod_data)
         dod_data = _dod_adj_dates('SB', dod_data)
 
         if headers:
@@ -855,11 +914,13 @@ def fr_dod_parse(dict_read=False, headers=False, fill_empty=None):
         if dict_read: # Only 1 ever
 
             dod_data = _dod_parse_file_dict('FR', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('FR', dod_data)
             dod_data = _dod_adj_dates('FR', dod_data)
 
             return dod_data
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('FR', dod_data)
         dod_data = _dod_adj_dates('FR', dod_data)
 
         if headers:
@@ -890,9 +951,12 @@ def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
         if dict_read:
             dod_data = _dod_parse_file_dict( 'STUID', dod_file, fill_empty = fill_empty)
+            dod_data = _dod_fill_missing('STUID', dod_data)
             return dod_data # only 1 ever
 
         dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+        dod_data = _dod_fill_missing('STUID', dod_data)
+
         if headers:
             dod_data = _dod_add_headers('STUID', dod_data)
 
@@ -1014,11 +1078,13 @@ def ref_dod_parse(report = None, gi03 = None, dict_read=False, headers=False, fi
             if dict_read:
 
                 data = _dod_parse_file_dict(report, dod_file, fill_empty = fill_empty)
+                data = _dod_fill_missing(report, data)
                 data = _dod_adj_dates(report, data)
                 dod_data[report] += data
                 continue
 
             data = _dod_parse_file( dod_file, fill_empty = fill_empty)
+            data = _dod_fill_missing(report, data)
             data = _dod_adj_dates(report, data)
             dod_data[report] += data
 
