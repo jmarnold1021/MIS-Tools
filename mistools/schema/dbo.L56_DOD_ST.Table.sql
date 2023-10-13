@@ -48,6 +48,8 @@ CREATE TABLE [dbo].[L56_DOD_ST](
 	[SB33] [varchar](2) NULL,
 	[SB36] [varchar](1) NULL,
 	[SB37] [varchar](1) NULL,
+	[SB38] [varchar](194) NULL,
+	[SB39] [varchar](2) NULL,
  CONSTRAINT [PK_DOD_ST_GI03_CCCCO_Assigned] PRIMARY KEY CLUSTERED 
 (
 	[GI03] DESC,
