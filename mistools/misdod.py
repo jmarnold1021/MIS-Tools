@@ -18,7 +18,6 @@ from . import misconfig
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 DOD_MIS_SPEC_PATH = "%s/spec/mis_dod_spec.json" % LIB_ROOT
-DOD_IPEDS_SPEC_PATH = "%s/spec/mis_ipeds_spec.json" % LIB_ROOT
 DOD_SCFF_SPEC_PATH = "%s/spec/mis_scff_spec.json" % LIB_ROOT
 DOD_SCHEMA_PATH = "%s/schema/" % LIB_ROOT
 DOD_SCHEMA_TEMPLATE = DOD_SCHEMA_PATH + 'dbo.L56_DOD_%s.Table.sql'
@@ -27,9 +26,6 @@ DOD_SCHEMA_TEMPLATE = DOD_SCHEMA_PATH + 'dbo.L56_DOD_%s.Table.sql'
 # read in specs for different report/s
 with open(DOD_MIS_SPEC_PATH) as dod_spec_file:
     DOD_MIS_SPEC = json.load(dod_spec_file)
-
-with open(DOD_IPEDS_SPEC_PATH) as dod_spec_file:
-    DOD_IPEDS_SPEC = json.load(dod_spec_file)
 
 with open(DOD_SCFF_SPEC_PATH) as dod_spec_file:
     DOD_SCFF_SPEC = json.load(dod_spec_file)
@@ -66,19 +62,6 @@ def _dod_fill_missing(report, data):
     return data
 
 
-
-def _dod_ipeds_adj_year(data):
-
-   for row in data:
-
-       sy = row['SURVEY_YEAR'].split('-')
-       del row['SURVEY_YEAR']
-       row['YEAR'] = sy[0]
-       row['LATER_YEAR'] = sy[0][0:2] + sy[1]
-
-   return data
-
-# private/shared methods
 def _dod_adj_dates(report, data):
 
 
@@ -1024,9 +1007,12 @@ def ref_dod_update_db(data, report = None, gi03 = None, full = None):
 
         table = 'L56_DOD_%s' % report
         dod_log.info('Inserting %d rows into %s' % (len(data[report]), report))
-        cnt = db.insert_batch( table, data[report] )
 
-    dod_log.info('Refresh Complete...%d rows inserted into %d tables' % (total_rows, total_tables))
+        try:
+            cnt = db.insert_batch( table, data[report] )
+            dod_log.info('Refresh Complete...%d rows inserted into %d tables' % (total_rows, total_tables))
+        except Exception as e:
+            dod_log.warning("Error occured during bacth insert %s data. Continuing upload..." % report)
 
     db.close()
 
@@ -1220,136 +1206,3 @@ def scff_dod_parse(gi03=None):
     return scff_data
 
 
-def hr_ipeds_parse(ipeds_file_path, dict_read=False, headers=False, fill_empty=None):
-
-    '''
-    Parse IPEDS grads rates from IPEDS DOD files
-
-    :param int trail_year: The trailing year of the Grad file being parsed.
-
-    :param bool dict_read: return data as a dict with headers for keys
-
-    :param bool headers: include headers
-
-    :param str fill_empty: filler string for missing data
-
-    :rtype: list
-
-    '''
-
-    ipeds_data = _dod_parse_file_dict( None, ipeds_file_path,  delim = ',')
-
-
-    return ipeds_data
-
-def ef_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=None):
-
-    '''
-    Parse IPEDS Fall Enrollment Rates DOD files
-
-    :param int trail_year: The trailing year of the Grad file being parsed.
-
-    :param bool dict_read: return data as a dict with headers for keys
-
-    :param bool headers: include headers
-
-    :param str fill_empty: filler string for missing data
-
-    :rtype: list
-
-    '''
-
-    ref_files_root = MIS_DOD_CONFIGS['ACC_FILES_ROOT']
-
-    root = os.path.join(ref_files_root, DOD_IPEDS_SPEC['EF']['FILENAME'])
-    for dod_file in glob.iglob( root, recursive=True ):
-        if str(later_year)[-2:] in os.path.basename(dod_file) and \
-           str(later_year-1) in os.path.basename(dod_file):
-
-           dod_data = _dod_parse_file_dict(None, dod_file,  delim = ',')
-           dod_data = _dod_ipeds_adj_year(dod_data)
-
-           return dod_data
-
-def ipeds_e12_parse(latter_year, dict_read=False, headers=False, fill_empty=None):
-
-    '''
-    Parse IPEDS 12 Month Rates DOD files
-
-    :param int latter_year: The latter year of the Grad file being parsed.
-
-    :param bool dict_read: return data as a dict with headers for keys
-
-    :param bool headers: include headers
-
-    :param str fill_empty: filler string for missing data
-
-    :rtype: list
-
-    '''
-
-    ref_files_root = MIS_DOD_CONFIGS['ACC_FILES_ROOT']
-
-    root = os.path.join(ref_files_root, DOD_IPEDS_SPEC['E12']['FILENAME'])
-    for dod_file in glob.iglob( root, recursive=True ):
-        if str(latter_year)[-2:] in os.path.basename(dod_file) and \
-           str(latter_year-1) in os.path.basename(dod_file):
-
-           dod_data = _dod_parse_file_dict(None, dod_file,  delim = ',')
-           dod_data = _dod_ipeds_adj_year(dod_data)
-
-           return dod_data
-
-
-def grads_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=None):
-
-    '''
-    Parse IPEDS grads rates from IPEDS DOD files
-
-    :param int trail_year: The trailing year of the Grad file being parsed.
-
-    :param bool dict_read: return data as a dict with headers for keys
-
-    :param bool headers: include headers
-
-    :param str fill_empty: filler string for missing data
-
-    :rtype: list
-
-    '''
-    grad_rates_file_name = 'IPEDS_GRADRATES _221_%s-%s.txt' % \
-                           (str(later_year - 1), str(later_year)[-2:])
-    dod_file_path = MIS_DOD_CONFIGS['ACC_IPEDS_PATH_TEMPLATE'] % \
-                    ('Graduation_Rates', grad_rates_file_name)
-
-    dod_data = _dod_parse_file(dod_file_path,  delim = ',')
-
-
-    return dod_data
-
-def grads_200_ipeds_parse(later_year, dict_read=False, headers=False, fill_empty=None):
-
-    '''
-    Parse IPEDS grads 200 rates from IPEDS DOD files
-
-    :param int trail_year: The trailing year of the Grad file being parsed.
-
-    :param bool dict_read: return data as a dict with headers for keys
-
-    :param bool headers: include headers
-
-    :param str fill_empty: filler string for missing data
-
-    :rtype: list
-
-    '''
-
-    grad_rates_file_name = 'IPEDS_GRDRATE200_221_%s-%s.txt' % \
-                           (str(later_year - 1), str(later_year)[-2:])
-    dod_file_path = MIS_DOD_CONFIGS['ACC_IPEDS_PATH_TEMPLATE'] % \
-                    ('Graduation_Rates', grad_rates_file_name)
-
-    dod_data = _dod_parse_file( dod_file_path,  delim = ',')
-
-
-    return dod_data
