@@ -20,6 +20,7 @@ sys.path.append("%s/../../MIS-Tools" % SCRIPT_DIR)
 # internal modules...
 from mistools    import misflatfile
 from mistools    import misdod
+from mistools    import misipeds
 from mistools    import mislog
 from mistools    import miscoci
 from mistools    import misrpt
@@ -433,7 +434,7 @@ def ltusd_grad_refresh(path, safe, log_level):
     num_rows = misltusd.mis_ltusd_grads_update_db(data)
     mis_log.info('Refreshed %d Rows to LTUSD Grad Results\n' % num_rows)
 
-@bin.command(name='coci_refresh', help='Refresh The COCI data from Curriculum Inventory')
+@bin.command(name='coci_refresh', help='Refresh the COCI data from Curriculum Inventory')
 @click.option('-c', '--courses', is_flag=True, help='Only consider COCI Courses in Refresh Operations')
 @click.option('-p', '--programs', is_flag=True, help='Only consider COCI programs in Refresh Operations')
 @click.option('-s', '--safe', is_flag=True, help='Do not take volatile Actions...db uploads etc. Print summary of future refresh.')
@@ -499,14 +500,13 @@ def cal_grant_enr(safe, log_level):
     miscalgrant.mis_cg_enr_generate(None) # not implemented for other terms yet. yet...
 
 
-
 @bin.command(name='ipeds_ef', help='Refresh the DOD Ipeds Fall HR data')
 @click.option('-y', '--later-year',  type=int, help='The later survey year')
-@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
-@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
+@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take volatile Actions...db uploads etc. Print top rows of data.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
 def ipeds_ef(later_year, safe, log_level):
 
-    mis_log = mislog.mis_console_logger('ipeds_fa_enr', log_level)
+    mis_log = mislog.mis_console_logger('ipeds_ef', log_level)
 
     fa_enr_table  = 'L56_DOD_IPEDS_EF'
     fa_enr_data = misdod.ef_ipeds_parse(later_year)
@@ -518,18 +518,20 @@ def ipeds_ef(later_year, safe, log_level):
     #db.close()
     #sys.exit(0)
 
-@bin.command(name='ipeds_e12', help='Refresh the DOD Ipeds Fall HR data')
+@bin.command(name='ipeds_e12', help='Refresh the DOD Ipeds 12 month data')
 @click.option('-y', '--latter-year',  type=int, help='The latter survey year')
-@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take vaolatile Actions...db uploads etc. Print top rows of data.')
-@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN INFO, DEBUG]')
+@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take volatile Actions...db uploads etc. Print top rows of data.')
+@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
 def ipeds_e12(latter_year, safe, log_level):
 
     mis_log = mislog.mis_console_logger('ipeds_e12', log_level)
 
     e12_table  = 'L56_DOD_IPEDS_E12'
-    e12_data = misdod.ipeds_e12_parse(latter_year)
+    e12_data = misipeds.e12_ipeds_parse(latter_year)
+    print(e12_data[0:10])
+    print(len(e12_data))
     db = DB('ods')
-    #db.truncate(enr_12_table)
+    db.truncate(e12_table)
     cnt = db.insert_batch( e12_table, e12_data )
     mis_log.info('Inserted %d rows into %s' % (cnt, e12_table))
     db.close()
