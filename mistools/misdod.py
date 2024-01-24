@@ -15,6 +15,7 @@ from datetime import datetime
 from . import mislog
 from .db import DB
 from . import misconfig
+from . import misutil
 
 LIB_ROOT = os.path.dirname( os.path.realpath(__file__) )
 DOD_MIS_SPEC_PATH = "%s/spec/mis_dod_spec.json" % LIB_ROOT
@@ -40,6 +41,9 @@ MIS_DOD_ADJ_DT_FRMT = '%Y%m%d' # better for sql etc..
 # set up global lib logger
 dod_log  = mislog.mis_console_logger('misdod', MIS_DOD_CONFIGS['LOG_LEVEL'])
 
+
+# this just ensurse that if the headers have been updated aka added elements...
+# then old dod reports get None fills for those new columns...
 def _dod_fill_missing(report, data):
 
     dod_header = DOD_MIS_SPEC[report]["HEADERS"]
@@ -95,10 +99,11 @@ def _dod_add_headers(report, data):
     return [dod_header] + data
 
 # needs has seperate option for adding header
-def _dod_parse_file(dod_paths, headers=False, fill_empty=None, delim = '\t'):
+def _dod_parse_file(dod_paths, fill_empty=None, delim = '\t'):
 
     if type(dod_paths) != list:
         dod_paths = [dod_paths]
+
 
     dod_rows = []
     for dod_path in dod_paths:
@@ -139,12 +144,13 @@ def _dod_parse_file_dict(report, dod_paths, delim = '\t', fill_empty =None):
 
     return dod_rows
 
-def sx_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None):
+
+def sx_dod_parse( gi03 = None, dict_read = False, headers = False, fill_empty = None):
 
     '''
     Parse Enrollment data from DOD files.
 
-    :param list dod_file_path: A single or list of DOD file paths to parse.
+    :param str gi03: Pull only data for this GI03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -156,29 +162,47 @@ def sx_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SX']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found SX DOD file - %s' % dod_file)
+
     if dict_read:
-        dod_data = _dod_parse_file_dict('SX', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SX', dod_data)
-        dod_data = _dod_adj_dates('SX', dod_data)
 
-        # convert to better date format
-        return dod_data
+        data = _dod_parse_file_dict('SX', dod_files, fill_empty = fill_empty)
 
-    dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('SX', dod_data)
-    dod_data = _dod_adj_dates('SX', dod_data)
+    else:
 
-    if headers:
-        dod_data = _dod_add_headers('SX', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-    return dod_data
+    data = _dod_fill_missing('SX', data)
+    data = _dod_adj_dates('SX', data)
 
-def ss_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None):
+    dod_log.info('Parsed %d files and %d rows for SX' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SX', data)
+
+    return data
+
+
+
+def ss_dod_parse( gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Success data from DOD files.
 
-    :param list dod_file_path: A single or list of DOD file paths to parse.
+    :param str gi03: Pull only data for this GI03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -190,29 +214,45 @@ def ss_dod_parse( dod_file_path, dict_read=False, headers=False, fill_empty=None
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SS']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found SS DOD file - %s' % dod_file)
+
     if dict_read:
-        dod_data = _dod_parse_file_dict('SS', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SS', dod_data)
-        dod_data = _dod_adj_dates('SS', dod_data)
 
-        # convert to better date format
-        return dod_data
+        data = _dod_parse_file_dict('SS', dod_files, fill_empty = fill_empty)
 
-    dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('SS', dod_data)
-    dod_data = _dod_adj_dates('SS', dod_data)
+    else:
 
-    if headers:
-        dod_data = _dod_add_headers('SS', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-    return dod_data
+    data = _dod_fill_missing('SS', data)
+    data = _dod_adj_dates('SS', data)
 
-def st_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None):
+    dod_log.info('Parsed %d files and %d rows for SS' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SS', data)
+
+    return data
+
+def st_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student data from DOD files
 
-    :param list dod_file_path: A single or list of DOD file paths to parse.
+    :param str gi03: Pull only data for this GI03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -224,27 +264,46 @@ def st_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['ST']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found ST DOD file - %s' % dod_file)
+
     if dict_read:
-        dod_data = _dod_parse_file_dict('ST', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('ST', dod_data)
-        dod_data = _dod_adj_dates('ST', dod_data)
-        return dod_data
 
-    dod_data = _dod_parse_file(dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('ST', dod_data)
-    dod_data = _dod_adj_dates('ST', dod_data)
+        data = _dod_parse_file_dict('ST', dod_files, fill_empty = fill_empty)
 
-    if headers:
-        dod_data = _dod_add_headers('ST', dod_data)
+    else:
 
-    return dod_data
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-def xb_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None):
+    data = _dod_fill_missing('ST', data)
+    data = _dod_adj_dates('ST', data)
+
+    dod_log.info('Parsed %d files and %d rows for ST' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('ST', data)
+
+    return data
+
+def xb_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Section data from DOD files
 
-    :param list dod_file_path: List of paths or path to a DOD XB Report.
+    :param str gi03: Pull only data for this GI03
+
     :param bool dict_read: return data as a dict with headers for keys
 
     :param bool headers: include headers
@@ -255,29 +314,45 @@ def xb_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['XB']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found XB DOD file - %s' % dod_file)
+
     if dict_read:
 
-        dod_data = _dod_parse_file_dict('XB', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('XB', dod_data)
-        dod_data = _dod_adj_dates('XB', dod_data)
+        data = _dod_parse_file_dict('XB', dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    else:
 
-    dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('XB', dod_data)
-    dod_data = _dod_adj_dates('XB', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-    if headers:
-        dod_data = _dod_add_headers('XB', dod_data)
+    data = _dod_fill_missing('XB', data)
+    data = _dod_adj_dates('XB', data)
 
-    return dod_data
+    dod_log.info('Parsed %d files and %d rows for XB' % (len(dod_files), len(data)))
 
-def xf_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('XB', data)
+
+    return data
+
+def xf_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Session data from DOD files
 
-    :param list dod_file_path: List of paths or path to a DOD XB Report.
+    :param str gi03: Pull only data for this GI03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -289,29 +364,45 @@ def xf_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['XF']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found XF DOD file - %s' % dod_file)
+
     if dict_read:
 
-        dod_data = _dod_parse_file_dict('XF', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('XF', dod_data)
-        dod_data = _dod_adj_dates('XF', dod_data)
+        data = _dod_parse_file_dict('XF', dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    else:
 
-    dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('XF', dod_data)
-    dod_data = _dod_adj_dates('XF', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-    if headers:
-        dod_data = _dod_add_headers('XF', dod_data)
+    data = _dod_fill_missing('XF', data)
+    data = _dod_adj_dates('XF', data)
 
-    return dod_data
+    dod_log.info('Parsed %d files and %d rows for XF' % (len(dod_files), len(data)))
 
-def xe_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('XF', data)
+
+    return data
+
+def xe_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Session data from DOD files
 
-    :param list dod_file_path: List of paths or path to a DOD XE Report.
+    :param str gi03: Pull only data for this GI03
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -323,24 +414,40 @@ def xe_dod_parse(dod_file_path, dict_read=False, headers=False, fill_empty=None)
 
     '''
 
+    ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
+
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['XE']['FILENAME'])
+
+
+    dod_files = []
+    for dod_file in glob.iglob( root, recursive=True ):
+
+        if gi03 and gi03 not in os.path.basename(dod_file):
+            continue
+
+        dod_files.append(dod_file)
+        dod_log.debug('Found XE DOD file - %s' % dod_file)
+
     if dict_read:
 
-        dod_data = _dod_parse_file_dict('XE', dod_file_path, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('XE', dod_data)
-        dod_data = _dod_adj_dates('XE', dod_data)
+        data = _dod_parse_file_dict('XE', dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    else:
 
-    dod_data = _dod_parse_file( dod_file_path, fill_empty = fill_empty)
-    dod_data = _dod_fill_missing('XE', dod_data)
-    dod_data = _dod_adj_dates('XE', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-    if headers:
-        dod_data = _dod_add_headers('XE', dod_data)
+    data = _dod_fill_missing('XE', data)
+    data = _dod_adj_dates('XE', data)
 
-    return dod_data
+    dod_log.info('Parsed %d files and %d rows for XF' % (len(dod_files), len(data)))
 
-def cb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('XE', data)
+
+    return data
+
+def cb_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Course data from DOD files
@@ -359,33 +466,38 @@ def cb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['CB']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['CB']['FILENAME'])
 
+
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found CB DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('CB', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('CB', dod_data)
-            dod_data = _dod_adj_dates('CB', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('CB', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('CB', dod_data)
-        dod_data = _dod_adj_dates('CB', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('CB', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('CB', data)
+    data = _dod_adj_dates('CB', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for CB' % (len(dod_files), len(data)))
 
-def se_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('CB', data)
+
+    return data
+
+def se_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse EOPS data from DOD files
@@ -404,33 +516,37 @@ def se_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SE']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SE']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SE DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SE', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SE', dod_data)
-            dod_data = _dod_adj_dates('SE', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SE', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SE', dod_data)
-        dod_data = _dod_adj_dates('SE', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SE', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SE', data)
+    data = _dod_adj_dates('SE', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for SE' % (len(dod_files), len(data)))
 
-def eb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SE', data)
+
+    return data
+
+def eb_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Employee Demographic data from DOD files
@@ -449,33 +565,37 @@ def eb_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['EB']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['EB']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found EB DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('EB', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('EB', dod_data)
-            dod_data = _dod_adj_dates('EB', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('EB', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('EB', dod_data)
-        dod_data = _dod_adj_dates('EB', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('EB', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('EB', data)
+    data = _dod_adj_dates('EB', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for EB' % (len(dod_files), len(data)))
 
-def ej_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('EB', data)
+
+    return data
+
+def ej_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Employee Assignment data from DOD files
@@ -494,33 +614,37 @@ def ej_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['EJ']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['EJ']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found EJ DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('EJ', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('EJ', dod_data)
-            dod_data = _dod_adj_dates('EJ', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('EJ', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('EJ', dod_data)
-        dod_data = _dod_adj_dates('EJ', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('EJ', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('EJ', data)
+    data = _dod_adj_dates('EJ', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for EJ' % (len(dod_files), len(data)))
 
-def sc_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('EJ', data)
+
+    return data
+
+def sc_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Cal-Works data from DOD files
@@ -541,31 +665,35 @@ def sc_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     root = os.path.join(ref_files_root, DOD_MIS_SPEC['SC']['FILENAME'])
 
-    for dod_file in glob.iglob( root, recursive=True ):
+    dod_files = []
+    for dod_file in glob.iglob( root, '/**/', recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SC DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SC', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SC', dod_data)
-            dod_data = _dod_adj_dates('SC', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SC', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SC', dod_data)
-        dod_data = _dod_adj_dates('SC', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SC', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SC', data)
+    data = _dod_adj_dates('SC', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for SC' % (len(dod_files), len(data)))
 
-def cw_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SC', data)
+
+    return data
+
+def cw_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Cal-Works Work data from DOD files
@@ -584,38 +712,42 @@ def cw_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['CW']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['CW']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found CW DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('CW', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('CW', dod_data)
-            dod_data = _dod_adj_dates('CW', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('CW', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('CW', dod_data)
-        dod_data = _dod_adj_dates('CW', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('CW', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('CW', data)
+    data = _dod_adj_dates('CW', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for CW' % (len(dod_files), len(data)))
 
-def sd_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('CW', data)
+
+    return data
+
+def sd_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Disabilities data from DOD files
 
-    :param str gi03: List of paths or path to a DOD CB Report.
+    :param str gi03: List of paths or path to a DOD SD Report.
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -629,33 +761,37 @@ def sd_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SD']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SD']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SD DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SD', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SD', dod_data)
-            dod_data = _dod_adj_dates('SD', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SD', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SD', dod_data)
-        dod_data = _dod_adj_dates('SD', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SD', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SD', data)
+    data = _dod_adj_dates('SD', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for SD' % (len(dod_files), len(data)))
 
-def sg_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SD', data)
+
+    return data
+
+def sg_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Groups data from DOD files
@@ -674,33 +810,37 @@ def sg_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SG']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SG']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SG DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SG', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SG', dod_data)
-            dod_data = _dod_adj_dates('SG', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SG', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SG', dod_data)
-        dod_data = _dod_adj_dates('SG', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SG', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SG', data)
+    data = _dod_adj_dates('SG', data)
 
-    return [[]]
+    dod_log.info('Parsed %d files and %d rows for SG' % (len(dod_files), len(data)))
 
-def sf_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SG', data)
+
+    return data
+
+def sf_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Financial Aid data from DOD files
@@ -719,33 +859,37 @@ def sf_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SF']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SF']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SF DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SF', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SF', dod_data)
-            dod_data = _dod_adj_dates('SF', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SF', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SF', dod_data)
-        dod_data = _dod_adj_dates('SF', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SF', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SF', data)
+    data = _dod_adj_dates('SF', data)
 
-    return [[]] # No data for provided gi03
+    dod_log.info('Parsed %d files and %d rows for SF' % (len(dod_files), len(data)))
 
-def fa_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SF', data)
+
+    return data
+
+def fa_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Financial Aid Award data from DOD files
@@ -764,33 +908,37 @@ def fa_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['FA']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['FA']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found FA DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('FA', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('FA', dod_data)
-            dod_data = _dod_adj_dates('FA', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('FA', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('FA', dod_data)
-        dod_data = _dod_adj_dates('FA', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('FA', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('FA', data)
+    data = _dod_adj_dates('FA', data)
 
-    return [[]] # No data for provided gi03
+    dod_log.info('Parsed %d files and %d rows for FA' % (len(dod_files), len(data)))
 
-def sp_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('FA', data)
+
+    return data
+
+def sp_dod_parse(gi03=None, dict_read=False, headers=False, fill_empty=None):
 
     '''
     Parse Student Programs data from DOD files
@@ -809,31 +957,35 @@ def sp_dod_parse(gi03, dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SP']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SP']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if gi03 not in os.path.basename(dod_file):
+        if gi03 and gi03 not in os.path.basename(dod_file):
             continue
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SP DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SP', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SP', dod_data)
-            dod_data = _dod_adj_dates('SP', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SP', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SP', dod_data)
-        dod_data = _dod_adj_dates('SP', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SP', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SP', data)
+    data = _dod_adj_dates('SP', data)
 
-    return [[]] # No data for provided gi03
+    dod_log.info('Parsed %d files and %d rows for SP' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SP', data)
+
+    return data
 
 def sb_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
@@ -852,26 +1004,32 @@ def sb_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['SB']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['SB']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if dict_read:
+        dod_files.append(dod_file)
+        dod_log.debug('Found SB DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('SB', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('SB', dod_data)
-            dod_data = _dod_adj_dates('SB', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('SB', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('SB', dod_data)
-        dod_data = _dod_adj_dates('SB', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('SB', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data
+    data = _dod_fill_missing('SB', data)
+    data = _dod_adj_dates('SB', data)
+
+    dod_log.info('Parsed %d files and %d rows for SB' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('SB', data)
+
+    return data
 
 def fr_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
@@ -890,26 +1048,33 @@ def fr_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['FR']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['FR']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if dict_read: # Only 1 ever
+        dod_files.append(dod_file)
+        dod_log.debug('Found FR DOD file - %s' % dod_file)
 
-            dod_data = _dod_parse_file_dict('FR', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('FR', dod_data)
-            dod_data = _dod_adj_dates('FR', dod_data)
+    if dict_read:
 
-            return dod_data
+        data = _dod_parse_file_dict('FR', dod_files, fill_empty = fill_empty)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('FR', dod_data)
-        dod_data = _dod_adj_dates('FR', dod_data)
+    else:
 
-        if headers:
-            dod_data = _dod_add_headers('FR', dod_data)
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
 
-        return dod_data # Only 1 Ever
+    data = _dod_fill_missing('FR', data)
+    data = _dod_adj_dates('FR', data)
+
+    dod_log.info('Parsed %d files and %d rows for FR' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('FR', data)
+
+    return data
+
 
 def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
@@ -928,25 +1093,36 @@ def stuid_dod_parse(dict_read=False, headers=False, fill_empty=None):
 
     ref_files_root = MIS_DOD_CONFIGS['REF_FILES_ROOT']
 
-    root = os.path.join(ref_files_root, DOD_MIS_SPEC['STUID']['FILENAME'])
+    root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC['STUID']['FILENAME'])
 
+    dod_files = []
     for dod_file in glob.iglob( root, recursive=True ):
 
-        if dict_read:
-            dod_data = _dod_parse_file_dict( 'STUID', dod_file, fill_empty = fill_empty)
-            dod_data = _dod_fill_missing('STUID', dod_data)
-            return dod_data # only 1 ever
+        dod_files.append(dod_file)
+        dod_log.debug('Found STUID DOD file - %s' % dod_file)
 
-        dod_data = _dod_parse_file( dod_file, fill_empty = fill_empty)
-        dod_data = _dod_fill_missing('STUID', dod_data)
+    if dict_read:
 
-        if headers:
-            dod_data = _dod_add_headers('STUID', dod_data)
+        data = _dod_parse_file_dict('STUID', dod_files, fill_empty = fill_empty)
 
-        return dod_data # only do 1 ever...
+    else:
+
+        data = _dod_parse_file( dod_files, fill_empty = fill_empty)
+
+    data = _dod_fill_missing('STUID', data)
+    data = _dod_adj_dates('STUID', data)
+
+    dod_log.info('Parsed %d files and %d rows for STUID' % (len(dod_files), len(data)))
+
+
+    if not dict_read and headers: # could combine with parse similar to parse_dict
+        data = _dod_add_headers('STUID', data)
+
+    return data
 
 
 def ref_dod_update_db(data, report = None, gi03 = None, full = None):
+
     '''
     Update any DOD data referential data in the Database
 
@@ -993,23 +1169,23 @@ def ref_dod_update_db(data, report = None, gi03 = None, full = None):
 
             schema_path = DOD_SCHEMA_TEMPLATE % report
             dod_log.info('Updating schema for %s' % report)
-            db.exec_sql_file(schema_path, stmt_delim = 'GO\n')
+            #db.exec_sql_file(schema_path, stmt_delim = 'GO\n')
 
         elif gi03:
 
             dod_log.info('Deleting %s from %s' % (gi03, report))
-            db.exec_query("DELETE FROM %s WHERE GI03 = '%s'" % (table, gi03))
+            #db.exec_query("DELETE FROM %s WHERE GI03 = '%s'" % (table, gi03))
 
         else:
 
             dod_log.info('Clearing %s' % report)
-            db.truncate(table)
+            #db.truncate(table)
 
         table = 'L56_DOD_%s' % report
         dod_log.info('Inserting %d rows into %s' % (len(data[report]), report))
 
         try:
-            cnt = db.insert_batch( table, data[report] )
+            #db.insert_batch( table, data[report] )
             dod_log.info('Refresh Complete...%d rows inserted into %d tables' % (total_rows, total_tables))
         except Exception as e:
             dod_log.warning("Error occured during bacth insert %s data. Continuing upload..." % report)
@@ -1021,11 +1197,13 @@ def ref_dod_update_db(data, report = None, gi03 = None, full = None):
 def ref_dod_parse(report = None, gi03 = None, dict_read=False, headers=False, fill_empty=None):
 
     '''
-    Parse any DOD data referential data
+    Parse any DOD data referential data, :orangebold:`This function can litterally pull the entire DOD db into memory`
 
     :param str report: only parse files for the provided report
 
     :param str gi03: Only parse files for this gi03
+
+    :param bool diff: Compare the new DOD Ref data with the current in the DB. (Requires report, gi03) args. Will still return the reported data with.
 
     :param bool dict_read: return data as a dict with headers for keys
 
@@ -1048,14 +1226,15 @@ def ref_dod_parse(report = None, gi03 = None, dict_read=False, headers=False, fi
 
         dod_log.info('Started Parsing %s' % report)
 
-        root = os.path.join(ref_files_root, DOD_MIS_SPEC[report]['FILENAME'])
+        root = os.path.join(ref_files_root, '/**/', DOD_MIS_SPEC[report]['FILENAME'])
         dod_log.debug('Glob pattern - %s' % root)
 
         cnt = 0
+        num_rows = 0
         dod_data[report] = []
         for dod_file in glob.iglob( root, recursive=True ):
 
-            if gi03 and gi03 not in os.path.basename(dod_file):
+            if gi03 and (gi03 not in os.path.basename(dod_file) or 'Non_Term' in dod_file) :
                 continue
 
             dod_log.debug('Found DOD files - %s' % dod_file)
@@ -1066,18 +1245,27 @@ def ref_dod_parse(report = None, gi03 = None, dict_read=False, headers=False, fi
                 data = _dod_parse_file_dict(report, dod_file, fill_empty = fill_empty)
                 data = _dod_fill_missing(report, data)
                 data = _dod_adj_dates(report, data)
+                num_rows += len(data)
                 dod_data[report] += data
                 continue
 
             data = _dod_parse_file( dod_file, fill_empty = fill_empty)
             data = _dod_fill_missing(report, data)
             data = _dod_adj_dates(report, data)
+            num_rows += len(data)
             dod_data[report] += data
 
-        dod_log.info('Parsed %d files for %s' % (cnt, report))
+
+        dod_log.info('Parsed %d files and %d rows for %s' % (cnt, num_rows, report))
+
+        if report and gi03 and diff: # do a diff...before headers option is easier...
+
+            _dod_diff(dod_data[report], report, gi03)
 
         if not dict_read and headers:
+
             dod_data[report] = _dod_add_headers(report, dod_data[report])
+
 
     return dod_data
 
@@ -1161,7 +1349,6 @@ def scff_dod_parse(gi03=None):
                 continue
 
             scff_gi03_file_paths[scff_gi03].append(file)
-
 
 
     scff_data = []

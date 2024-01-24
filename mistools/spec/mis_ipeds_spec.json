@@ -7,5 +7,10 @@
     "E12" : {
 
          "FILENAME" : "IPEDS_12MONENROL_221_*-*.txt"
+     },
+
+    "SFA" : {
+
+         "FILENAME" : "IPEDS_STDNTFNAID_221_*-*.txt"
      }
 }

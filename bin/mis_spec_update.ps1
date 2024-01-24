@@ -62,7 +62,7 @@ $db = $serv.Databases["ODS_production"]
 
 foreach ( $tables in $db.Tables ) {
 
-    if ( $tables.Name.StartsWith('L56_DOD') -or $tables.Name.StartsWith("L56_COCI") )
+    if ( $tables.Name.StartsWith('L56_DOD') -or $tables.Name.StartsWith("L56_COCI") -or $tables.Name.StartsWith("L56_DOD_IPEDS"))
     {
 
         $options = new-object ('Microsoft.SqlServer.Management.Smo.ScriptingOptions')
