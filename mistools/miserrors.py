@@ -97,4 +97,5 @@ def sb_build_savelist(gi03):
     db = DB(MIS_ERRORS_CONFIGS['SRC_DB_NAME'])
     #print(query)
     data = db.exec_query(query)
+    db.close()
     return data
