@@ -10,13 +10,16 @@
 #)
 
 # seems once the .NET object code is loaded can begin sourcing it...
+# this will also throw an odd syntax error...I looked into it a bit here...
+# https://stackoverflow.com/questions/9929452/in-powershell-object-not-loading-though-i-call-loadwithpartialname
+# looks like the final comment refers to a new shell which is how I was fixing it. The failed backups were due to out of date configs.
 [System.Reflection.Assembly]::LoadWithPartialName( 'Microsoft.SqlServer.SMO' ) | out-null
 [System.Reflection.Assembly]::LoadWithPartialName( 'System.IO.Compression.FileSystem' ) | out-null
 
 Write-Output ($USERPROFILE)
 
 $PACKAGE_ROOT = $PSScriptRoot + '\..'
-#$CONFIG_ROOT  = $env:USERPROFILE + '\Documents\MIS-Tools\configs.json'  
+#$CONFIG_ROOT  = $env:USERPROFILE + '\Documents\MIS-Tools\configs.json' -- this should happen since it is what caused the backups to fail.
 cd $PACKAGE_ROOT
 
 $RETENTION_DAYS = 60
@@ -24,10 +27,10 @@ $RETENTION_DAYS = 60
 $log_file = "$PACKAGE_ROOT/mistools/logs/mis_rpt_backup.log"
 
 # db server instance..
-$serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-db"
+$serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-db23"
 
 # db instance..
-$db = $serv.Databases["coll18_production"]
+$db = $serv.Databases["coll18_prod"]
 
 $bdate = Get-Date -Format "yyMMdd"
 $bpath = "\\ltcc-app23\MIS\MIS_SQL_Backups\mis_rpt_bac_"
