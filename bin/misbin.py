@@ -27,13 +27,33 @@ from mistools    import misrpt
 from mistools    import misnsc
 from mistools    import misltusd
 from mistools    import miscalgrant
+from mistools    import miserrors
 from mistools.db import DB
 
+
+def _safe_prnt(data, itr=11): # place to print some specs and view data samples before uploading
+
+    if not data or \
+       type(data) != list or \
+       len(data) == 0:
+
+        print('_safe_prnt: No valid itr data')
+
+    for i in range(0, itr):
+
+        if i == 0:
+
+            print('')
+            print( 'Row Length is %d' % len(data[i]) )
+            print('')
+
+        print(data[i])
+
+    print('')
 
 @click.group(name='bin')
 def bin():
     pass
-
 
 @bin.command(name='mis_version', help='List the currently installed version of MIS-Tools.')
 def mis_version():
@@ -106,6 +126,7 @@ def mis_export(report, gi03, backup, sql_only, log_level):
         eval(EXPORT_FUNC)(gi03, backup)
     else:
         eval(EXPORT_FUNC)(gi03)
+
     sys.exit(0)
 
 @bin.command(name='dod_refresh', help='Refresh all DOD data from source files')
@@ -122,31 +143,320 @@ def dod_refresh(report, gi03, full, safe, log_level):
     mis_log.info('Starting Refresh...\n')
     mis_log.info('Starting Parse...\n')
 
-    dod_data = misdod.ref_dod_parse(report=report, gi03=gi03)
 
-    if safe:
+    if not report or report.lower() == 'cb':
 
-        for rpt in dod_data:
+        dod_data = misdod.cb_dod_parse(gi03=gi03)
 
-            rpt_len = len(dod_data[rpt])
+        if safe:
 
-            if rpt_len == 0:
-                continue
+            _safe_prnt(dod_data)
 
-            itr = 10
-            if rpt_len < 10:
-                itr = rpt_len
+        else:
 
-            for i in range(0, itr):
-                print(dod_data[rpt][i])
+            print('')
+            mis_log.info('Starting DOD DB Update...\n')
+            misdod.ref_dod_update_db(dod_data, report='CB', gi03=gi03, full=full)
 
-        print('')
-        sys.exit(0)
 
-    print('')
-    mis_log.info('Starting DOD DB Update...\n')
-    misdod.ref_dod_update_db(dod_data, report=report, gi03=gi03, full=full)
-    print('')
+    if not report or report.lower() == 'xb':
+
+        xb_data = misdod.xb_dod_parse(gi03=gi03)
+        xf_data = misdod.xf_dod_parse(gi03=gi03)
+        xe_data = misdod.xe_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(xb_data)
+            _safe_prnt(xe_data)
+            _safe_prnt(xf_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...XB\n')
+            xb_data = misdod.ref_dod_update_db(dod_data, report='XB', gi03=gi03, full=full)
+            mis_log.info('Starting DOD DB Update...XF\n')
+            xf_data = misdod.ref_dod_update_db(dod_data, report='XF', gi03=gi03, full=full)
+            mis_log.info('Starting DOD DB Update...XE\n')
+            xe_data = misdod.ref_dod_update_db(dod_data, report='XE', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sx':
+
+        dod_data = misdod.sx_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SX\n')
+            misdod.ref_dod_update_db(dod_data, report='SX', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'eb':
+
+        dod_data = misdod.eb_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...EB\n')
+            misdod.ref_dod_update_db(dod_data, report='EB', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'st':
+
+        dod_data = misdod.st_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...ST\n')
+            misdod.ref_dod_update_db(dod_data, report='ST', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'ss':
+
+        dod_data = misdod.ss_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SS\n')
+            misdod.ref_dod_update_db(dod_data, report='SS', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sc':
+
+        sc_data = misdod.sc_dod_parse(gi03=gi03)
+        cw_data = misdod.cw_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(sc_data)
+            _safe_prnt(cw_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SC\n')
+            misdod.ref_dod_update_db(sc_data, report='SC', gi03=gi03, full=full)
+            mis_log.info('Starting DOD DB Update...CW\n')
+            misdod.ref_dod_update_db(cw_data, report='CW', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'se':
+
+        dod_data = misdod.se_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SE\n')
+            misdod.ref_dod_update_db(dod_data, report='SE', gi03=gi03, full=full)
+
+
+    #if not report or report.lower() == 'sv':
+
+    #    dod_data = misdod.sv_dod_parse(gi03=gi03)
+
+    #    if safe:
+
+    #        _safe_prnt(dod_data)
+
+    #    else:
+
+    #        print('')
+    #        mis_log.info('Starting DOD DB Update...SV\n')
+    #        misdod.ref_dod_update_db(dod_data, report='SV', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sd':
+
+        dod_data = misdod.sd_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SD\n')
+            misdod.ref_dod_update_db(dod_data, report='SD', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sg':
+
+        dod_data = misdod.sg_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SG\n')
+            misdod.ref_dod_update_db(dod_data, report='SG', gi03=gi03, full=full)
+
+
+    #if not report or report.lower() == 'sy':
+
+    #    dod_data = misdod.sy_dod_parse(gi03=gi03)
+
+    #    if safe:
+
+    #        _safe_prnt(dod_data)
+
+    #    else:
+
+    #        print('')
+    #        mis_log.info('Starting DOD DB Update...SY\n')
+    #        misdod.ref_dod_update_db(dod_data, report='SY', gi03=gi03, full=full)
+
+
+    #if not report or report.lower() == 'sl':
+
+    #    misdod.sl_dod_parse(gi03=gi03)
+
+    #    if safe:
+
+    #        _safe_prnt(dod_data)
+
+    #    else:
+
+    #        print('')
+    #        mis_log.info('Starting DOD DB Update...SL\n')
+    #        misdod.ref_dod_update_db(dod_data, report='SL', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sf':
+
+        sf_data = misdod.sf_dod_parse(gi03=gi03)
+        fa_data = misdod.fa_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(sf_data)
+            _safe_prnt(fa_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SF\n')
+            misdod.ref_dod_update_db(sf_data, report='SF', gi03=gi03, full=full)
+            mis_log.info('Starting DOD DB Update...FA\n')
+            misdod.ref_dod_update_db(fa_data, report='FA', gi03=gi03, full=full)
+
+
+    #if not report or report.lower() == 'aa':
+    #    misdod.aa_dod_parse(gi03=gi03)
+
+    #    if safe:
+
+    #        for i in range(0, 10):
+    #            print(dod_data[i])
+
+    #    else:
+
+    #        print('')
+    #        mis_log.info('Starting DOD DB Update...\n')
+    #        misdod.ref_dod_update_db(dod_data, report='AA', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sp':
+
+        dod_data = misdod.sp_dod_parse(gi03=gi03)
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SP\n')
+            misdod.ref_dod_update_db(dod_data, report='SP', gi03=gi03, full=full)
+
+    if not report or report.lower() == 'ej': # diff source could be combined w/ eb potentially but usually means diff
+
+        dod_data = misdod.sb_dod_parse()
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...EJ\n')
+            misdod.ref_dod_update_db(dod_data, report='EJ', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'stuid':
+
+        dod_data = misdod.stuid_dod_parse()
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...STUID\n')
+            misdod.ref_dod_update_db(dod_data, report='STUID', gi03=gi03, full=full)
+
+    if not report or report.lower() == 'fr':
+
+        dod_data = misdod.fr_dod_parse()
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...FR\n')
+            misdod.ref_dod_update_db(dod_data, report='FR', gi03=gi03, full=full)
+
+
+    if not report or report.lower() == 'sb':
+
+        dod_data = misdod.sb_dod_parse()
+
+        if safe:
+
+            _safe_prnt(dod_data)
+
+        else:
+
+            print('')
+            mis_log.info('Starting DOD DB Update...SB\n')
+            misdod.ref_dod_update_db(dod_data, report='SB', gi03=gi03, full=full)
+
 
     sys.exit(0)
 
@@ -299,6 +609,28 @@ def ods_rpt_refresh(report, sql_only, log_level):
             script = misrpt.mis_ods_cw_refresh_schema()
             num_rows = misrpt.mis_ods_cw_refresh_data()
             mis_log.info('Refreshed %d CW RPT Rows\n' % num_rows)
+
+    if not report or report.lower() == 'sf':
+
+        if sql_only:
+
+            mis_log.info('Generating Schema for SF RPT\n')
+            script = misrpt.mis_ods_sf_refresh_schema(sql_only=True)
+            print(script)
+            script = misrpt.mis_ods_fa_refresh_schema(sql_only=True)
+            print(script)
+
+        else:
+
+            mis_log.info('Refreshing SF RPT Tables\n')
+            script = misrpt.mis_ods_sf_refresh_schema()
+            num_rows = misrpt.mis_ods_sf_refresh_data()
+            mis_log.info('Refreshed %d SF RPT Rows\n' % num_rows)
+
+            mis_log.info('Refreshing FA RPT Tables\n')
+            script = misrpt.mis_ods_fa_refresh_schema()
+            num_rows = misrpt.mis_ods_fa_refresh_data()
+            mis_log.info('Refreshed %d FA RPT Rows\n' % num_rows)
 
     if not report or report.lower() == 'sd':
 
@@ -499,43 +831,17 @@ def cal_grant_enr(safe, log_level):
 
     miscalgrant.mis_cg_enr_generate(None) # not implemented for other terms yet. yet...
 
-
-@bin.command(name='ipeds_ef', help='Refresh the DOD Ipeds Fall HR data')
-@click.option('-y', '--later-year',  type=int, help='The later survey year')
-@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take volatile Actions...db uploads etc. Print top rows of data.')
+@bin.command(name='sb_savelist', help='Build the SB savelist')
+@click.option('-g', '--gi03', type=str, help='The GI03 term for the report')
 @click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
-def ipeds_ef(later_year, safe, log_level):
+def sb_savelist(gi03, log_level):
 
-    mis_log = mislog.mis_console_logger('ipeds_ef', log_level)
 
-    fa_enr_table  = 'L56_DOD_IPEDS_EF'
-    fa_enr_data = misdod.ef_ipeds_parse(later_year)
-    print(fa_enr_data)
-    #db = DB('ods')
-    ##db.truncate(fa_enr_table)
-    #cnt = db.insert_batch( fa_enr_table, fa_enr_data )
-    #mis_log.info('Inserted %d rows into %s' % (cnt, fa_enr_table))
-    #db.close()
-    #sys.exit(0)
+    mis_log = mislog.mis_console_logger('sb_savelist', log_level)
+    data = miserrors.sb_build_savelist(gi03)
+    print(len(data))
+    print(data[0])
 
-@bin.command(name='ipeds_e12', help='Refresh the DOD Ipeds 12 month data')
-@click.option('-y', '--latter-year',  type=int, help='The latter survey year')
-@click.option('-s', '--safe', is_flag=True, type=bool, help='Do not take volatile Actions...db uploads etc. Print top rows of data.')
-@click.option('-l', '--log-level',  type=str, default='INFO', help='Set the logging level for the command defaults to INFO, Choices [CRITICAL, ERROR, WARN, INFO, DEBUG]')
-def ipeds_e12(latter_year, safe, log_level):
-
-    mis_log = mislog.mis_console_logger('ipeds_e12', log_level)
-
-    e12_table  = 'L56_DOD_IPEDS_E12'
-    e12_data = misipeds.e12_ipeds_parse(latter_year)
-    print(e12_data[0:10])
-    print(len(e12_data))
-    db = DB('ods')
-    db.truncate(e12_table)
-    cnt = db.insert_batch( e12_table, e12_data )
-    mis_log.info('Inserted %d rows into %s' % (cnt, e12_table))
-    db.close()
-    sys.exit(0)
 
 if __name__ == "__main__":
     bin()

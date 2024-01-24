@@ -86,7 +86,8 @@ def mis_ltcc_st_results_parse():
             new_results = res_file
             newest_ctime = os.stat(res_file).st_ctime
 
-    nsc_log.info("Parsing newest results from %s" % new_results)
+    newest_cdate = datetime.fromtimestamp(newest_ctime).strftime("%m/%d/%Y, %H:%M:%S")
+    nsc_log.info("Parsing newest results from %s with ctime %s" % (new_results, newest_cdate))
     rows = _nsc_parse_file_dict(new_results)
 
     return rows
@@ -125,7 +126,8 @@ def mis_ltusd_st_results_parse():
             new_results = res_file
             newest_ctime = os.stat(res_file).st_ctime
 
-    nsc_log.info("Parsing newest results from %s" % new_results)
+    newest_cdate = datetime.fromtimestamp(newest_ctime).strftime("%m/%d/%Y, %H:%M:%S")
+    nsc_log.info("Parsing newest results from %s with ctime %s" % (new_results, newest_cdate))
     rows = _nsc_parse_file_dict(new_results)
 
     return rows
@@ -141,10 +143,3 @@ def mis_ltusd_st_results_update_db(data):
     return num_rows
 
 
-def mis_st_exec_adams_sp():
-
-
-    db = DB('ODS')
-    db.exec_sp('dbo.L56_IMPORT_STUDENT_TRACKER')
-    db.close()
-    return num_rows

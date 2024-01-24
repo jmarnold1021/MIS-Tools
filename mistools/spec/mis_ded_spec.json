@@ -1034,29 +1034,23 @@
 
         "FORMAT" : {
 
-            "GI90" : "'EB'",
-            "GI01" : "CAHREB_GI01",
-            "GI03" : "CAHREB_GI03",
+            "GI90" : "'EJ'",
+            "GI01" : "CAHREJW_GI01",
+            "GI03" : "CAHREJW_GI03",
             "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
-            "EB01" : "CAHREB_EB01",
-            "EB02" : "CAHREB_EB02",
-            "EB03" : "CASE WHEN CAHREB_EB03 IS NOT NULL THEN CAHREB_EB03 ELSE SPACE(1) END",
-            "EB04" : "'X '",
-            "EB05" : "CASE WHEN CAHREB_EB05 IS NOT NULL THEN CAHREB_EB05 ELSE 'C' END",
-            "EB06" : "CASE WHEN CAHREB_EB06 IS NOT NULL THEN CAHREB_EB06 ELSE SPACE(1) END",
-            "EB07" : "CASE WHEN CAHREB_EB07 IS NOT NULL THEN CAHREB_EB07 ELSE SPACE(1) END",
-            "EB08" : "CASE WHEN CAHREB_EB08 IS NOT NULL THEN CAHREB_EB08 ELSE SPACE(1) END",
-            "EB09" : "CASE WHEN CAHREB_EB09 IS NOT NULL THEN CAHREB_EB09 ELSE SPACE(1) END",
-            "EB10" : "SPACE(6)",
-            "EB11" : "CASE WHEN CAHREB_EB11 IS NOT NULL THEN CAHREB_EB11 ELSE SPACE(1) END",
-            "EB12" : "RIGHT( '000000' + CAST(CAHREB_EB12 AS VARCHAR), 6)",
-            "EB13" : "RIGHT( '000000' + CAST(CAHREB_EB13 AS VARCHAR), 6)",
-            "EB14" : "CAHREB_EB14",
-            "FILLER" : "SPACE(6)"
+            "EJ01" : "CAHREJW_EJ01",
+            "EJ02" : "CAHREJW_EJ02",
+            "EJ03" : "LEFT(CAHREJW_EJ03 + REPLICATE(' ', 6), 6)",
+            "EJ04" : "RIGHT(REPLICATE('0',3) + REPLACE(CAST(CAHREJW_EJ04 AS VARCHAR), '.',''), '3')",
+            "EJ05" : "RIGHT(REPLICATE('0',5) + REPLACE(CAST(CAHREJW_EJ05 AS VARCHAR), '.',''), '5')",
+            "EJ06" : "SPACE(4)",
+            "EJ07" : "SPACE(6)",
+            "EJ08" : "RIGHT(REPLICATE('0',5) + REPLACE(CAST(CAHREJW_EJ08 AS VARCHAR), '.',''), '5')",
+            "FILLER": "SPACE(31)"
         },
 
 
-        "MIS_SRC_TABLE" : "CAHR_EB_RPT"
+        "MIS_SRC_TABLE" : "CAHR_EJ_RPT"
     },
 
     "AA" : {
@@ -1075,6 +1069,19 @@
         "LENGTH" : 28,
 
         "POSITION" : {},
+
+        "FORMAT" : {},
+
+        "MIS_SRC_TABLE" : "L56_SL"
+    },
+
+    "SI" : {
+
+        "LENGTH" : 25,
+
+        "POSITION" : {
+
+        },
 
         "FORMAT" : {},
 

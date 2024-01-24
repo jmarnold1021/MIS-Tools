@@ -789,3 +789,100 @@ def mis_ods_sp_refresh_data():
 
     return num_rows
 
+def mis_ods_sf_refresh_schema(sql_only = False):
+
+    '''
+    Builds/Executes the SQL Sccript for SF in the LTCC_MIS
+
+    :param bool sql_only: Only return the Script
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix = "CAST"
+    report = "SF"
+
+    schema_lines = _read_rpt_sql_schema(prefix, report)
+    ods_script = _update_table_name(prefix, report, schema_lines)
+
+    if sql_only:
+        return ods_script
+
+    _refresh_schema(ods_script)
+    return ods_script
+
+def mis_ods_sf_refresh_data():
+
+    '''
+    Builds/Executes the SQL Sccript for SF in the LTCC_MIS
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix    = "CAST"
+    report    = "SF"
+    dst_table = 'L56_%s_%s_RPT' % (prefix, report)
+
+    data = _fetch_upstream_data(prefix, report)
+
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
+    num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
+    db.close()
+
+    return num_rows
+
+def mis_ods_fa_refresh_schema(sql_only = False):
+
+    '''
+    Builds/Executes the SQL Sccript for FA in the LTCC_MIS
+
+    :param bool sql_only: Only return the Script
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix = "CAST"
+    report = "FA"
+
+    schema_lines = _read_rpt_sql_schema(prefix, report)
+    ods_script = _update_table_name(prefix, report, schema_lines)
+
+    if sql_only:
+        return ods_script
+
+    _refresh_schema(ods_script)
+    return ods_script
+
+def mis_ods_fa_refresh_data():
+
+    '''
+    Builds/Executes the SQL Sccript for FA in the LTCC_MIS
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix    = "CAST"
+    report    = "FA"
+    dst_table = 'L56_%s_%s_RPT' % (prefix, report)
+
+    data = _fetch_upstream_data(prefix, report)
+
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
+    num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
+    db.close()
+
+    return num_rows
+
+

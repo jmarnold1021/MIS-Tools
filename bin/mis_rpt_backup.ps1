@@ -13,7 +13,10 @@
 [System.Reflection.Assembly]::LoadWithPartialName( 'Microsoft.SqlServer.SMO' ) | out-null
 [System.Reflection.Assembly]::LoadWithPartialName( 'System.IO.Compression.FileSystem' ) | out-null
 
+Write-Output ($USERPROFILE)
+
 $PACKAGE_ROOT = $PSScriptRoot + '\..'
+#$CONFIG_ROOT  = $env:USERPROFILE + '\Documents\MIS-Tools\configs.json'  
 cd $PACKAGE_ROOT
 
 $RETENTION_DAYS = 60
@@ -27,7 +30,7 @@ $serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-db"
 $db = $serv.Databases["coll18_production"]
 
 $bdate = Get-Date -Format "yyMMdd"
-$bpath = "\\ltcc-app\MIS\MIS_SQL_Backups\mis_rpt_bac_"
+$bpath = "\\ltcc-app23\MIS\MIS_SQL_Backups\mis_rpt_bac_"
 
 New-Item -Path ($bpath + $bdate) -ItemType Directory | out-null
 

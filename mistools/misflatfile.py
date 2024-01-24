@@ -34,8 +34,8 @@ misff_log  = mislog.mis_console_logger('misflatfile', CONFIGS['MIS_FLAT_FILE']['
 # DB configs
 
 CONNECTION_STRING = r'Driver=SQL Server;Server=%s;Database=%s;Trusted_Connection=yes;' % \
-                    (CONFIGS['DB']['COLLEAGUE']['SERVER_NAME'],
-                     CONFIGS['DB']['COLLEAGUE']['DB_NAME'])
+                    (CONFIGS['DB']['COLLPROD']['SERVER_NAME'],
+                     CONFIGS['DB']['COLLPROD']['DB_NAME'])
 
 # MIS FF EXPORT CONFIGS
 MIS_FF_EXPORT_ROOT = CONFIGS['MIS_FLAT_FILE']['MIS_FF_EXPORT_ROOT']
@@ -194,13 +194,19 @@ def _build_sql(report, gi03):
     gi03_attr = DED_MIS_SPEC[report]['FORMAT']['GI03']
     table     = DED_MIS_SPEC[report]['MIS_SRC_TABLE']
 
+    ej_eb00_filter = '\n'
+    if report.upper() == 'EJ':
+        ej_eb00_filter = "\n     LEFT JOIN CAHR_EB_RPT ON CAHREJW_EMPLOYEE = CAHREB_PERSON_ID" + \
+                      "\n                              AND CAHREJW_GI03 = CAHREB_GI03"
+
     # EB uses a different prefix CAHR not CAST...
     flag_filter = "\n      AND CAST_" + report + "_RPT_FLAG = 1"
-    if report == 'EB':
+    if report.upper() in ['EB','EJ']:
         flag_filter = "\n      AND CAHR_" + report + "_RPT_FLAG = 1"
 
     return "SELECT "  + ' +\n       '.join(attrs.values()) + \
            "\nFROM "  + table + \
+           ej_eb00_filter + \
            "\nWHERE " + gi03_attr + ' = ' + "'" + gi03 + "'" + \
            flag_filter
 
@@ -308,7 +314,9 @@ def _backup_dat_file(gi03, report):
     mdate = datetime.fromtimestamp(os.path.getmtime(os.path.join(root, dat_file))).strftime("%y%m%d")
     shutil.move(os.path.join(root, dat_file), os.path.join(bpath,dat_file + '_' + mdate))
 
-# MIS Export Interface
+def si_mis_export(gi03, sql_only = False):
+    pass # place holder for doc automation...
+
 def sx_mis_export(gi03, backup = False, sql_only = False):
 
     '''
@@ -701,6 +709,45 @@ def sv_mis_export(gi03, backup = False, sql_only = False):
 
     return sql
 
+def ej_mis_export(gi03, backup = False, sql_only = False):
+
+    '''
+    Export Employee Demographic Assignment to a Flat File(.DAT)
+
+    :param str gi03: Term to export data from
+
+    :param bool backup: Backup the Prev dat file for this report also.
+
+    :param bool sql_only: Only return the generated sql, defaults to False
+
+    :return: The sql used to perform the export
+
+    :rtype: str
+
+    '''
+
+    if backup:
+        _backup_dat_file(gi03, 'EJ')
+
+    # build sql from spec
+    sql = _build_sql('EJ', gi03)
+
+    if sql_only:
+        return sql
+
+    rows = _exec_query(sql)
+
+    dat_file = DAT_FILE_TEMPLATE % (gi03, 'EJ')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, dat_file)
+
+    row_count = _write_dat_file(rows, out_file)
+
+    txt_file = DAT_FILE_TEMPLATE % (gi03, 'TX')
+    out_file = os.path.join(MIS_FF_EXPORT_ROOT, gi03, txt_file)
+
+    _build_txt_file(row_count, 'EJ', gi03, out_file)
+
+    return sql
 
 def eb_mis_export(gi03, backup = False, sql_only = False):
 
