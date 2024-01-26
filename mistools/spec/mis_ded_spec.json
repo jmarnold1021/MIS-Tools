@@ -1038,14 +1038,14 @@
             "GI01" : "CAHREJW_GI01",
             "GI03" : "CAHREJW_GI03",
             "EB00" : "LEFT(CAHREB_EB00 + SPACE(9), 9)",
-            "EJ01" : "CAHREJW_EJ01",
+            "EJ01" : "CASE WHEN CAHREJW_EJ01 IS NOT NULL THEN CAHREJW_EJ01 ELSE REPLICATE(' ', 2) END",
             "EJ02" : "CAHREJW_EJ02",
             "EJ03" : "LEFT(CAHREJW_EJ03 + REPLICATE(' ', 6), 6)",
-            "EJ04" : "RIGHT(REPLICATE('0',3) + REPLACE(CAST(CAHREJW_EJ04 AS VARCHAR), '.',''), '3')",
-            "EJ05" : "RIGHT(REPLICATE('0',5) + REPLACE(CAST(CAHREJW_EJ05 AS VARCHAR), '.',''), '5')",
+            "EJ04" : "FORMAT(CAST(ROUND(CAHREJW_EJ04 * 10, 0) AS INT), '000')",
+            "EJ05" : "FORMAT(CAST(ROUND(CAHREJW_EJ05 * 100, 0) AS INT), '00000')",
             "EJ06" : "SPACE(4)",
             "EJ07" : "SPACE(6)",
-            "EJ08" : "RIGHT(REPLICATE('0',5) + REPLACE(CAST(CAHREJW_EJ08 AS VARCHAR), '.',''), '5')",
+            "EJ08" : "FORMAT(CAST(ROUND(CAHREJW_EJ08 * 100, 0) AS INT), '00000')",
             "FILLER": "SPACE(31)"
         },
 
