@@ -14,7 +14,7 @@
 
 ### In Progress
 
-- [ ] SP export SQL decouple initial changes...kind of a picnic not sure if worth it...
+- [ ] SP export SQL decouple initial changes...kind of a picnic not sure if worth it...honestly thinking of going more towards just storing SQL export query cause its easier to update to use WORK table export....
 
 
 ### Done

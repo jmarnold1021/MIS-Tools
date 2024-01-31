@@ -401,7 +401,7 @@ def dod_refresh(report, gi03, full, safe, log_level):
 
     if not report or report.lower() == 'ej': # diff source could be combined w/ eb potentially but usually means diff
 
-        dod_data = misdod.sb_dod_parse()
+        dod_data = misdod.ej_dod_parse()
 
         if safe:
 
@@ -557,6 +557,21 @@ def ods_rpt_refresh(report, sql_only, log_level):
             script   = misrpt.mis_ods_eb_refresh_schema()
             num_rows = misrpt.mis_ods_eb_refresh_data()
             mis_log.info('Refreshed %d EB RPT Rows\n' % num_rows)
+
+    if not report or report.lower() == 'ej':
+
+        if sql_only:
+
+            mis_log.info('Generating Schema for EJ RPT\n')
+            script = misrpt.mis_ods_ej_refresh_schema(sql_only=True)
+            print(script)
+
+        else:
+
+            mis_log.info('Refreshing EJ RPT Tables\n')
+            script   = misrpt.mis_ods_ej_refresh_schema()
+            num_rows = misrpt.mis_ods_ej_refresh_data()
+            mis_log.info('Refreshed %d EJ RPT Rows\n' % num_rows)
 
     if not report or report.lower() == 'sb':
 
@@ -839,8 +854,9 @@ def sb_savelist(gi03, log_level):
 
     mis_log = mislog.mis_console_logger('sb_savelist', log_level)
     data = miserrors.sb_build_savelist(gi03)
-    print(len(data))
-    print(data[0])
+    #print(len(data))
+    #print(data[0])
+    sys.exit(0)
 
 
 if __name__ == "__main__":

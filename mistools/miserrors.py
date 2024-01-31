@@ -51,12 +51,14 @@ def sb_build_savelist(gi03):
     '''
 
     query = """
-
+        -- query takes a while I honestly always feel this look up takes a long time.  Lost of 'IN'...may be batches...or pull id from MIS files directly since we know they must have a record now hence will have a colleague id O(1) access.
         SELECT DISTINCT p.ID
         FROM PERSON p
-        WHERE REPLACE(p.SSN, '-', '') IN %s
-              OR
-              ('D' + p.ID) IN %s
+        WHERE (
+                REPLACE(p.SSN, '-', '') IN %s
+                OR
+                ('D' + p.ID) IN %s
+              )
     """
 
     # should prob have some spec for the file name...but keeping here for now...
@@ -90,12 +92,13 @@ def sb_build_savelist(gi03):
                curr_id not in sb00s:
                 sb00s.append(curr_id)
 
-    print(len(sb00s))
+
+    #print(len(sb00s))
     sb00s_filter = "('" + "','".join(sb00s) + "')"
     query = query % (sb00s_filter, sb00s_filter)
-
-    db = DB(MIS_ERRORS_CONFIGS['SRC_DB_NAME'])
+    print(query)
+    #db = DB(MIS_ERRORS_CONFIGS['SRC_DB_NAME'])
     #print(query)
-    data = db.exec_query(query)
-    db.close()
-    return data
+    ##data = db.exec_query(query)
+    #db.close()
+    return None #data
