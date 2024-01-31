@@ -6,7 +6,7 @@ with open('version.json') as version_file:
     version = json.load(version_file)['version']
 
 # Primary app
-scripts = ['bin/misbin.py']
+scripts = ['bin/misbin.py', 'bin/ipedsbin.py']
 
 
 # Platform Dependant Scripts...

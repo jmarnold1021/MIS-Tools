@@ -19,10 +19,10 @@ cd $PACKAGE_ROOT
 $log_file = "$PACKAGE_ROOT/mistools/logs/mis_rpt_spec_refresh.log"
 
 # db server instance..
-$serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-db"
+$serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-db23"
 
 # db instance..
-$db = $serv.Databases["coll18_production"]
+$db = $serv.Databases["coll18_prod"]
 
 $bpath = "$PACKAGE_ROOT/mistools/schema/"
 

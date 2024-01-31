@@ -379,7 +379,7 @@ def mis_ods_eb_refresh_data():
 
     return num_rows
 
-def mis_rpt_ods_ej_refresh(sql_only = False):
+def mis_ods_ej_refresh_schema(sql_only = False):
 
     '''
     Builds/Executes the SQL Sccript for EJ in the LTCC_MIS(:redbold:1Has not been Implemented`)
@@ -392,18 +392,42 @@ def mis_rpt_ods_ej_refresh(sql_only = False):
 
     '''
 
-    #prefix = "CAHR"
-    #report = "EJ"
+    prefix = "CAHR"
+    report = "EJ"
 
-    #schema_lines = _read_rpt_sql_schema(prefix, report)
-    #ods_script = _update_table_name(prefix, report, schema_lines)
+    schema_lines = _read_rpt_sql_schema(prefix, report)
+    ods_script = _update_table_name(prefix, report, schema_lines)
 
-    #if sql_only:
-    #    return ods_script
+    if sql_only:
+        return ods_script
 
-    #_refresh_schema(ods_script)
-    #return ods_script
-    return ''
+    _refresh_schema(ods_script)
+    return ods_script
+
+def mis_ods_ej_refresh_data():
+
+    '''
+    Builds/Executes the SQL Sccript for EJ in the LTCC_MIS
+
+    :param bool sql_only: Only return the Script
+
+    :return: The sql script used to maintain the schema
+
+    :rtype: str
+
+    '''
+
+    prefix    = "CAHR"
+    report    = "EJ"
+    dst_table = 'L56_%s_%s_RPT' % (prefix, report)
+
+    data = _fetch_upstream_data(prefix, report)
+
+    db = DB(MIS_RPT_CONFIGS['DST_DB_NAME'])
+    num_rows = db.insert_batch(dst_table, data, dt_format = RPT_ADJ_DT_FRMT)
+    db.close()
+
+    return num_rows
 
 def mis_ods_sb_refresh_schema(sql_only = False):
 

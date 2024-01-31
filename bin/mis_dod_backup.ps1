@@ -17,7 +17,7 @@ $serv = new-object ('Microsoft.SqlServer.Management.Smo.Server') "ltcc-ods"
 $db = $serv.Databases["ODS_production"]
 
 $bdate = Get-Date -Format "yyMMdd"
-$bpath = "\\ltcc-app\MIS\MIS_SQL_Backups\mis_dod_bac_" + $bdate
+$bpath = "\\ltcc-app23\MIS\MIS_SQL_Backups\mis_dod_bac_" + $bdate
 
 New-Item -Path $bpath -ItemType Directory | out-null
 
@@ -47,7 +47,7 @@ foreach ( $tables in $db.Tables ) {
     }
 }
 
-$bzip = "\\ltcc-app\MIS\MIS_SQL_Backups\mis_dod_bac_" + $bdate + ".zip"
+$bzip = "\\ltcc-app23\MIS\MIS_SQL_Backups\mis_dod_bac_" + $bdate + ".zip"
 
 Write-Output ("Archiving Data {0} to {1}" -f $bpath, $bzip) >> $log_file
 [System.IO.Compression.ZipFile]::CreateFromDirectory($bpath, $bzip)
